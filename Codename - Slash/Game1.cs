@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using Misc_Helpers;
+using System;
 
 namespace Codename___Slash
 {
@@ -9,13 +12,21 @@ namespace Codename___Slash
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        // Resources for drawing.
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+
+        private Hero hero;
+        private InputHandler inputHandler;
+        private GameState state;
+
+        private Song song;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this); // TODO: Maybe not needed here if this is handling in the state classes? 
             Content.RootDirectory = "Content";
+            Console.WriteLine("Begins---------------");
         }
 
         /// <summary>
@@ -27,7 +38,9 @@ namespace Codename___Slash
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            inputHandler = new InputHandler();
+            hero = new Hero();
+            state = GameState.MenuState;
             base.Initialize();
         }
 
@@ -41,6 +54,18 @@ namespace Codename___Slash
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            
+            //Known issue that you get exceptions if you use Media PLayer while connected to your PC
+            //See http://social.msdn.microsoft.com/Forums/en/windowsphone7series/thread/c8a243d2-d360-46b1-96bd-62b1ef268c66
+            //Which means its impossible to test this from VS.
+            //So we have to catch the exception and throw it away
+            try
+            {
+                // MediaPlayer.IsRepeating = true;
+                song = Content.Load<Song>("Sound/Music/Everybody-Dies-Instrumental");
+                MediaPlayer.Play(song);
+            }
+            catch { }
         }
 
         /// <summary>
@@ -50,6 +75,8 @@ namespace Codename___Slash
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            //Stop playing the music
+            MediaPlayer.Stop();
         }
 
         /// <summary>
@@ -59,10 +86,15 @@ namespace Codename___Slash
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
+            // IMPORTANT
+            // Scene/Game State handling area
+            GameState s = state.Update(this, ref inputHandler);
+            if (s != null)
+            {
+                state.Exit(this); // Call previous state's exit method 
+                state = s;
+                state.Enter(this); // Call new state's enter method
+            }
 
             base.Update(gameTime);
         }
@@ -73,7 +105,7 @@ namespace Codename___Slash
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.LightSkyBlue);
 
             // TODO: Add your drawing code here
 

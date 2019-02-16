@@ -41,9 +41,18 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Command.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="GameplayState.cs" />
+    <Compile Include="Hero.cs" />
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="MenuState.cs" />
+    <Compile Include="OptionsState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GameState.cs" />
+    <Compile Include="StateMachine.cs" />
+    <Compile Include="UI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
