@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace Codename___Slash
 {
-    class Loader
+    public class Loader
     {
         
         /// <summary>
