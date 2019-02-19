@@ -21,7 +21,7 @@ namespace Codename___Slash
             base.Exit(game);
         }
 
-        public override GameState Update(Game1 game, ref InputHandler inputHandler)
+        public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
         {
             Console.WriteLine("In menu state");
 
@@ -33,9 +33,15 @@ namespace Codename___Slash
 
             // Exmaple return statement:::: return GameState.optionState;
 
-            base.Update(game, ref inputHandler);
+            base.Update(game, ref gameTime, ref inputHandler);
             return null;
         }
 
+        public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
+        {
+
+
+            base.Draw(ref gameTime, spriteBatch);
+        }
     }
 }

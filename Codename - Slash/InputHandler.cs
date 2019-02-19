@@ -28,6 +28,10 @@ namespace Codename___Slash
 
         public Command HandleInput()
         {
+            // TODO: Check for controller input 
+            // TODO: maybe, pass in a sensitvity parameter on how hard the button is pressed. 
+
+
             if (Keyboard.GetState().IsKeyDown(Keys.W)) return wButton;
             if (Keyboard.GetState().IsKeyDown(Keys.S)) return sButton;
             if (Keyboard.GetState().IsKeyDown(Keys.A)) return aButton;

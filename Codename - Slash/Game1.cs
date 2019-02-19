@@ -16,7 +16,6 @@ namespace Codename___Slash
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private Hero hero;
         private InputHandler inputHandler;
         private GameState state;
 
@@ -39,8 +38,10 @@ namespace Codename___Slash
         {
             // TODO: Add your initialization logic here
             inputHandler = new InputHandler();
-            hero = new Hero();
-            state = GameState.MenuState;
+            
+            state = GameState.GameplayState;
+            state.Enter(this);
+
             base.Initialize();
         }
 
@@ -88,7 +89,7 @@ namespace Codename___Slash
         {
             // IMPORTANT
             // Scene/Game State handling area
-            GameState s = state.Update(this, ref inputHandler);
+            GameState s = state.Update(this, ref gameTime, ref inputHandler);
             if (s != null)
             {
                 state.Exit(this); // Call previous state's exit method 
@@ -108,6 +109,11 @@ namespace Codename___Slash
             GraphicsDevice.Clear(Color.LightSkyBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            state.Draw(ref gameTime, spriteBatch);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

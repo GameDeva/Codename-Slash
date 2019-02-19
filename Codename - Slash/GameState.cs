@@ -23,18 +23,20 @@ namespace Codename___Slash
         public static GameplayState GameplayState { get; } = new GameplayState();
 
         protected ContentManager stateContent; // Content manager for each state
-        protected GraphicsDeviceManager graphics;
+        // protected GraphicsDeviceManager graphics;
 
         // Enter method to be called on entry into particular state
         public virtual void Enter(Game1 game)
         {
-            graphics = new GraphicsDeviceManager(game);
+            // graphics = new GraphicsDeviceManager(game);
         }
 
         // Exit method to be called on exit out of statey
         public virtual void Exit(Game1 game) { }
 
         // Update method for each scene
-        public virtual GameState Update(Game1 game, ref InputHandler inputHandler) { return null; }
+        public virtual GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler) { return null; }
+
+        public virtual void Draw(ref GameTime gameTime, SpriteBatch spriteBatch) { }
     }
 }

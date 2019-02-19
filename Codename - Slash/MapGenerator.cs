@@ -35,7 +35,7 @@ namespace Codename___Slash
         public Section(int sectionSize)
         {
             tilesInfo = new TileInfo[sectionSize, sectionSize];
-            // TODO : 
+
         }
 
     }
@@ -45,15 +45,25 @@ namespace Codename___Slash
         public Section[,] MapSections { get; }
         public Dictionary<int, string> IndexToTextureFile { get; }
 
+        private List<Texture2D> textureList;
+        private int textureCount;
         private int mapNumber;
         private int mapSize;
 
-        public Map(int mapSize)
+        public Map()
         {
             // Assign parameter values
-            this.mapSize = mapSize;
             MapSections = new Section[mapSize, mapSize];
             IndexToTextureFile = new Dictionary<int, string>();
+        }
+
+        public void LoadMapTextures(ContentManager content)
+        {
+            foreach (KeyValuePair<int, string> pair in IndexToTextureFile)
+            {
+                content.Load<Texture2D>(pair.Value);
+            }
+            
         }
 
 
@@ -67,8 +77,7 @@ namespace Codename___Slash
         private Vector2Int currentHeroPos;
         private Deque<Deque<Section>> currentChunk;
         private int renderChunkSize;
-        private Dictionary<int, Texture2D> IndexToTextureLoaded; // Indexes of the tiles currently loaded from content manager (Used to check to not load again)
-
+        
         private List<Section> currentGridsDisplayed;
 
         private ContentManager content;
@@ -77,16 +86,15 @@ namespace Codename___Slash
         {
             content = new ContentManager(serivceProvider, "Content/Maps");
         }
-
         
-        public void InitialiseNewMap(int MapNumber, int mapSize, Vector2Int heroPos, int renderChunkSize)
+        public void InitialiseNewMap(int MapNumber, Vector2Int heroPos, int renderChunkSize)
         {
             // Reinitialise values when creating a new map, or newly assign if first time
+            ResetHeroPosition(heroPos);
             currentMapNumber = MapNumber;
-            currentMap = new Map(mapSize);
+            currentMap = new Map();
             currentGridsDisplayed = new List<Section>();
             currentChunk = null;
-            currentHeroPos = heroPos;
             this.renderChunkSize = renderChunkSize;
 
             // Read XML map data onto the new Map object, based on mapNumber
@@ -94,7 +102,15 @@ namespace Codename___Slash
             Loader.ReadXML(string.Format("Content/Maps/{0}.txt", MapNumber), ref currentMap);
         }
 
-        public void UpdateMapDisplay(Direction dir)
+        public void ResetHeroPosition(Vector2Int heroPos)
+        {
+            currentHeroPos = heroPos;
+
+
+        }
+
+
+        private void UpdateChunkInUse(Direction dir)
         {
             if (currentChunk != null)
             {
@@ -121,9 +137,6 @@ namespace Codename___Slash
                             for(int j=0; j < l2; j++)
                             {
                                 int index = s2.tilesInfo[i, j].textureIndex;
-
-                                if (!IndexToTextureLoaded.ContainsKey(index))
-                                    IndexToTextureLoaded[index] = content.Load<Texture2D>(string.Format("{0}/Tiles", currentMapNumber));
                                 
                                 // TODO : Add collision for tiles
                             }
@@ -134,9 +147,16 @@ namespace Codename___Slash
             }
 
             // Update currentHeroPos based on dir
-            
 
+            // Once the sections have been choosen update the relevant colliders. 
+            UpdateTileColiders();
         }
+
+        private void UpdateTileColiders()
+        {
+
+        } 
+
 
         private void LoadResource()
         {
