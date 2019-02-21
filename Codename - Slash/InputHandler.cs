@@ -15,9 +15,13 @@ namespace Codename___Slash
         private Command dButton;
         private Command spaceButton;
 
+        private List<Command> currentCommandsList;
+
         // TODO: methods to bind the commands
         public InputHandler()
         {
+            currentCommandsList = new List<Command>();
+
             wButton = new MoveUpCommand();
             aButton = new MoveLeftCommand();
             sButton = new MoveDownCommand();
@@ -26,19 +30,21 @@ namespace Codename___Slash
         }
 
 
-        public Command HandleInput()
+        public List<Command> HandleInput()
         {
             // TODO: Check for controller input 
             // TODO: maybe, pass in a sensitvity parameter on how hard the button is pressed. 
+            // Clear previous list of commands pressed
+            currentCommandsList.Clear();
 
-
-            if (Keyboard.GetState().IsKeyDown(Keys.W)) return wButton;
-            if (Keyboard.GetState().IsKeyDown(Keys.S)) return sButton;
-            if (Keyboard.GetState().IsKeyDown(Keys.A)) return aButton;
-            if (Keyboard.GetState().IsKeyDown(Keys.D)) return dButton;
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) return spaceButton;
-
-            return null; // If nothing is pressed
+            // Add any commands issued this frame to the list
+            if (Keyboard.GetState().IsKeyDown(Keys.W)) currentCommandsList.Add(wButton);
+            if (Keyboard.GetState().IsKeyDown(Keys.S)) currentCommandsList.Add(sButton);
+            if (Keyboard.GetState().IsKeyDown(Keys.A)) currentCommandsList.Add(aButton);
+            if (Keyboard.GetState().IsKeyDown(Keys.D)) currentCommandsList.Add(dButton);
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) currentCommandsList.Add(spaceButton);
+            
+            return currentCommandsList; 
         }
 
     }

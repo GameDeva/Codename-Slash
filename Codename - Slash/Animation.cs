@@ -9,17 +9,17 @@ namespace Codename___Slash
 {
     public class Animation
     {
-        public Texture2D Texture { get; }
+        public Texture2D SpriteStrip { get; }
         public float FrameTime { get; } // Duration of time for each frame
-        public int FrameWidth {  get { return Texture.Width / FrameCount; } }    // TODO: Splice width with number of sprites
-        public int FrameHeight { get { return Texture.Height; } }   
+        public int FrameWidth {  get { return SpriteStrip.Width / FrameCount; } }    // TODO: Splice width with number of sprites
+        public int FrameHeight { get { return SpriteStrip.Height; } }   
         public bool IsLooping { get;  }
         public int FrameCount;
 
         
         public Animation(Texture2D texture, int frameCount, float frameTime, bool isLooping)
         {
-            Texture = texture;
+            SpriteStrip = texture;
             FrameTime = frameTime;
             IsLooping = isLooping;
             FrameCount = frameCount;

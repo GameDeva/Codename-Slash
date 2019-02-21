@@ -38,11 +38,14 @@ namespace Codename___Slash
         public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
         {
             // TODO: Add your update logic here
-            Command command = inputHandler.HandleInput();
-            if (command != null)
+            List<Command> commands = inputHandler.HandleInput();
+
+            if (commands != null)
             {
-                Console.WriteLine("Something has been pressed");
-                command.execute(ref hero);
+                foreach (Command c in commands)
+                {
+                    c.execute(ref hero);
+                }
             }
             
             // Handle State object Updates

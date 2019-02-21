@@ -19,6 +19,8 @@ namespace Codename___Slash
         private Vector2 position;
         private Vector2 velocity;
 
+        private Vector2 prevPosition;
+
         Texture2D testTex;
 
         // Animations
@@ -33,8 +35,9 @@ namespace Codename___Slash
         private SpriteEffects flip = SpriteEffects.None;
 
         private Vector2 movement;
-        private float maxMoveSpeed = 1750f;
-        private float moveAcc = 13000f;
+        private float maxMoveSpeed = 1000f;
+        private float moveAcc = 5000f;
+        private float friction = 0.85f;
         private float dashAcc;
         private bool shouldDash;
 
@@ -50,15 +53,45 @@ namespace Codename___Slash
         public void Reset(Vector2 position)
         {
             this.position = position;
-            animator.PlayAnimation(idle);
+            animator.AttachAnimation(idle);
 
 
         }
 
         public void Update(GameTime gameTime)
         {
+            
+            //// TODO: Get rid of this please. 
+            //if (Keyboard.GetState().IsKeyDown(Keys.W))
+            //{
+            //    MoveUp();
+            //}
+            //if (Keyboard.GetState().IsKeyDown(Keys.S))
+            //{
+            //    MoveDown();
+            //}
+            //if (Keyboard.GetState().IsKeyDown(Keys.A))
+            //{
+            //    MoveLeft();
+            //}
+            //if (Keyboard.GetState().IsKeyDown(Keys.D))
+            //{
+            //    MoveRight();
+            //}
+            //if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            //{
+
+            //}
+
+
+
+
             ApplyMovement(gameTime);
             AttachAnimation();
+
+            // Reset movement
+
+
 
         }
 
@@ -75,10 +108,14 @@ namespace Codename___Slash
         
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(testTex, new Vector2(0, 0), Color.White);
+            // spriteBatch.Draw(testTex, new Vector2(0, 0), Color.White);
+
+
+
+
 
             // Flip the sprite to face the way we are moving.
-            if (velocity.Y > 0 && velocity.X != 0)
+            if (velocity.X < 0)
                 flip = SpriteEffects.FlipHorizontally;
             else
             {
@@ -89,13 +126,21 @@ namespace Codename___Slash
             animator.Draw(gameTime, spriteBatch, Position, flip);
         }
 
+        private void ResetMovement()
+        {
+            // Reset movement
+            movement.X = 0.0f;
+            movement.Y = 0.0f;
+        }
 
         private void ApplyMovement(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-
+            
             velocity += movement * moveAcc * elapsed;
+            // if(movement == Vector2.Zero)
+            velocity *= friction;
+
             if (!shouldDash)
             {
             } else
@@ -106,47 +151,51 @@ namespace Codename___Slash
 
             // Prevent the player from running faster than his top speed.            
             velocity.X = MathHelper.Clamp(Velocity.X, -maxMoveSpeed, maxMoveSpeed);
-            velocity.X = MathHelper.Clamp(Velocity.X, -maxMoveSpeed, maxMoveSpeed);
+            velocity.Y = MathHelper.Clamp(Velocity.Y, -maxMoveSpeed, maxMoveSpeed);
 
+            prevPosition = position;
             position += Velocity * elapsed;
+            // Console.WriteLine("Position X: " + position.X);
             position = new Vector2((float)Math.Round(Position.X), (float)Math.Round(Position.Y));
-            
+            movement = Vector2.Zero;
         }
 
         private void AttachAnimation()
         {
+            // 
+            if(prevPosition == position)
+            {
+                // Console.WriteLine("Playing Idle");
+                animator.AttachAnimation(idle);
+            } 
             // Both sideways movement
-            if (Math.Abs(velocity.X) > 0 && velocity.Y == 0)
+            else if (Math.Abs(velocity.X) > 0 && velocity.Y == 0)
             {
                 Console.WriteLine("MoveRight");
-                animator.PlayAnimation(sideRight);
+                animator.AttachAnimation(sideRight);
             }
             // Upwards movement
             else if(velocity.Y > 0 && velocity.X == 0)
             {
-                animator.PlayAnimation(up);
+                animator.AttachAnimation(up);
                 Console.WriteLine("MoveUp");
             }
             // Downward movement
             else if (velocity.Y < 0 && velocity.X == 0)
             {
-                animator.PlayAnimation(down);
+                animator.AttachAnimation(down);
                 Console.WriteLine("MoveDown");
             }
             // Diagonal upward movement either left or right
             else if(velocity.Y > 0 && Math.Abs(velocity.X) > 0)
             {
-                animator.PlayAnimation(diagonalUpRight);
+                animator.AttachAnimation(diagonalUpRight);
             }
             // Diagonal downward movement either left or right
             else if (velocity.Y < 0 && Math.Abs(velocity.X) > 0)
             {
-                animator.PlayAnimation(diagonalDownRight);
+                animator.AttachAnimation(diagonalDownRight);
             }
-            else 
-            {
-                animator.PlayAnimation(idle);
-            } 
         }
 
         #region Hero Commands
@@ -163,12 +212,12 @@ namespace Codename___Slash
 
         public void MoveDown()
         {
-            movement.Y = -1.0f;
+            movement.Y = 1.0f;
         }
 
         public void MoveUp()
         {
-            movement.Y = 1.0f;
+            movement.Y = -1.0f;
         }
 
         public void Dash()

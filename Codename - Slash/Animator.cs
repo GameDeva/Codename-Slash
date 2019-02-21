@@ -14,12 +14,12 @@ namespace Codename___Slash
     {
         public Animation Animation { get; private set; }
         public int FrameIndex { get; private set; }
-        public Vector2 Origin { get { return new Vector2(Animation.FrameWidth / 2.0f, Animation.FrameHeight); } }
+        public Vector2 Origin { get { return new Vector2(Animation.FrameWidth / 2.0f, Animation.FrameHeight / 2.0f); } }
 
 
         private float time;
 
-        public void PlayAnimation(Animation animation)
+        public void AttachAnimation(Animation animation)
         {
             // If this animation is already running, do not restart it.
             if (Animation == animation)
@@ -57,10 +57,11 @@ namespace Codename___Slash
             }
 
             // Calculate the source rectangle of the current frame.
-            Rectangle source = new Rectangle(FrameIndex * Animation.Texture.Height, 0, Animation.FrameHeight, Animation.FrameWidth);
+            Rectangle source = new Rectangle(FrameIndex * Animation.FrameWidth, 0, Animation.FrameWidth, Animation.FrameHeight);
 
             // Draw the current frame.
-            spriteBatch.Draw(Animation.Texture, position, source, Color.White, 0.0f, Origin, 1.0f, spriteEffects, 0.0f);
+            // spriteBatch.Draw(Animation.SpriteStrip, position, source, Color.White);
+            spriteBatch.Draw(Animation.SpriteStrip, position, source, Color.White, 0.0f, Origin, 2.0f, spriteEffects, 0.0f);
         }
 
 
