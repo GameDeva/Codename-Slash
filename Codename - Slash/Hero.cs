@@ -20,9 +20,7 @@ namespace Codename___Slash
         private Vector2 velocity;
 
         private Vector2 prevPosition;
-
-        Texture2D testTex;
-
+        
         // Animations
         private Animation idle;
         private Animation diagonalUpRight;
@@ -30,20 +28,24 @@ namespace Codename___Slash
         private Animation up;
         private Animation sideRight;
         private Animation down;
-
+        
         private Animator animator;
-        private SpriteEffects flip = SpriteEffects.None;
+        private SpriteEffects heroSpriteEffects = SpriteEffects.None;
+
+        // Player Spawned sprites
+        WeaponHandler weaponHandler;
 
         private Vector2 movement;
-        private float maxMoveSpeed = 1000f;
-        private float moveAcc = 5000f;
-        private float friction = 0.85f;
+        private float maxMoveSpeed = 300f;
+        private float moveAcc = 6000f;
+        private float friction = 0.8f;
         private float dashAcc;
         private bool shouldDash;
 
         public Hero(Vector2 position, ContentManager content)
         {
             animator = new Animator();
+            weaponHandler = new WeaponHandler();
 
             LoadContent(content);
             Reset(position);
@@ -60,70 +62,45 @@ namespace Codename___Slash
 
         public void Update(GameTime gameTime)
         {
+            weaponHandler.Update(position);
             
-            //// TODO: Get rid of this please. 
-            //if (Keyboard.GetState().IsKeyDown(Keys.W))
-            //{
-            //    MoveUp();
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.S))
-            //{
-            //    MoveDown();
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.A))
-            //{
-            //    MoveLeft();
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.D))
-            //{
-            //    MoveRight();
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            //{
-
-            //}
-
-
-
-
             ApplyMovement(gameTime);
             AttachAnimation();
-
-            // Reset movement
-
-
+            ResetMovement();
+            
 
         }
 
         public void LoadContent(ContentManager content)
         {
-            testTex = content.Load<Texture2D>("Sprites/Hero/2");
+            // 
+            weaponHandler.LoadContent(content);
+
             idle = new Animation(content.Load<Texture2D>("Sprites/Hero/2"), 1, 0.1f, true); // Just one frame
             diagonalDownRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_diagdown"), 4, 0.1f, true); 
             diagonalUpRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_diagup"), 4, 0.1f, true); 
             up = new Animation(content.Load<Texture2D>("Sprites/Hero/2_north"), 4, 0.1f, true);  
             down = new Animation(content.Load<Texture2D>("Sprites/Hero/2_south2"), 4, 0.1f, true);
             sideRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_side"), 4, 0.1f, true);
+            
+
         }
-        
+
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            // spriteBatch.Draw(testTex, new Vector2(0, 0), Color.White);
-
-
-
-
-
             // Flip the sprite to face the way we are moving.
             if (velocity.X < 0)
-                flip = SpriteEffects.FlipHorizontally;
+                heroSpriteEffects = SpriteEffects.FlipHorizontally;
             else
             {
-                flip = SpriteEffects.None;
+                heroSpriteEffects = SpriteEffects.None;
             }
 
             // Draw that sprite.
-            animator.Draw(gameTime, spriteBatch, Position, flip);
+            animator.Draw(gameTime, spriteBatch, Position, heroSpriteEffects);
+
+            // Draw Weapon Related things
+            weaponHandler.Draw(spriteBatch, position);
         }
 
         private void ResetMovement()
@@ -137,10 +114,12 @@ namespace Codename___Slash
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             
+
             velocity += movement * moveAcc * elapsed;
             // if(movement == Vector2.Zero)
             velocity *= friction;
 
+            
             if (!shouldDash)
             {
             } else
@@ -155,48 +134,46 @@ namespace Codename___Slash
 
             prevPosition = position;
             position += Velocity * elapsed;
-            // Console.WriteLine("Position X: " + position.X);
             position = new Vector2((float)Math.Round(Position.X), (float)Math.Round(Position.Y));
-            movement = Vector2.Zero;
         }
 
         private void AttachAnimation()
         {
-            // 
+            // When player comes to a stop
             if(prevPosition == position)
             {
-                // Console.WriteLine("Playing Idle");
                 animator.AttachAnimation(idle);
             } 
             // Both sideways movement
-            else if (Math.Abs(velocity.X) > 0 && velocity.Y == 0)
+            else if (movement.X != 0 && movement.Y == 0)
             {
-                Console.WriteLine("MoveRight");
                 animator.AttachAnimation(sideRight);
             }
             // Upwards movement
-            else if(velocity.Y > 0 && velocity.X == 0)
+            else if(movement.Y < 0 && movement.X == 0)
             {
                 animator.AttachAnimation(up);
-                Console.WriteLine("MoveUp");
             }
             // Downward movement
-            else if (velocity.Y < 0 && velocity.X == 0)
+            else if (movement.Y > 0 && movement.X == 0)
             {
                 animator.AttachAnimation(down);
-                Console.WriteLine("MoveDown");
             }
             // Diagonal upward movement either left or right
-            else if(velocity.Y > 0 && Math.Abs(velocity.X) > 0)
+            else if (movement.Y < 0 && movement.X > 0)
             {
                 animator.AttachAnimation(diagonalUpRight);
             }
             // Diagonal downward movement either left or right
-            else if (velocity.Y < 0 && Math.Abs(velocity.X) > 0)
+            else if (movement.Y > 0 && movement.X > 0)
             {
                 animator.AttachAnimation(diagonalDownRight);
             }
         }
+
+
+
+
 
         #region Hero Commands
 

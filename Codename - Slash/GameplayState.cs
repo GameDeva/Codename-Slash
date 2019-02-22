@@ -14,10 +14,15 @@ namespace Codename___Slash
         private Hero hero;
         private MapGenerator map;
 
+        private UI ui;
+
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
             stateContent = new ContentManager(game.Services, "Content"); // Should be based on level, maybe later object types or areas
+            
+            ui = new UI(stateContent);
+            
 
             // Create the appropriate map TODO : change to level state logic 
             // map = new MapGenerator(game.Services);
@@ -28,7 +33,7 @@ namespace Codename___Slash
             base.Enter(game);
             
         }
-
+        
         public override void Exit(Game1 game)
         {
             Dispose();
@@ -50,6 +55,7 @@ namespace Codename___Slash
             
             // Handle State object Updates
             hero.Update(gameTime);
+            ui.Update();
 
             base.Update(game, ref gameTime, ref inputHandler);
             return null;
@@ -58,6 +64,7 @@ namespace Codename___Slash
         public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
         {
             hero.Draw(gameTime, spriteBatch);
+            ui.Draw(spriteBatch);
 
             base.Draw(ref gameTime, spriteBatch);
         }

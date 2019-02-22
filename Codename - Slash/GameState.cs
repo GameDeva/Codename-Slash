@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Content;
 namespace Codename___Slash
 {
     // TODO : CHECK IF THIS CAN BE TURNED INTO AN ABSTRACT CLASS 
-    public class GameState
+    public class GameState 
     {
         // List of states
         // Stored as static auto properties, since the game will only have one game state
