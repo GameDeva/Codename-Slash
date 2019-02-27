@@ -22,11 +22,22 @@ namespace Codename___Slash
 
         private ContentManager content;
 
+        private SpriteFont hudFont;
+        private Texture2D templateSquare;
+
+
         public UI(ContentManager content)
         {
             cursorTextureList = new List<Texture2D>();
 
             this.content = content;
+
+            // Load fonts
+            hudFont = content.Load<SpriteFont>("UI/Fonts/Hud");
+
+            // Health bar
+            templateSquare = content.Load<Texture2D>("UI/white");
+
             // Set up cursor and textures
             CursorSetup();
         }
@@ -53,13 +64,38 @@ namespace Codename___Slash
         public void Draw(SpriteBatch spriteBatch)
         {
             //spriteBatch.Begin();
+            
+            DrawFont(spriteBatch);
+
             spriteBatch.Draw(currentCursorTexture, cursorPos, Color.White);
+
             // spriteBatch.End();
         }
 
 
 
+        private void DrawFont(SpriteBatch spriteBatch)
+        {
+            Rectangle titleSafeArea = new Rectangle(10, 0, 100, 100);
+            Vector2 hudLocation = new Vector2(titleSafeArea.X, titleSafeArea.Y);
+            Vector2 center = new Vector2(titleSafeArea.X + titleSafeArea.Width / 2.0f,
+                                         titleSafeArea.Y + titleSafeArea.Height / 2.0f);
 
+            string text = "Mani";
+            string weaponName = "[WepName]";
+            
+            spriteBatch.DrawString(hudFont, text, hudLocation, Color.Black);
+            spriteBatch.DrawString(hudFont, weaponName + " : " + , hudLocation + Vector2.UnitX * 120, Color.Black);
+
+
+            Rectangle healthRectangle = new Rectangle((int)hudLocation.X, 40, 50, 200);
+            Rectangle shieldRectangle = new Rectangle(70, 40, 20, 200);
+
+            spriteBatch.Draw(templateSquare, healthRectangle, Color.Red);
+            spriteBatch.Draw(templateSquare, shieldRectangle, Color.Blue);
+            
+        }
+        
 
     }
 }

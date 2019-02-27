@@ -13,6 +13,7 @@ namespace Codename___Slash
 {
     public class Hero
     {
+
         public Vector2 Position { get { return position; } }
         public Vector2 Velocity { get { return velocity; } }
 
@@ -29,7 +30,7 @@ namespace Codename___Slash
         private Animation sideRight;
         private Animation down;
         
-        private Animator animator;
+        public Animator Animator { get; private set; }
         private SpriteEffects heroSpriteEffects = SpriteEffects.None;
 
         // Player Spawned sprites
@@ -44,7 +45,7 @@ namespace Codename___Slash
 
         public Hero(Vector2 position, ContentManager content)
         {
-            animator = new Animator();
+            Animator = new Animator();
             weaponHandler = new WeaponHandler();
 
             LoadContent(content);
@@ -55,14 +56,14 @@ namespace Codename___Slash
         public void Reset(Vector2 position)
         {
             this.position = position;
-            animator.AttachAnimation(idle);
+            Animator.AttachAnimation(idle);
 
 
         }
 
         public void Update(GameTime gameTime)
         {
-            weaponHandler.Update(position);
+            weaponHandler.Update(position, gameTime);
             
             ApplyMovement(gameTime);
             AttachAnimation();
@@ -97,7 +98,7 @@ namespace Codename___Slash
             }
 
             // Draw that sprite.
-            animator.Draw(gameTime, spriteBatch, Position, heroSpriteEffects);
+            Animator.Draw(gameTime, spriteBatch, Position, heroSpriteEffects);
 
             // Draw Weapon Related things
             weaponHandler.Draw(spriteBatch, position);
@@ -142,32 +143,32 @@ namespace Codename___Slash
             // When player comes to a stop
             if(prevPosition == position)
             {
-                animator.AttachAnimation(idle);
+                Animator.AttachAnimation(idle);
             } 
             // Both sideways movement
             else if (movement.X != 0 && movement.Y == 0)
             {
-                animator.AttachAnimation(sideRight);
+                Animator.AttachAnimation(sideRight);
             }
             // Upwards movement
             else if(movement.Y < 0 && movement.X == 0)
             {
-                animator.AttachAnimation(up);
+                Animator.AttachAnimation(up);
             }
             // Downward movement
             else if (movement.Y > 0 && movement.X == 0)
             {
-                animator.AttachAnimation(down);
+                Animator.AttachAnimation(down);
             }
             // Diagonal upward movement either left or right
             else if (movement.Y < 0 && movement.X > 0)
             {
-                animator.AttachAnimation(diagonalUpRight);
+                Animator.AttachAnimation(diagonalUpRight);
             }
             // Diagonal downward movement either left or right
             else if (movement.Y > 0 && movement.X > 0)
             {
-                animator.AttachAnimation(diagonalDownRight);
+                Animator.AttachAnimation(diagonalDownRight);
             }
         }
 
@@ -200,6 +201,12 @@ namespace Codename___Slash
         public void Dash()
         {
             shouldDash = true;
+        }
+
+        public void ShootWeapon()
+        {
+            if (weaponHandler != null)
+                weaponHandler.ShootEquippedWeapon();
         }
 
         #endregion

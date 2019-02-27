@@ -12,16 +12,63 @@ namespace Codename___Slash
 {
     public class Weapon
     {
-        public Texture2D WeaponTexture { get; private set; }
+        public Action OnShoot;
+        public Action OutOfAmmoAction;
 
-        public Weapon(Texture2D weaponTexture)
+        public Texture2D WeaponTexture { get; private set; }
+        public Texture2D BulletTexture { get; private set; }
+
+        // 
+        public int MaximumAmmoCarry { get; protected set; }
+        public int MaximumMagHold { get; protected set; }
+        public int AmmoPerShot { get; protected set; }
+        public float TimeBetweenShots { get; protected set; }
+        public float BulletMoveSpeed { get; protected set; }
+        public float BulletDecayTime { get; protected set; }
+
+
+        // 
+        public int CurrentAmmoCarry { get; protected set; }
+        public int CurrentMagHold { get; protected set; }
+
+        public List<Bullet> BulletsFired { get; protected set; }
+
+        public Weapon(Texture2D weaponTexture, Texture2D bulletTexture)
         {
             WeaponTexture = weaponTexture;
+            BulletTexture = bulletTexture;
+
+            BulletsFired = new List<Bullet>();
 
         }
 
-        public virtual void Shoot() { }
-        public virtual void Reload() { }
+        public virtual void Update(GameTime gameTime) { }
+        public virtual void Shoot(Vector2 firePoint, Vector2 fireDirection) { }
+        
+        // Only override if there is something specific we want to do for each weapon
+        public virtual void Reload()
+        {
+            int amountToRefill = MaximumMagHold - CurrentMagHold;
+
+            // If there is not enough ammo carried to reload, invoke the out of Ammo Delegate
+            if (CurrentAmmoCarry < amountToRefill)
+                OutOfAmmoAction?.Invoke();
+
+            // TODO: Wait for reloadtime before adding the ammo
+
+            // Fill ammo to the mag
+            CurrentMagHold = MaximumMagHold;
+
+            // Reduce from the ammo count 
+            CurrentAmmoCarry -= amountToRefill;
+        }
+
+        // When ammo is picked up
+        public virtual void OnAmmoPickup(int pickupValue)
+        {
+            // Clamp the added ammo to the maximum ammo carry
+            CurrentAmmoCarry = MathHelper.Clamp(CurrentAmmoCarry + pickupValue, 0, MaximumAmmoCarry);
+        }
 
     }
 }

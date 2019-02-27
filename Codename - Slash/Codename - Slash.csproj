@@ -43,10 +43,13 @@
   <ItemGroup>
     <Compile Include="Animation.cs" />
     <Compile Include="Animator.cs" />
+    <Compile Include="Bullet.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameplayState.cs" />
     <Compile Include="Loader.cs" />
+    <Compile Include="MachineGun.cs" />
     <Compile Include="MapGenerator.cs" />
     <Compile Include="Hero.cs" />
     <Compile Include="InputHandler.cs" />

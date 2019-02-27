@@ -115,6 +115,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Hero/dash_right.png
 
+#begin Sprites/Weapons/Shotgun/bulletb.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Weapons/Shotgun/bulletb.png
+
 #begin Sprites/Weapons/Shotgun/shot_diagdown.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -217,4 +229,16 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:UI/Fonts/Hud.spritefont
+
+#begin UI/white.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/white.png
 

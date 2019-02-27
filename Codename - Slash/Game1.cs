@@ -11,10 +11,13 @@ namespace Codename___Slash
     /// </summary>
     public class Game1 : Game
     {
+        public static int SCREENWIDTH = 1920;
+        public static int SCREENHEIGHT = 1080;
+        
         // Resources for drawing.
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-
+        
         private InputHandler inputHandler;
         private GameState state;
 
@@ -24,7 +27,10 @@ namespace Codename___Slash
         {
             graphics = new GraphicsDeviceManager(this); // TODO: Maybe not needed here if this is handling in the state classes? 
             Content.RootDirectory = "Content";
-            Console.WriteLine("Begins---------------");
+            
+            graphics.PreferredBackBufferWidth = SCREENWIDTH;
+            graphics.PreferredBackBufferHeight = SCREENHEIGHT;
+            graphics.IsFullScreen = true;
 
         }
 
@@ -109,11 +115,11 @@ namespace Codename___Slash
             GraphicsDevice.Clear(Color.LightSkyBlue);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin();
+            // spriteBatch.Begin();
 
             state.Draw(ref gameTime, spriteBatch);
 
-            spriteBatch.End();
+            // spriteBatch.End();
 
             base.Draw(gameTime);
         }

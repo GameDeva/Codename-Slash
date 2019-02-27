@@ -12,6 +12,7 @@ namespace Codename___Slash
     public class GameplayState : GameState
     {
         private Hero hero;
+        private Camera camera;
         private MapGenerator map;
 
         private UI ui;
@@ -28,7 +29,8 @@ namespace Codename___Slash
             // map = new MapGenerator(game.Services);
             
             // TODO : Based on serialization, saved hero could have several bits of data already stored i.e. weapons held, points scored 
-            hero = new Hero(new Vector2(0, 0), stateContent);
+            hero = new Hero(new Vector2(800, 500), stateContent);
+            camera = new Camera();
 
             base.Enter(game);
             
@@ -55,6 +57,7 @@ namespace Codename___Slash
             
             // Handle State object Updates
             hero.Update(gameTime);
+            camera.Follow(hero);
             ui.Update();
 
             base.Update(game, ref gameTime, ref inputHandler);
@@ -63,10 +66,17 @@ namespace Codename___Slash
 
         public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
         {
+            // transformMatrix: camera.Transform [add as parameter]
+            spriteBatch.Begin();
+
             hero.Draw(gameTime, spriteBatch);
+            spriteBatch.End();
+            spriteBatch.Begin();
             ui.Draw(spriteBatch);
 
             base.Draw(ref gameTime, spriteBatch);
+
+            spriteBatch.End();
         }
 
         public void Dispose()

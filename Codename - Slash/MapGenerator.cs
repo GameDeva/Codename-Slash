@@ -99,7 +99,7 @@ namespace Codename___Slash
 
             // Read XML map data onto the new Map object, based on mapNumber
             // Should update Section Values with TilesInfo
-            Loader.ReadXML(string.Format("Content/Maps/{0}.txt", MapNumber), ref currentMap);
+            Loader.ReadXML(string.Format("Content/Maps/{0}.xml", MapNumber), ref currentMap);
         }
 
         public void ResetHeroPosition(Vector2Int heroPos)

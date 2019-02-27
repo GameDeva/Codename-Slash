@@ -59,4 +59,15 @@ namespace Codename___Slash
             hero.Dash();
         }
     }
+
+
+    class ShootCommand : Command
+    {
+        public override void execute(ref Hero hero)
+        {
+            // Shoot
+            hero.ShootWeapon();
+        }
+    }
+
 }

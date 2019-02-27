@@ -15,6 +15,8 @@ namespace Codename___Slash
         private Command dButton;
         private Command spaceButton;
 
+        private Command leftMouse;
+
         private List<Command> currentCommandsList;
 
         // TODO: methods to bind the commands
@@ -27,6 +29,8 @@ namespace Codename___Slash
             sButton = new MoveDownCommand();
             dButton = new MoveRightCommand();
             spaceButton = new DashCommand();
+
+            leftMouse = new ShootCommand();
         }
 
 
@@ -43,7 +47,9 @@ namespace Codename___Slash
             if (Keyboard.GetState().IsKeyDown(Keys.A)) currentCommandsList.Add(aButton);
             if (Keyboard.GetState().IsKeyDown(Keys.D)) currentCommandsList.Add(dButton);
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) currentCommandsList.Add(spaceButton);
-            
+
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed) currentCommandsList.Add(leftMouse);
+
             return currentCommandsList; 
         }
 
