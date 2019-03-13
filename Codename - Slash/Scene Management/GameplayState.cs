@@ -11,31 +11,40 @@ namespace Codename___Slash
 {
     public class GameplayState : GameState
     {
-        private Hero hero;
-        private Camera camera;
-        private MapGenerator map;
+        ObjectPool<Bullet> bulletPool;
 
-        private UI ui;
+        private Hero hero; // Hero instance for this gameplay session
+        private Camera camera; // Camera instance for this gameplay session
+        // private MapGenerator map;
+
+        private UI ui; // UI instance for this gameplay session
 
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
             stateContent = new ContentManager(game.Services, "Content"); // Should be based on level, maybe later object types or areas
             
-            ui = new UI(stateContent);
-            
-
             // Create the appropriate map TODO : change to level state logic 
             // map = new MapGenerator(game.Services);
             
             // TODO : Based on serialization, saved hero could have several bits of data already stored i.e. weapons held, points scored 
             hero = new Hero(new Vector2(800, 500), stateContent);
+            ui = new UI(stateContent, ref hero);
+            
             camera = new Camera();
 
+            bulletPool = new ObjectPool<Bullet>(10);
+            
             base.Enter(game);
             
         }
-        
+
+        public override void LoadContent(ContentManager content) 
+        {
+            hero.LoadContent(stateContent);
+            ui.LoadContent(stateContent);
+        }
+
         public override void Exit(Game1 game)
         {
             Dispose();
@@ -70,8 +79,10 @@ namespace Codename___Slash
             spriteBatch.Begin();
 
             hero.Draw(gameTime, spriteBatch);
-            spriteBatch.End();
-            spriteBatch.Begin();
+            //spriteBatch.End();
+
+            
+            //spriteBatch.Begin();
             ui.Draw(spriteBatch);
 
             base.Draw(ref gameTime, spriteBatch);

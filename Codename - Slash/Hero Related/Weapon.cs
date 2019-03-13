@@ -12,9 +12,14 @@ namespace Codename___Slash
 {
     public class Weapon
     {
-        public Action OnShoot;
+        // public delegate void BulletCreated<Bullet>(ref Bullet bulletInstance);
+
+        public Action OnShootAction;
+        public Action OnBulletCreated;
+        public Action<int> OnReload;
         public Action OutOfAmmoAction;
 
+        public Texture2D WeaponIconTexture { get; private set; }
         public Texture2D WeaponTexture { get; private set; }
         public Texture2D BulletTexture { get; private set; }
 
@@ -33,8 +38,9 @@ namespace Codename___Slash
 
         public List<Bullet> BulletsFired { get; protected set; }
 
-        public Weapon(Texture2D weaponTexture, Texture2D bulletTexture)
+        public Weapon(Texture2D weaponIconTexture, Texture2D weaponTexture, Texture2D bulletTexture)
         {
+            WeaponIconTexture = weaponIconTexture;
             WeaponTexture = weaponTexture;
             BulletTexture = bulletTexture;
 
@@ -52,7 +58,11 @@ namespace Codename___Slash
 
             // If there is not enough ammo carried to reload, invoke the out of Ammo Delegate
             if (CurrentAmmoCarry < amountToRefill)
+            {
+                Console.WriteLine("out of ammo");
                 OutOfAmmoAction?.Invoke();
+                return;
+            }
 
             // TODO: Wait for reloadtime before adding the ammo
 
@@ -61,6 +71,8 @@ namespace Codename___Slash
 
             // Reduce from the ammo count 
             CurrentAmmoCarry -= amountToRefill;
+
+            OnReload?.Invoke(amountToRefill);
         }
 
         // When ammo is picked up

@@ -13,25 +13,39 @@ namespace Codename___Slash
 {
     public class UI
     {
-        public ContentManager Content { get; }
+        public ContentManager Content { get; private set; }
 
         private List<Texture2D> cursorTextureList;
         private Texture2D currentCursorTexture;
         private Vector2 cursorPos;
         private MouseState mouseState;
-
-        private ContentManager content;
-
+        
         private SpriteFont hudFont;
         private Texture2D templateSquare;
+        
+        private Hero hero;
+
+        // Weapon Display
+        private Texture2D weaponIconUI;
+        private int ammoRemaining;
+        private int ammoInMag;
 
 
         public UI(ContentManager content)
         {
             cursorTextureList = new List<Texture2D>();
 
-            this.content = content;
+            this.Content = content;
+        }
 
+        public UI(ContentManager content, ref Hero hero) : this(content)
+        {
+            this.hero = hero;
+            hero.WeaponHandler.OnWeaponSwap += OnWeaponSwap;
+        }
+
+        public void LoadContent(ContentManager content)
+        {
             // Load fonts
             hudFont = content.Load<SpriteFont>("UI/Fonts/Hud");
 
@@ -42,16 +56,16 @@ namespace Codename___Slash
             CursorSetup();
         }
 
+
         // Load all cursor textures 
         // Specify currently used texture
         private void CursorSetup()
         {
-            cursorTextureList.Add(content.Load<Texture2D>("UI/Cursors/8crosshair"));
-            cursorTextureList.Add(content.Load<Texture2D>("UI/Cursors/8crosshair2"));
+            cursorTextureList.Add(Content.Load<Texture2D>("UI/Cursors/8crosshair"));
+            cursorTextureList.Add(Content.Load<Texture2D>("UI/Cursors/8crosshair2"));
             currentCursorTexture = cursorTextureList[0];
 
         }
-
 
         public void Update()
         {
@@ -63,7 +77,7 @@ namespace Codename___Slash
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            //spriteBatch.Begin();
+            // spriteBatch.Begin();
             
             DrawFont(spriteBatch);
 
@@ -85,17 +99,54 @@ namespace Codename___Slash
             string weaponName = "[WepName]";
             
             spriteBatch.DrawString(hudFont, text, hudLocation, Color.Black);
-            spriteBatch.DrawString(hudFont, weaponName + " : " + , hudLocation + Vector2.UnitX * 120, Color.Black);
+            spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.Black);
 
 
             Rectangle healthRectangle = new Rectangle((int)hudLocation.X, 40, 50, 200);
             Rectangle shieldRectangle = new Rectangle(70, 40, 20, 200);
+            Rectangle weaponIconRectangle = new Rectangle(150, 50, 100, 40);
+
 
             spriteBatch.Draw(templateSquare, healthRectangle, Color.Red);
             spriteBatch.Draw(templateSquare, shieldRectangle, Color.Blue);
-            
+            if(weaponIconUI != null)
+            {
+                spriteBatch.Draw(weaponIconUI, weaponIconRectangle, Color.Black);
+            }
+
         }
         
+
+        private void OnShoot()
+        {
+            ammoInMag--;
+        }
+
+        private void OnReload(int amountToRefill)
+        {
+            ammoInMag += amountToRefill;
+            ammoRemaining -= amountToRefill;
+        }
+        
+        private void OnWeaponSwap(ref Weapon oldWeapon, ref Weapon newWeapon)
+        {
+            if(oldWeapon != null)
+            {
+                // Unsubscibe old delegates 
+                oldWeapon.OnShootAction -= OnShoot;
+                oldWeapon.OnReload -= OnReload;
+            }
+
+            // Subscribe new delegates
+            newWeapon.OnShootAction += OnShoot;
+            newWeapon.OnReload += OnReload;
+
+            // Update UI display values
+            weaponIconUI = newWeapon.WeaponIconTexture;
+            ammoRemaining = newWeapon.CurrentAmmoCarry;
+            ammoInMag = newWeapon.CurrentMagHold;
+        }
+
 
     }
 }

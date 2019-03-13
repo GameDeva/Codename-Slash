@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace Codename___Slash
 {
@@ -20,6 +21,9 @@ namespace Codename___Slash
         {
             base.Exit(game);
         }
+
+        public override void LoadContent(ContentManager content) { }
+
 
         public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
         {

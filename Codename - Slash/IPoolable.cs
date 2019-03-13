@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Microsoft.Xna.Framework;
+
 namespace Codename___Slash
 {
-    abstract class State
+    public interface IPoolable
     {
-        public abstract void Enter();
-        public abstract void Exit();
-
-
-
+        void OnPoolInstantiation();
+        void OnSpawnFromPool(IArgs args);
     }
 }

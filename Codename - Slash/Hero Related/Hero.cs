@@ -11,8 +11,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Codename___Slash
 {
-    public class Hero
+    public class Hero : IDamageable
     {
+        // Hero stats
+        public float MaxHealth { get; private set; }
+        public float CurrentHealth { get; private set; }
 
         public Vector2 Position { get { return position; } }
         public Vector2 Velocity { get { return velocity; } }
@@ -34,7 +37,7 @@ namespace Codename___Slash
         private SpriteEffects heroSpriteEffects = SpriteEffects.None;
 
         // Player Spawned sprites
-        WeaponHandler weaponHandler;
+        public WeaponHandler WeaponHandler { get; private set; } 
 
         private Vector2 movement;
         private float maxMoveSpeed = 300f;
@@ -43,13 +46,13 @@ namespace Codename___Slash
         private float dashAcc;
         private bool shouldDash;
 
+        public Action OnDamage;
+        public Action OnDeath;
+
         public Hero(Vector2 position, ContentManager content)
         {
             Animator = new Animator();
-            weaponHandler = new WeaponHandler();
-
-            LoadContent(content);
-            Reset(position);
+            WeaponHandler = new WeaponHandler();
 
         }
 
@@ -63,7 +66,7 @@ namespace Codename___Slash
 
         public void Update(GameTime gameTime)
         {
-            weaponHandler.Update(position, gameTime);
+            WeaponHandler.Update(position, gameTime);
             
             ApplyMovement(gameTime);
             AttachAnimation();
@@ -75,7 +78,7 @@ namespace Codename___Slash
         public void LoadContent(ContentManager content)
         {
             // 
-            weaponHandler.LoadContent(content);
+            WeaponHandler.LoadContent(content);
 
             idle = new Animation(content.Load<Texture2D>("Sprites/Hero/2"), 1, 0.1f, true); // Just one frame
             diagonalDownRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_diagdown"), 4, 0.1f, true); 
@@ -83,7 +86,9 @@ namespace Codename___Slash
             up = new Animation(content.Load<Texture2D>("Sprites/Hero/2_north"), 4, 0.1f, true);  
             down = new Animation(content.Load<Texture2D>("Sprites/Hero/2_south2"), 4, 0.1f, true);
             sideRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_side"), 4, 0.1f, true);
-            
+
+            Reset(position);
+
 
         }
 
@@ -101,7 +106,7 @@ namespace Codename___Slash
             Animator.Draw(gameTime, spriteBatch, Position, heroSpriteEffects);
 
             // Draw Weapon Related things
-            weaponHandler.Draw(spriteBatch, position);
+            WeaponHandler.Draw(spriteBatch, position);
         }
 
         private void ResetMovement()
@@ -205,12 +210,38 @@ namespace Codename___Slash
 
         public void ShootWeapon()
         {
-            if (weaponHandler != null)
-                weaponHandler.ShootEquippedWeapon();
+            if (WeaponHandler != null)
+                WeaponHandler.ShootEquippedWeapon();
+        }
+
+        public void PreviousWeapon()
+        {
+            WeaponHandler.PreviousWeapon();
+        }
+
+        public void NextWeapon()
+        {
+            WeaponHandler.NextWeapon();
         }
 
         #endregion
+        
+        public void TakeDamage(int damagePoints)
+        {
+            CurrentHealth -= damagePoints;
+            OnDamage?.Invoke();
 
+            // Health below 0, then player is dead
+            // if()    
 
+        }
+
+        public void TakeDamage(int damagePoints, Vector2 direction) 
+        {
+            // Apply effect in direction of hit
+
+            TakeDamage(damagePoints);
+        }
+        
     }
 }

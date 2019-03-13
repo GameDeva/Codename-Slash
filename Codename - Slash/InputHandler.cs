@@ -16,8 +16,12 @@ namespace Codename___Slash
         private Command spaceButton;
 
         private Command leftMouse;
+        private Command scrollUp;
+        private Command scrollDown;
 
         private List<Command> currentCommandsList;
+
+        private int previousScrollVal;
 
         // TODO: methods to bind the commands
         public InputHandler()
@@ -29,8 +33,11 @@ namespace Codename___Slash
             sButton = new MoveDownCommand();
             dButton = new MoveRightCommand();
             spaceButton = new DashCommand();
-
+            
             leftMouse = new ShootCommand();
+            scrollUp = new PreviousWeaponCommand();
+            scrollDown = new NextWeaponCommand();
+
         }
 
 
@@ -49,6 +56,11 @@ namespace Codename___Slash
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) currentCommandsList.Add(spaceButton);
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed) currentCommandsList.Add(leftMouse);
+
+            int newScrollVal = Mouse.GetState().ScrollWheelValue;
+
+            if (newScrollVal > previousScrollVal) { currentCommandsList.Add(scrollUp); previousScrollVal = newScrollVal; }
+            if (newScrollVal < previousScrollVal) { currentCommandsList.Add(scrollDown); previousScrollVal = newScrollVal; }
 
             return currentCommandsList; 
         }

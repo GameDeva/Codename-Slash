@@ -12,7 +12,7 @@ namespace Codename___Slash
 {
     class MachineGun : Weapon
     {
-        public MachineGun(Texture2D weaponTexture, Texture2D bulletTexture) : base(weaponTexture, bulletTexture)
+        public MachineGun(Texture2D weaponIconTexture, Texture2D weaponTexture, Texture2D bulletTexture) : base(weaponIconTexture, weaponTexture, bulletTexture)
         {
             // NOTE: Below assumes weapons are complete when created, 
             // TODO: For pickup weapons that are half empty, need to refactor
@@ -49,9 +49,12 @@ namespace Codename___Slash
             // Todo: OBJECT POOLING NEEDS TO HAPPEN PLS. 
             for (int i = 0; i < AmmoPerShot; i++)
             {
-                CurrentAmmoCarry--;
-                BulletsFired.Add(new Bullet(firePoint, fireDirection));
-                OnShoot?.Invoke();
+                CurrentMagHold--;
+                // BulletsFired.Add(new Bullet(firePoint, fireDirection));
+                OnShootAction?.Invoke();
+                // Bullet b = new Bullet(firePoint, fireDirection);
+
+                OnBulletCreated?.Invoke();
             }
 
             base.Shoot(firePoint, fireDirection);

@@ -70,4 +70,22 @@ namespace Codename___Slash
         }
     }
 
+    class PreviousWeaponCommand : Command
+    {
+        public override void execute(ref Hero hero)
+        {
+            // Swap to previous weapon
+            hero.PreviousWeapon();
+        }
+    }
+
+    class NextWeaponCommand : Command
+    {
+        public override void execute(ref Hero hero)
+        {
+            // Swap to previous weapon
+            hero.NextWeapon();
+        }
+    }
+
 }

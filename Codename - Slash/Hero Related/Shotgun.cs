@@ -12,9 +12,8 @@ namespace Codename___Slash
 {
     public class Shotgun : Weapon
     {
-
-
-        public Shotgun(Texture2D weaponTexture, Texture2D bulletTexture) : base(weaponTexture, bulletTexture)
+        
+        public Shotgun(Texture2D weaponIconTexture, Texture2D weaponTexture, Texture2D bulletTexture) : base(weaponIconTexture, weaponTexture, bulletTexture)
         {
             // NOTE: Below assumes weapons are complete when created, 
             // TODO: For pickup weapons that are half empty, need to refactor

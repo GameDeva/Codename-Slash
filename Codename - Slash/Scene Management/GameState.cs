@@ -22,6 +22,8 @@ namespace Codename___Slash
         public static OptionsState OptionsState { get; } = new OptionsState();
         public static GameplayState GameplayState { get; } = new GameplayState();
 
+
+
         protected ContentManager stateContent; // Content manager for each state
         // protected GraphicsDeviceManager graphics;
 
@@ -33,6 +35,8 @@ namespace Codename___Slash
 
         // Exit method to be called on exit out of statey
         public virtual void Exit(Game1 game) { }
+
+        public virtual void LoadContent(ContentManager content) { }
 
         // Update method for each scene
         public virtual GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler) { return null; }

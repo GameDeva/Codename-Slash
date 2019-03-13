@@ -61,7 +61,9 @@ namespace Codename___Slash
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            
+            state?.LoadContent(Content);
+
+
             //Known issue that you get exceptions if you use Media PLayer while connected to your PC
             //See http://social.msdn.microsoft.com/Forums/en/windowsphone7series/thread/c8a243d2-d360-46b1-96bd-62b1ef268c66
             //Which means its impossible to test this from VS.
