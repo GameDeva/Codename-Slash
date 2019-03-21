@@ -13,9 +13,11 @@ namespace Codename___Slash
     {
         ObjectPool<Bullet> bulletPool;
 
+        private List<GameObject> spawnedObjects;
+
         private Hero hero; // Hero instance for this gameplay session
         private Camera camera; // Camera instance for this gameplay session
-        // private MapGenerator map;
+        private MapGenerator mapGenerator;
 
         private UI ui; // UI instance for this gameplay session
 
@@ -33,8 +35,15 @@ namespace Codename___Slash
             
             camera = new Camera();
 
-            bulletPool = new ObjectPool<Bullet>(10);
+            bulletPool = new ObjectPool<Bullet>(100);
             
+            hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
+
+            spawnedObjects = new List<GameObject>();
+
+            mapGenerator = new MapGenerator(game.Services);
+            mapGenerator.InitialiseNewMap(1);
+
             base.Enter(game);
             
         }
@@ -69,6 +78,20 @@ namespace Codename___Slash
             camera.Follow(hero);
             ui.Update();
 
+            // Update all gameobjects 
+            // int size = spawnedObjects.Count;
+            for(int i = 0; i < spawnedObjects.Count; i++)
+            {
+                if (spawnedObjects[i].IsActive)
+                {
+                    spawnedObjects[i].Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+                }
+                else
+                {
+                    spawnedObjects.RemoveAt(i);
+                }
+            }
+
             base.Update(game, ref gameTime, ref inputHandler);
             return null;
         }
@@ -81,7 +104,16 @@ namespace Codename___Slash
             hero.Draw(gameTime, spriteBatch);
             //spriteBatch.End();
 
-            
+            // Draw all gameobjects 
+            // int size = spawnedObjects.Count;
+            for (int i = 0; i < spawnedObjects.Count; i++)
+            {
+                if (spawnedObjects[i].IsActive)
+                {
+                    spawnedObjects[i].Draw(spriteBatch);
+                }
+            }
+
             //spriteBatch.Begin();
             ui.Draw(spriteBatch);
 
@@ -94,6 +126,18 @@ namespace Codename___Slash
         {
             stateContent.Unload();
         }
+        
+        #region Object Creation from Pool
+
+        private void SpawnBullet(IArgs args)
+        {
+            spawnedObjects.Add(bulletPool.SpawnFromPool(args));
+        }
+
+        #endregion
+
+
+
 
     }
 }

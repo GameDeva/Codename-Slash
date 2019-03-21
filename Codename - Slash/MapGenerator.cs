@@ -18,51 +18,62 @@ namespace Codename___Slash
         Top,    // only for top half of tile
         Bottom, // only for bottom half of tile
         Full,   // for entire tile
+        None
+    }
+
+    public enum TileName
+    {
+        Grass,
+        Dirt,
     }
 
     // Info of each tile on the grid
     public struct TileInfo
     {
-        public int textureIndex;
+        public TileName name;
+        public string textureIndex;
         public Direction collision;
-
+        public bool enemySpawnpoint;
     }
     
     public struct Section
     {
-        public TileInfo[,] tilesInfo;
-        
-        public Section(int sectionSize)
-        {
-            tilesInfo = new TileInfo[sectionSize, sectionSize];
+        public TileName[,] tilesInfo;
 
+        public void InitialiseSection(int sectionSize)
+        {
+            tilesInfo = new TileName[sectionSize, sectionSize];
         }
 
     }
 
     public class Map
     {
+        public string[][] mapStrings;
         public Section[,] MapSections { get; }
-        public Dictionary<int, string> IndexToTextureFile { get; }
+        public TileInfo[] tileInfoList;
 
-        private List<Texture2D> textureList;
-        private int textureCount;
-        private int mapNumber;
-        private int mapSize;
-
-        public Map()
+        public Map(int mapSize, int sectionSize)
         {
             // Assign parameter values
             MapSections = new Section[mapSize, mapSize];
-            IndexToTextureFile = new Dictionary<int, string>();
+
+            // Load map values to 2d string array
+            Loader.ReadCSVFileTo2DArray("Map1", ref mapStrings);
+
+            // Initialise each section
+            for (int i = 0; i < mapSize; i++)
+            {
+                for (int j = 0; j < mapSize; j++)
+                {
+                    MapSections[i, j].InitialiseSection(sectionSize);
+                }
+            }
+
         }
 
         public void LoadMapTextures(ContentManager content)
         {
-            foreach (KeyValuePair<int, string> pair in IndexToTextureFile)
-            {
-                content.Load<Texture2D>(pair.Value);
-            }
             
         }
 
@@ -72,6 +83,12 @@ namespace Codename___Slash
 
     public class MapGenerator
     {
+        private const int mapGridSize = 64; // Width and Height
+        private const int sectionCount = 8; // Width and Height
+        public TileInfo[] currentTileInfoList;
+
+        public Section[,] sectionsGrid;
+
         private Map currentMap;
         private int currentMapNumber;
         private Vector2Int currentHeroPos;
@@ -85,21 +102,52 @@ namespace Codename___Slash
         public MapGenerator(IServiceProvider serivceProvider)
         {
             content = new ContentManager(serivceProvider, "Content/Maps");
+
+            sectionsGrid = new Section[sectionCount, sectionCount];
         }
         
-        public void InitialiseNewMap(int MapNumber, Vector2Int heroPos, int renderChunkSize)
+        public void InitialiseNewMap(int mapNumber) // , Vector2Int heroPos, int renderChunkSize
         {
-            // Reinitialise values when creating a new map, or newly assign if first time
-            ResetHeroPosition(heroPos);
-            currentMapNumber = MapNumber;
-            currentMap = new Map();
-            currentGridsDisplayed = new List<Section>();
-            currentChunk = null;
-            this.renderChunkSize = renderChunkSize;
+            string[,] arr = new string[64,64];
+            
+            Loader.ReadCSVFileTo2DArray(string.Format("Map{0}.csv", mapNumber), ref arr);
+            Loader.ReadXML(string.Format("TileInfo{0}.xml", mapNumber), ref currentTileInfoList);
 
-            // Read XML map data onto the new Map object, based on mapNumber
-            // Should update Section Values with TilesInfo
-            Loader.ReadXML(string.Format("Content/Maps/{0}.xml", MapNumber), ref currentMap);
+            for (int i = 0; i < mapGridSize; i+=sectionCount)
+            {
+                for (int j = 0; j < mapGridSize; j+=sectionCount)
+                {
+                    // Each subgrid loop
+                    // sectionsGrid[i%sectionCount,j%sectionCount]
+
+                    for(int x = 0; x < sectionCount; x++)
+                    {
+                        for (int y = 0; y < sectionCount; y++)
+                        {
+                            // each tile in a subgrid loop
+                            // arr[i+x, j+y].
+
+                        }
+                    }
+
+                }
+            }
+
+
+
+
+
+            //// Reinitialise values when creating a new map, or newly assign if first time
+            //ResetHeroPosition(heroPos);
+            //currentMapNumber = MapNumber;
+            //currentMap = new Map(1, 8);
+            //currentGridsDisplayed = new List<Section>();
+            //currentChunk = null;
+            //this.renderChunkSize = renderChunkSize;
+
+            //// Read XML map data onto the new Map object, based on mapNumber
+            //// Should update Section Values with TilesInfo
+            //Loader.ReadXML(string.Format("Content/Maps/{0}.xml", MapNumber), ref currentMap);
         }
 
         public void ResetHeroPosition(Vector2Int heroPos)
@@ -136,7 +184,6 @@ namespace Codename___Slash
                         {
                             for(int j=0; j < l2; j++)
                             {
-                                int index = s2.tilesInfo[i, j].textureIndex;
                                 
                                 // TODO : Add collision for tiles
                             }

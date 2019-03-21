@@ -12,10 +12,9 @@ namespace Codename___Slash
 {
     public class Weapon
     {
-        // public delegate void BulletCreated<Bullet>(ref Bullet bulletInstance);
-
+        
         public Action OnShootAction;
-        public Action OnBulletCreated;
+        public Action<IArgs> OnBulletCreated;
         public Action<int> OnReload;
         public Action OutOfAmmoAction;
 

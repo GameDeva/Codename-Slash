@@ -4,49 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 
 namespace Codename___Slash
 {
-    public class GameObject : IPoolable
+    public abstract class GameObject : IPoolable
     {
+        protected float liveTime;
+
         public bool IsActive { get; protected set; }
 
-        public virtual void OnPoolInstantiation() { }
+        public abstract void OnPoolInstantiation();
 
-        public virtual void OnSpawnFromPool(IArgs args) { }
-    }
+        public abstract void OnSpawnFromPool(IArgs args);
 
-
-
-
-    public interface IArgs
-    {
-        
-    }
-
-    public class ArgsBullet : IArgs
-    {
-        public Vector2 position;
-        public Vector2 direction;
-
-        public ArgsBullet(Vector2 position, Vector2 direction)
+        public virtual void Update(float deltaTime)
         {
-            this.position = position;
-            this.direction = direction;
         }
 
-    }
+        public abstract void Draw(SpriteBatch spriteBatch);
 
-    public class ArgsEnemy : IArgs
-    {
-        public Vector2 position;
-        // more args
 
-        public ArgsEnemy(Vector2 position)
-        {
-            this.position = position;
-        }
 
     }
 
+    
 }

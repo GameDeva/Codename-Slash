@@ -10,7 +10,25 @@ namespace Codename___Slash
 {
     public class Loader
     {
-        
+        /// <summary>
+        /// Reads a csv file to a 2d array of strings
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="output"></param>
+        public static void ReadCSVFileTo2DArray(string filename, ref string[,] output)
+        {
+            try
+            {
+                output = ConvertFromJaggedtoMulti(File.ReadAllLines(filename).Select(l => l.Split(',').ToArray()).ToArray());
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("ERROR: 2D File could not be read!");
+                Console.WriteLine("Exception Message: " + e.Message);
+            }
+        }
+
+
         /// <summary>
         /// XML Reader generic method that takes in a xml file and pushes its contents into the given object 
         /// </summary>
@@ -35,5 +53,14 @@ namespace Codename___Slash
             }
         }
 
+        // Helper Method to convert from a jagged array to a 2d multi dimensional array
+        // Courtesy of https://highfieldtales.wordpress.com/2013/08/17/convert-a-jagged-array-into-a-2d-array/
+        private static string[,] ConvertFromJaggedtoMulti(string[][] source)
+        {
+            return new[] { new string[source.Length, source[0].Length] }
+                .Select(_ => new { x = _, y = source.Select((a, ia) => a.Select((b, ib) => _[ia, ib] = b).Count()).Count() })
+                .Select(_ => _.x)
+                .First();
+        }
     }
 }

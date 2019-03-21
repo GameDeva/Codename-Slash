@@ -22,6 +22,7 @@ namespace Codename___Slash
 
         private Vector2 position;
         private Vector2 velocity;
+        private Vector2 prevVelocity;
 
         private Vector2 prevPosition;
         
@@ -53,6 +54,9 @@ namespace Codename___Slash
         {
             Animator = new Animator();
             WeaponHandler = new WeaponHandler();
+
+            prevVelocity = new Vector2(0, 0);
+            velocity = new Vector2(0, 0);
 
         }
 
@@ -119,6 +123,7 @@ namespace Codename___Slash
         private void ApplyMovement(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // movement.Normalize();
             
 
             velocity += movement * moveAcc * elapsed;
@@ -141,6 +146,8 @@ namespace Codename___Slash
             prevPosition = position;
             position += Velocity * elapsed;
             position = new Vector2((float)Math.Round(Position.X), (float)Math.Round(Position.Y));
+
+            // prevVelocity = velocity;
         }
 
         private void AttachAnimation()

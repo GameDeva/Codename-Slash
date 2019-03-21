@@ -1,29 +1,43 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace Codename___Slash
 {
     public class Bullet : GameObject
     {
+        public Texture2D bulletTexture;
         public Vector2 position;
         public Vector2 moveDirection;
 
-        private float moveSpeed;
+        private const float moveSpeed = 500.0f;
 
         public Bullet()
         {
+        }
+
+        public override void Update(float deltaTime)
+        {
+            position += moveSpeed * moveDirection * deltaTime;
+
+            if (liveTime < 1f)
+                liveTime += deltaTime;
+            else
+                IsActive = false;
 
         }
 
-        //public Bullet(Vector2 spawnPoint, Vector2 moveDirection)
-        //{
-        //    position = spawnPoint;
-        //    this.moveDirection = moveDirection;
-        //}
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(bulletTexture, position, Color.White);
+            
+        }
 
         public override void OnPoolInstantiation()
         {
@@ -37,7 +51,11 @@ namespace Codename___Slash
             
             // Assign values
             position = a.position;
-            this.moveDirection = a.direction;
+            moveDirection = a.direction;
+            bulletTexture = a.bulletTexture;
+
+            liveTime = 0f;
+            IsActive = true;
         }
     }
 }

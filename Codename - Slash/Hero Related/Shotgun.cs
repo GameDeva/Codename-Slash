@@ -33,7 +33,7 @@ namespace Codename___Slash
             // Todo: OBJECT POOLING NEEDS TO HAPPEN PLS. 
             for(int i=0; i < AmmoPerShot; i++)
             {
-                new Bullet(firePoint, fireDirection);
+                // new Bullet(firePoint, fireDirection);
             }
 
             base.Shoot(firePoint, fireDirection);

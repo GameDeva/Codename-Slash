@@ -13,6 +13,7 @@ namespace Codename___Slash
     public class WeaponHandler
     {
         public delegate void ActionRef<Weapon>(ref Weapon previousWeapon, ref Weapon newWeapon);
+        public Action<IArgs> OnSpawnBullet;
 
         private List<Weapon> weaponsList;
         public Weapon EquippedWeapon { get { return equippedWeapon; } set { equippedWeapon = value; } }
@@ -62,16 +63,6 @@ namespace Codename___Slash
             // Rectangle shotgunDest = new Rectangle((int)(position.X + 2.0f), (int)position.Y, shotgun.Width, shotgun.Height);
             spriteBatch.Draw(EquippedWeapon.WeaponTexture, weaponPostion, weaponSourceRect, Color.White, rotationAngleWeapon, new Vector2(EquippedWeapon.WeaponTexture.Width / 2, EquippedWeapon.WeaponTexture.Height / 2), 2.0f, mouseState.X < heroPosition.X ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
             // new Vector2(position.X + 2.0f, position.Y), new Rectangle(0, 0, 0, 0), Color.White, 0.0f, new Vector2(shotgun.Width/2, shotgun.Height/2), SpriteEffects.None);
-
-            // Draw each of the bullets fired and present in screen
-            List<Bullet> bullets = EquippedWeapon.BulletsFired;
-            if(bullets.Count != 0)
-            {
-                foreach (Bullet bullet in bullets)
-                {
-                    spriteBatch.Draw(EquippedWeapon.BulletTexture, bullet.position, Color.White);
-                }
-            }
 
         }
 
@@ -125,6 +116,8 @@ namespace Codename___Slash
         {
             equippedWeapon = weaponsList[weaponIndex];
             equippedWeaponIndex = weaponIndex;
+
+            equippedWeapon.OnBulletCreated += SpawnBullet;
         }
 
         public void ShootEquippedWeapon()
@@ -142,6 +135,12 @@ namespace Codename___Slash
         public void ReloadWeapon()
         {
             EquippedWeapon.Reload();
+        }
+
+        private void SpawnBullet(IArgs args)
+        {
+            OnSpawnBullet?.Invoke(args);
+
         }
 
 

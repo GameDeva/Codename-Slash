@@ -8,16 +8,16 @@ namespace Codename___Slash
 {
     // Generic Object Pool class 
     // Ensures type of object pooled has a parameterless constructor and and IPoolable interface
-    public class ObjectPool<T> where T : IPoolable, new() 
+    public class ObjectPool<T> where T : IPoolable, new()
     {
 
-        private int poolSize;
+        public int PoolSize { get; private set; }
         // Queue of type T in the pool
         private Queue<T> poolQueue;
 
         public ObjectPool(int poolSize)
         {
-            this.poolSize = poolSize;
+            PoolSize = poolSize;
 
             // Create queue of given size
             poolQueue = new Queue<T>(poolSize);
@@ -29,7 +29,7 @@ namespace Codename___Slash
 
         private void PopulatePool() 
         {
-            for(int i = 0; i < poolSize; i++)
+            for(int i = 0; i < PoolSize; i++)
             {
                 // Create new object of type T
                 T obj = new T();
@@ -45,7 +45,9 @@ namespace Codename___Slash
 
         }
 
-        public void SpawnFromPool(IArgs args)
+
+
+        public T SpawnFromPool(IArgs args)
         {
             T obj = poolQueue.Dequeue();
 
@@ -53,6 +55,7 @@ namespace Codename___Slash
 
             poolQueue.Enqueue(obj);
 
+            return obj;
         }
 
 

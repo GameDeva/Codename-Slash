@@ -32,14 +32,14 @@ namespace Codename___Slash
 
         public override void Update(GameTime gameTime)
         {
-            if(BulletsFired.Count != 0)
-            {
-                foreach (Bullet bullet in BulletsFired)
-                {
+            //if(BulletsFired.Count != 0)
+            //{
+            //    foreach (Bullet bullet in BulletsFired)
+            //    {
 
-                    bullet.position += BulletMoveSpeed * bullet.moveDirection * (float) gameTime.ElapsedGameTime.TotalSeconds;
-                } 
-            }
+            //        bullet.position += BulletMoveSpeed * bullet.moveDirection * (float) gameTime.ElapsedGameTime.TotalSeconds;
+            //    } 
+            //}
 
             base.Update(gameTime);
         }
@@ -54,7 +54,7 @@ namespace Codename___Slash
                 OnShootAction?.Invoke();
                 // Bullet b = new Bullet(firePoint, fireDirection);
 
-                OnBulletCreated?.Invoke();
+                OnBulletCreated?.Invoke(new ArgsBullet(firePoint, fireDirection, BulletTexture));
             }
 
             base.Shoot(firePoint, fireDirection);
