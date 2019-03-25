@@ -21,75 +21,41 @@ namespace Codename___Slash
         None
     }
 
-    public enum TileName
-    {
-        Grass,
-        Dirt,
-    }
-
     // Info of each tile on the grid
     public struct TileInfo
     {
-        public TileName name;
-        public string textureIndex;
+        public string texturePath;
+        public Texture2D texture;
         public Direction collision;
         public bool enemySpawnpoint;
+
+        public void SetTexture(Texture2D texture)
+        {
+            this.texture = texture;
+        }
+
     }
     
     public struct Section
     {
-        public TileName[,] tilesInfo;
+        public string[,] tilesInfo;
 
         public void InitialiseSection(int sectionSize)
         {
-            tilesInfo = new TileName[sectionSize, sectionSize];
+            tilesInfo = new string[sectionSize, sectionSize];
         }
 
     }
-
-    public class Map
-    {
-        public string[][] mapStrings;
-        public Section[,] MapSections { get; }
-        public TileInfo[] tileInfoList;
-
-        public Map(int mapSize, int sectionSize)
-        {
-            // Assign parameter values
-            MapSections = new Section[mapSize, mapSize];
-
-            // Load map values to 2d string array
-            Loader.ReadCSVFileTo2DArray("Map1", ref mapStrings);
-
-            // Initialise each section
-            for (int i = 0; i < mapSize; i++)
-            {
-                for (int j = 0; j < mapSize; j++)
-                {
-                    MapSections[i, j].InitialiseSection(sectionSize);
-                }
-            }
-
-        }
-
-        public void LoadMapTextures(ContentManager content)
-        {
-            
-        }
-
-
-    }
-
 
     public class MapGenerator
     {
+        public static Dictionary<string, TileInfo> stringToTile;
+
         private const int mapGridSize = 64; // Width and Height
         private const int sectionCount = 8; // Width and Height
-        public TileInfo[] currentTileInfoList;
-
+        
         public Section[,] sectionsGrid;
-
-        private Map currentMap;
+        
         private int currentMapNumber;
         private Vector2Int currentHeroPos;
         private Deque<Deque<Section>> currentChunk;
@@ -101,41 +67,57 @@ namespace Codename___Slash
 
         public MapGenerator(IServiceProvider serivceProvider)
         {
-            content = new ContentManager(serivceProvider, "Content/Maps");
+            content = new ContentManager(serivceProvider, "Content/");
 
+            // Create sectionGrid 2d array to reference to each section of the map
             sectionsGrid = new Section[sectionCount, sectionCount];
+
+            stringToTile = new Dictionary<string, TileInfo>();
+
         }
         
         public void InitialiseNewMap(int mapNumber) // , Vector2Int heroPos, int renderChunkSize
         {
             string[,] arr = new string[64,64];
             
-            Loader.ReadCSVFileTo2DArray(string.Format("Map{0}.csv", mapNumber), ref arr);
-            Loader.ReadXML(string.Format("TileInfo{0}.xml", mapNumber), ref currentTileInfoList);
+            // Load map into the 2d array from the csv file
+            Loader.ReadCSVFileTo2DArray(string.Format("Content/Maps/Map{0}.csv", mapNumber), ref arr);
+            
+            // Load the appropriate tileinfo into dictionary 
+            Loader.XMLToDictionary(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref stringToTile);
+            // Load the textures for each tile into each trileInfo struct 
+            foreach(string key in stringToTile.Keys)
+            {
+                stringToTile[key].SetTexture(content.Load<Texture2D>(stringToTile[key].texturePath));
+            }
 
             for (int i = 0; i < mapGridSize; i+=sectionCount)
             {
                 for (int j = 0; j < mapGridSize; j+=sectionCount)
                 {
                     // Each subgrid loop
-                    // sectionsGrid[i%sectionCount,j%sectionCount]
 
-                    for(int x = 0; x < sectionCount; x++)
+                    // Create new section 
+                    Section s = new Section();
+                    // Initalise the 2d array in seciton with sectionCount
+                    s.InitialiseSection(sectionCount);
+                    // Attach to the sectionsgrid on the map
+                    sectionsGrid[i % sectionCount, j % sectionCount] = s;
+
+                    for (int x = 0; x < sectionCount; x++)
                     {
                         for (int y = 0; y < sectionCount; y++)
                         {
                             // each tile in a subgrid loop
-                            // arr[i+x, j+y].
 
+
+                            // Add the tile name to each subgrid from the map
+                            s.tilesInfo[x, y] = arr[i + x, j + y];
                         }
                     }
 
                 }
             }
-
-
-
-
 
             //// Reinitialise values when creating a new map, or newly assign if first time
             //ResetHeroPosition(heroPos);
@@ -150,54 +132,79 @@ namespace Codename___Slash
             //Loader.ReadXML(string.Format("Content/Maps/{0}.xml", MapNumber), ref currentMap);
         }
 
-        public void ResetHeroPosition(Vector2Int heroPos)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            currentHeroPos = heroPos;
+            // Test by drawing 1 section
+            Rectangle tileRect = new Rectangle(0, 0, 1, 1);
+            // TileInfo tileInfo = new TileInfo();
 
-
-        }
-
-
-        private void UpdateChunkInUse(Direction dir)
-        {
-            if (currentChunk != null)
+            Vector2 origin = new Vector2(0, 0);
+            for (int x = 0; x < sectionCount; x++)
             {
-
-            } else
-            {
-                // Create new chunk, then for each deque, add a deque with the relevant Sections based on the heroPos
-                currentChunk = new Deque<Deque<Section>>();
-                for (int i = 0; i < 3; i++)
+                for (int y = 0; y < sectionCount; y++)
                 {
-                    currentChunk.Add(new Deque<Section> { currentMap.MapSections[currentHeroPos.X - 1, currentHeroPos.Y + (i-1)],
-                                                        currentMap.MapSections[currentHeroPos.X, currentHeroPos.Y + (i-1)],
-                                                        currentMap.MapSections[currentHeroPos.X + 1, currentHeroPos.Y + (i-1)] });
-                }
+                    // Get appropriate tile
+                    TileInfo tileInfo = stringToTile[sectionsGrid[0, 0].tilesInfo[x,y]];
 
-                foreach (Deque<Section> s in currentChunk) 
-                {
-                    foreach (Section s2 in s)
-                    {
-                        int l1 = s2.tilesInfo.GetLength(0);
-                        int l2 = s2.tilesInfo.GetLength(1);
-                        for (int i=0; i < l1; i++)
-                        {
-                            for(int j=0; j < l2; j++)
-                            {
-                                
-                                // TODO : Add collision for tiles
-                            }
-                        }
-                    }
-                }
+                    tileRect.X = x;
+                    tileRect.Y = y;
 
+                    spriteBatch.Draw(tileInfo.texture, tileRect, null, Color.White, 0, origin, SpriteEffects.None, 0);
+
+
+                }
             }
 
-            // Update currentHeroPos based on dir
 
-            // Once the sections have been choosen update the relevant colliders. 
-            UpdateTileColiders();
         }
+
+
+
+
+        //private void UpdateChunkInUse(Direction dir)
+        //{
+        //    if (currentChunk != null)
+        //    {
+
+        //    } else
+        //    {
+        //        // Create new chunk, then for each deque, add a deque with the relevant Sections based on the heroPos
+        //        currentChunk = new Deque<Deque<Section>>();
+        //        for (int i = 0; i < 3; i++)
+        //        {
+        //            currentChunk.Add(new Deque<Section> { currentMap.MapSections[currentHeroPos.X - 1, currentHeroPos.Y + (i-1)],
+        //                                                currentMap.MapSections[currentHeroPos.X, currentHeroPos.Y + (i-1)],
+        //                                                currentMap.MapSections[currentHeroPos.X + 1, currentHeroPos.Y + (i-1)] });
+        //        }
+
+        //        foreach (Deque<Section> s in currentChunk) 
+        //        {
+        //            foreach (Section s2 in s)
+        //            {
+        //                int l1 = s2.tilesInfo.GetLength(0);
+        //                int l2 = s2.tilesInfo.GetLength(1);
+        //                for (int i=0; i < l1; i++)
+        //                {
+        //                    for(int j=0; j < l2; j++)
+        //                    {
+                                
+        //                        // TODO : Add collision for tiles
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //    }
+
+        //    // Update currentHeroPos based on dir
+
+        //    // Once the sections have been choosen update the relevant colliders. 
+        //    UpdateTileColiders();
+        //}
+
+
+
+
 
         private void UpdateTileColiders()
         {
@@ -209,7 +216,5 @@ namespace Codename___Slash
         {
 
         }
-
-
     }
 }

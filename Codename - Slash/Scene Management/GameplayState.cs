@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+
 
 namespace Codename___Slash
 {
@@ -20,12 +22,10 @@ namespace Codename___Slash
         private MapGenerator mapGenerator;
 
         private UI ui; // UI instance for this gameplay session
-
+        
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
-            stateContent = new ContentManager(game.Services, "Content"); // Should be based on level, maybe later object types or areas
-            
             // Create the appropriate map TODO : change to level state logic 
             // map = new MapGenerator(game.Services);
             
@@ -48,7 +48,7 @@ namespace Codename___Slash
             
         }
 
-        public override void LoadContent(ContentManager content) 
+        protected override void LoadContent() 
         {
             hero.LoadContent(stateContent);
             ui.LoadContent(stateContent);
@@ -56,24 +56,45 @@ namespace Codename___Slash
 
         public override void Exit(Game1 game)
         {
-            Dispose();
             base.Exit(game);
         }
-        
+
+        protected override void InitialiseKeyBindings()
+        {
+            if(commandManager != null)
+            {
+                commandManager.AddKeyboardBinding(Keys.W, hero.MoveUp);
+                commandManager.AddKeyboardBinding(Keys.D, hero.MoveRight);
+                commandManager.AddKeyboardBinding(Keys.A, hero.MoveLeft);
+                commandManager.AddKeyboardBinding(Keys.S, hero.MoveDown);
+                commandManager.AddKeyboardBinding(Keys.Space, hero.Dash);
+
+                commandManager.AddMouseBinding(MouseButton.LEFT, hero.ShootWeapon);
+                commandManager.AddMouseBinding(MouseButton.RIGHT, hero.ShootWeapon);
+                commandManager.AddScrollBinding(Scroll.DOWN, hero.PreviousWeapon);
+                commandManager.AddScrollBinding(Scroll.UP, hero.NextWeapon);
+
+
+            }
+        }
+
+
         public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
         {
             // TODO: Add your update logic here
-            List<Command> commands = inputHandler.HandleInput();
+            //List<Command> commands = inputHandler.HandleInput();
 
-            if (commands != null)
-            {
-                foreach (Command c in commands)
-                {
-                    c.execute(ref hero);
-                }
-            }
+            //if (commands != null)
+            //{
+            //    foreach (Command c in commands)
+            //    {
+            //        c.execute(ref hero);
+            //    }
+            //}
             
+
             // Handle State object Updates
+            commandManager.Update();
             hero.Update(gameTime);
             camera.Follow(hero);
             ui.Update();
@@ -102,6 +123,7 @@ namespace Codename___Slash
             spriteBatch.Begin();
 
             hero.Draw(gameTime, spriteBatch);
+            // mapGenerator.Draw(spriteBatch);
             //spriteBatch.End();
 
             // Draw all gameobjects 
@@ -120,11 +142,6 @@ namespace Codename___Slash
             base.Draw(ref gameTime, spriteBatch);
 
             spriteBatch.End();
-        }
-
-        public void Dispose()
-        {
-            stateContent.Unload();
         }
         
         #region Object Creation from Pool

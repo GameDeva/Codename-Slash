@@ -49,16 +49,17 @@ namespace Codename___Slash
             currentCommandsList.Clear();
 
             // Add any commands issued this frame to the list
-            if (Keyboard.GetState().IsKeyDown(Keys.W)) currentCommandsList.Add(wButton);
-            if (Keyboard.GetState().IsKeyDown(Keys.S)) currentCommandsList.Add(sButton);
-            if (Keyboard.GetState().IsKeyDown(Keys.A)) currentCommandsList.Add(aButton);
-            if (Keyboard.GetState().IsKeyDown(Keys.D)) currentCommandsList.Add(dButton);
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) currentCommandsList.Add(spaceButton);
+            //if (Keyboard.GetState().IsKeyDown(Keys.W)) currentCommandsList.Add(wButton);
+            //if (Keyboard.GetState().IsKeyDown(Keys.S)) currentCommandsList.Add(sButton);
+            //if (Keyboard.GetState().IsKeyDown(Keys.A)) currentCommandsList.Add(aButton);
+            //if (Keyboard.GetState().IsKeyDown(Keys.D)) currentCommandsList.Add(dButton);
+            //if (Keyboard.GetState().IsKeyDown(Keys.Space)) currentCommandsList.Add(spaceButton);
 
+            // Mouse input
             if (Mouse.GetState().LeftButton == ButtonState.Pressed) currentCommandsList.Add(leftMouse);
 
+            // Scroll input
             int newScrollVal = Mouse.GetState().ScrollWheelValue;
-
             if (newScrollVal > previousScrollVal) { currentCommandsList.Add(scrollUp); previousScrollVal = newScrollVal; }
             if (newScrollVal < previousScrollVal) { currentCommandsList.Add(scrollDown); previousScrollVal = newScrollVal; }
 

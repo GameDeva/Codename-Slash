@@ -190,43 +190,56 @@ namespace Codename___Slash
 
         #region Hero Commands
 
-        public void MoveRight()
+        public void MoveRight(eButtonState buttonState, Vector2 amount)
         {
-            movement.X = 1.0f;
+            if (buttonState == eButtonState.PRESSED)
+            {
+                movement.X = 1.0f;
+            }
         }
 
-        public void MoveLeft()
+        public void MoveLeft(eButtonState buttonState, Vector2 amount)
         {
-            movement.X = -1.0f;
+            if (buttonState == eButtonState.PRESSED)
+            {
+                movement.X = -1.0f;
+            }
         }
 
-        public void MoveDown()
+        public void MoveDown(eButtonState buttonState, Vector2 amount)
         {
-            movement.Y = 1.0f;
+            if (buttonState == eButtonState.PRESSED)
+            {
+                movement.Y = 1.0f;
+            }
         }
 
-        public void MoveUp()
+        public void MoveUp(eButtonState buttonState, Vector2 amount)
         {
-            movement.Y = -1.0f;
+            if (buttonState == eButtonState.DOWN)
+            {
+                movement.Y = -1.0f;
+            }
         }
 
-        public void Dash()
+        public void Dash(eButtonState buttonState, Vector2 amount)
         {
             shouldDash = true;
         }
 
-        public void ShootWeapon()
+        public void ShootWeapon(eButtonState buttonState, Vector2 amount)
         {
-            if (WeaponHandler != null)
+            if(buttonState == eButtonState.DOWN)//  || buttonState == eButtonState.PRESSED
+                if (WeaponHandler != null)
                 WeaponHandler.ShootEquippedWeapon();
         }
 
-        public void PreviousWeapon()
+        public void PreviousWeapon(eButtonState buttonState, Vector2 amount)
         {
             WeaponHandler.PreviousWeapon();
         }
 
-        public void NextWeapon()
+        public void NextWeapon(eButtonState buttonState, Vector2 amount)
         {
             WeaponHandler.NextWeapon();
         }

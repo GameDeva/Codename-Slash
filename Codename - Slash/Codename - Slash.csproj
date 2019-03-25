@@ -46,10 +46,13 @@
     <Compile Include="GameObjectPool.cs" />
     <Compile Include="Hero Related\Bullet.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="Hero Related\Command.cs" />
+    <Compile Include="InputHandling\Command.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="IArgs.cs" />
+    <Compile Include="InputHandling\CommandManager.cs" />
+    <Compile Include="InputHandling\InputListener.cs" />
+    <Compile Include="InputHandling\MouseEventArgs.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
     <Compile Include="IDamageable.cs" />
     <Compile Include="IPoolable.cs" />
@@ -57,7 +60,7 @@
     <Compile Include="Hero Related\MachineGun.cs" />
     <Compile Include="MapGenerator.cs" />
     <Compile Include="Hero Related\Hero.cs" />
-    <Compile Include="InputHandler.cs" />
+    <Compile Include="InputHandling\InputHandler.cs" />
     <Compile Include="Scene Management\MenuState.cs" />
     <Compile Include="ObjectPool.cs" />
     <Compile Include="Scene Management\OptionsState.cs" />

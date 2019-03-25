@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Codename___Slash
 {
     public class OptionsState : GameState
@@ -22,11 +23,10 @@ namespace Codename___Slash
             base.Exit(game);
         }
 
-        public virtual void LoadContent(ContentManager content)
+        protected override void LoadContent()
         {
-
+            base.LoadContent();
         }
-
 
         public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
         {

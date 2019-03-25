@@ -17,7 +17,7 @@ namespace Codename___Slash
         // Resources for drawing.
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        
+
         private InputHandler inputHandler;
         private GameState state;
 
@@ -44,8 +44,14 @@ namespace Codename___Slash
         {
             // TODO: Add your initialization logic here
             inputHandler = new InputHandler();
-            
-            state = GameState.GameplayState;
+
+            // Initalise all states
+            GameState.MenuState.InitialiseState(this);
+            GameState.GameplayState.InitialiseState(this);
+            GameState.OptionsState.InitialiseState(this);
+
+            // Set first state
+            state = GameState.MenuState;
             state.Enter(this);
 
             base.Initialize();
@@ -61,8 +67,7 @@ namespace Codename___Slash
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            state?.LoadContent(Content);
-
+            
 
             //Known issue that you get exceptions if you use Media PLayer while connected to your PC
             //See http://social.msdn.microsoft.com/Forums/en/windowsphone7series/thread/c8a243d2-d360-46b1-96bd-62b1ef268c66
@@ -114,7 +119,7 @@ namespace Codename___Slash
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.LightSkyBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             // spriteBatch.Begin();

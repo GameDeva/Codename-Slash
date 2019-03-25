@@ -53,6 +53,25 @@ namespace Codename___Slash
             }
         }
 
+        public static void ReadXMLList<T>(string filename, ref List<T> infoObjList)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(filename))
+                {
+                    infoObjList = (List<T>)new XmlSerializer(typeof(List<T>)).Deserialize(reader.BaseStream);
+                }
+            }
+            catch (Exception e)
+            {
+                // If we've caught an exception, output an error message
+                // describing the error
+                Console.WriteLine("ERROR: XML List File could not be deserialized!");
+                Console.WriteLine("Exception Message: " + e.Message);
+            }
+        }
+
+
         // Helper Method to convert from a jagged array to a 2d multi dimensional array
         // Courtesy of https://highfieldtales.wordpress.com/2013/08/17/convert-a-jagged-array-into-a-2d-array/
         private static string[,] ConvertFromJaggedtoMulti(string[][] source)
@@ -62,5 +81,27 @@ namespace Codename___Slash
                 .Select(_ => _.x)
                 .First();
         }
+
+        /// <summary>
+        /// Takes in a dictionary of type K and V, and a filename, uses the READXML method to convert the file into a keyvaluepair list and then adds it to a dictionary
+        /// </summary>
+        /// <typeparam name="K"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="dict"></param>
+        public static void XMLToDictionary<K, V>(string fileName, ref Dictionary<K, V> dict)
+        {
+            List<KeyValuePair<K, V>> keyValueList = new List<KeyValuePair<K, V>>();
+
+            ReadXMLList(fileName, ref keyValueList);
+
+            int size = keyValueList.Count;
+            for(int i = 0; i < size; i++)
+            {
+                dict.Add(keyValueList[i].Key, keyValueList[i].Value);
+            }
+            
+        }
+
+
     }
 }

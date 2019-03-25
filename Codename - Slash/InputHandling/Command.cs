@@ -16,7 +16,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // move up
-            hero.MoveUp();
+            // hero.MoveUp();
         }
     }
 
@@ -26,7 +26,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // move down
-            hero.MoveDown();
+            // hero.MoveDown();
         }
     }
 
@@ -36,7 +36,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // move right
-            hero.MoveRight();
+            // hero.MoveRight();
         }
     }
 
@@ -46,7 +46,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // move left
-            hero.MoveLeft();
+            // hero.MoveLeft();
         }
     }
 
@@ -56,7 +56,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // dash 
-            hero.Dash();
+            //hero.Dash();
         }
     }
 
@@ -66,7 +66,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // Shoot
-            hero.ShootWeapon();
+            //hero.ShootWeapon();
         }
     }
 
@@ -75,7 +75,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // Swap to previous weapon
-            hero.PreviousWeapon();
+           // hero.PreviousWeapon();
         }
     }
 
@@ -84,7 +84,7 @@ namespace Codename___Slash
         public override void execute(ref Hero hero)
         {
             // Swap to previous weapon
-            hero.NextWeapon();
+            //hero.NextWeapon();
         }
     }
 
