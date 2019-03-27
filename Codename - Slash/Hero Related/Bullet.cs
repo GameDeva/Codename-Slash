@@ -12,28 +12,30 @@ namespace Codename___Slash
 {
     public class Bullet : GameObject
     {
-        public Texture2D bulletTexture;
-        public Vector2 position;
-        public Vector2 moveDirection;
-
-        private const float moveSpeed = 500.0f;
+        private Texture2D bulletTexture;
+        private Vector2 position;
+        private Vector2 moveDirection;
+        private float maxLiveTime;
+        private float moveSpeed;
 
         public Bullet()
         {
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(GameTime gameTime)
         {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             position += moveSpeed * moveDirection * deltaTime;
 
-            if (liveTime < 1f)
+            if (liveTime < maxLiveTime)
                 liveTime += deltaTime;
             else
                 IsActive = false;
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(bulletTexture, position, Color.White);
             
@@ -50,9 +52,11 @@ namespace Codename___Slash
             if (!(args is ArgsBullet a)) { throw new ArgumentException(); }
             
             // Assign values
-            position = a.position;
-            moveDirection = a.direction;
-            bulletTexture = a.bulletTexture;
+            position = a.Position;
+            moveDirection = a.Direction;
+            bulletTexture = a.BulletTexture;
+            maxLiveTime = a.MaxLiveTime;
+            moveSpeed = a.MoveSpeed;
 
             liveTime = 0f;
             IsActive = true;

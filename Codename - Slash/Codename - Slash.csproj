@@ -43,6 +43,14 @@
   <ItemGroup>
     <Compile Include="Animation.cs" />
     <Compile Include="Animator.cs" />
+    <Compile Include="EnemyStates\ChaseState.cs" />
+    <Compile Include="EnemyStates\Doge.cs" />
+    <Compile Include="EnemyStates\Enemy.cs" />
+    <Compile Include="EnemyStates\EnemyDirector.cs" />
+    <Compile Include="EnemyStates\FleeState.cs" />
+    <Compile Include="EnemyStates\IdleState.cs" />
+    <Compile Include="EnemyStates\ShortRangeAttackState.cs" />
+    <Compile Include="EnemyStates\StateMachine.cs" />
     <Compile Include="GameObjectPool.cs" />
     <Compile Include="Hero Related\Bullet.cs" />
     <Compile Include="Camera.cs" />
@@ -53,6 +61,7 @@
     <Compile Include="InputHandling\CommandManager.cs" />
     <Compile Include="InputHandling\InputListener.cs" />
     <Compile Include="InputHandling\MouseEventArgs.cs" />
+    <Compile Include="EnemyStates\State.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
     <Compile Include="IDamageable.cs" />
     <Compile Include="IPoolable.cs" />
@@ -68,6 +77,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene Management\GameState.cs" />
     <Compile Include="Hero Related\Shotgun.cs" />
+    <Compile Include="Scene Management\PoolManager.cs" />
+    <Compile Include="TileInfo.cs" />
     <Compile Include="UI.cs" />
     <Compile Include="Misc\Vector2Int.cs" />
     <Compile Include="Hero Related\Weapon.cs" />
@@ -87,6 +98,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\TileInfo1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -30,7 +30,7 @@ namespace Codename___Slash
             
             graphics.PreferredBackBufferWidth = SCREENWIDTH;
             graphics.PreferredBackBufferHeight = SCREENHEIGHT;
-            graphics.IsFullScreen = true;
+            // graphics.IsFullScreen = true;
 
         }
 

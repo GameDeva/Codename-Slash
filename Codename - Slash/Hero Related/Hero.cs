@@ -70,7 +70,7 @@ namespace Codename___Slash
 
         public void Update(GameTime gameTime)
         {
-            WeaponHandler.Update(position, gameTime);
+            WeaponHandler.Update(position, (float) gameTime.ElapsedGameTime.TotalSeconds);
             
             ApplyMovement(gameTime);
             AttachAnimation();
@@ -92,8 +92,7 @@ namespace Codename___Slash
             sideRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_side"), 4, 0.1f, true);
 
             Reset(position);
-
-
+            
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -123,9 +122,7 @@ namespace Codename___Slash
         private void ApplyMovement(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            // movement.Normalize();
-            
-
+            // movement.Normalize(); // TODO: not working
             velocity += movement * moveAcc * elapsed;
             // if(movement == Vector2.Zero)
             velocity *= friction;

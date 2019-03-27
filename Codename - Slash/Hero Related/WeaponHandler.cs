@@ -50,10 +50,10 @@ namespace Codename___Slash
         }
 
 
-        public void Update(Vector2 heroPosition, GameTime gameTime)
+        public void Update(Vector2 heroPosition, float deltaTime)
         {
             UpdateWeaponPosition(heroPosition);
-            EquippedWeapon.Update(gameTime);
+            EquippedWeapon.Update(deltaTime);
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 heroPosition)
@@ -122,7 +122,7 @@ namespace Codename___Slash
 
         public void ShootEquippedWeapon()
         {
-            if(EquippedWeapon.CurrentMagHold < EquippedWeapon.AmmoPerShot)
+            if(EquippedWeapon.CurrentMagHold < 1)
             {
                 ReloadWeapon();
                 return;

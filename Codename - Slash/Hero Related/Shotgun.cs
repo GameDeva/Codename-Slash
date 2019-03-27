@@ -22,21 +22,13 @@ namespace Codename___Slash
             MaximumMagHold = 8;
             CurrentAmmoCarry = MaximumAmmoCarry;
             CurrentMagHold = MaximumMagHold;
-
-            AmmoPerShot = 2;
-
+            
 
         }
 
         public override void Shoot(Vector2 firePoint, Vector2 fireDirection)
         {
-            // Todo: OBJECT POOLING NEEDS TO HAPPEN PLS. 
-            for(int i=0; i < AmmoPerShot; i++)
-            {
-                // new Bullet(firePoint, fireDirection);
-            }
-
-            base.Shoot(firePoint, fireDirection);
+            
         }
 
         public override void Reload()

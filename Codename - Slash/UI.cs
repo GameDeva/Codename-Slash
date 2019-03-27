@@ -29,6 +29,7 @@ namespace Codename___Slash
         private Texture2D weaponIconUI;
         private int ammoRemaining;
         private int ammoInMag;
+        private string weaponName;
 
 
         public UI(ContentManager content)
@@ -96,10 +97,10 @@ namespace Codename___Slash
                                          titleSafeArea.Y + titleSafeArea.Height / 2.0f);
 
             string text = "Mani";
-            string weaponName = "[WepName]";
+            // string weaponName = "[WepName]";
             
-            spriteBatch.DrawString(hudFont, text, hudLocation, Color.Black);
-            spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.Black);
+            spriteBatch.DrawString(hudFont, text, hudLocation, Color.White);
+            spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.White);
 
 
             Rectangle healthRectangle = new Rectangle((int)hudLocation.X, 40, 50, 200);
@@ -143,6 +144,7 @@ namespace Codename___Slash
 
             // Update UI display values
             weaponIconUI = newWeapon.WeaponIconTexture;
+            weaponName = newWeapon.GetType().ToString().Remove(0, 17);
             ammoRemaining = newWeapon.CurrentAmmoCarry;
             ammoInMag = newWeapon.CurrentMagHold;
         }

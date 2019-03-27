@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Codename___Slash
 {
-    public class Weapon
+    public abstract class Weapon
     {
         
         public Action OnShootAction;
@@ -25,11 +25,11 @@ namespace Codename___Slash
         // 
         public int MaximumAmmoCarry { get; protected set; }
         public int MaximumMagHold { get; protected set; }
-        public int AmmoPerShot { get; protected set; }
-        public float TimeBetweenShots { get; protected set; }
+        public float MaxTimeBetweenShots { get; protected set; }
         public float BulletMoveSpeed { get; protected set; }
         public float BulletDecayTime { get; protected set; }
 
+        protected float currentTimerBetweenShots;
 
         // 
         public int CurrentAmmoCarry { get; protected set; }
@@ -47,8 +47,12 @@ namespace Codename___Slash
 
         }
 
-        public virtual void Update(GameTime gameTime) { }
-        public virtual void Shoot(Vector2 firePoint, Vector2 fireDirection) { }
+        public virtual void Update(float deltaTime)
+        {
+            currentTimerBetweenShots += deltaTime;
+        }
+
+        public abstract void Shoot(Vector2 firePoint, Vector2 fireDirection);
         
         // Only override if there is something specific we want to do for each weapon
         public virtual void Reload()

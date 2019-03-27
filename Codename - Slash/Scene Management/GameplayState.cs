@@ -7,19 +7,17 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-
+using Codename___Slash.EnemyStates;
 
 namespace Codename___Slash
 {
     public class GameplayState : GameState
     {
-        ObjectPool<Bullet> bulletPool;
-
-        private List<GameObject> spawnedObjects;
 
         private Hero hero; // Hero instance for this gameplay session
         private Camera camera; // Camera instance for this gameplay session
         private MapGenerator mapGenerator;
+        private PoolManager poolManager;
 
         private UI ui; // UI instance for this gameplay session
         
@@ -35,14 +33,21 @@ namespace Codename___Slash
             
             camera = new Camera();
 
-            bulletPool = new ObjectPool<Bullet>(100);
-            
-            hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
-
-            spawnedObjects = new List<GameObject>();
-
             mapGenerator = new MapGenerator(game.Services);
-            mapGenerator.InitialiseNewMap(1);
+            // mapGenerator.InitialiseNewMap(1);
+
+            // TileInfo tileInfo = new TileInfo();
+
+            // Loader.ReadXML("Content/Maps/TileInfo1.xml");
+
+            // Initialise the EnemyDirector Singleton
+            EnemyDirector.Instance = new EnemyDirector();
+            EnemyDirector.Instance.Initialise(hero, stateContent);
+
+            poolManager = new PoolManager();
+            poolManager.Initialise(hero);
+
+            EnemyDirector.Instance.Create();
 
             base.Enter(game);
             
@@ -73,45 +78,21 @@ namespace Codename___Slash
                 commandManager.AddMouseBinding(MouseButton.RIGHT, hero.ShootWeapon);
                 commandManager.AddScrollBinding(Scroll.DOWN, hero.PreviousWeapon);
                 commandManager.AddScrollBinding(Scroll.UP, hero.NextWeapon);
-
-
             }
         }
 
 
         public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
         {
-            // TODO: Add your update logic here
-            //List<Command> commands = inputHandler.HandleInput();
-
-            //if (commands != null)
-            //{
-            //    foreach (Command c in commands)
-            //    {
-            //        c.execute(ref hero);
-            //    }
-            //}
             
-
             // Handle State object Updates
             commandManager.Update();
             hero.Update(gameTime);
+            EnemyDirector.Instance.Update(gameTime);
+            poolManager.Update(gameTime);
             camera.Follow(hero);
             ui.Update();
 
-            // Update all gameobjects 
-            // int size = spawnedObjects.Count;
-            for(int i = 0; i < spawnedObjects.Count; i++)
-            {
-                if (spawnedObjects[i].IsActive)
-                {
-                    spawnedObjects[i].Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-                }
-                else
-                {
-                    spawnedObjects.RemoveAt(i);
-                }
-            }
 
             base.Update(game, ref gameTime, ref inputHandler);
             return null;
@@ -125,17 +106,8 @@ namespace Codename___Slash
             hero.Draw(gameTime, spriteBatch);
             // mapGenerator.Draw(spriteBatch);
             //spriteBatch.End();
-
-            // Draw all gameobjects 
-            // int size = spawnedObjects.Count;
-            for (int i = 0; i < spawnedObjects.Count; i++)
-            {
-                if (spawnedObjects[i].IsActive)
-                {
-                    spawnedObjects[i].Draw(spriteBatch);
-                }
-            }
-
+            EnemyDirector.Instance.Draw(gameTime, spriteBatch);
+            poolManager.Draw(gameTime, spriteBatch);
             //spriteBatch.Begin();
             ui.Draw(spriteBatch);
 
@@ -144,17 +116,5 @@ namespace Codename___Slash
             spriteBatch.End();
         }
         
-        #region Object Creation from Pool
-
-        private void SpawnBullet(IArgs args)
-        {
-            spawnedObjects.Add(bulletPool.SpawnFromPool(args));
-        }
-
-        #endregion
-
-
-
-
     }
 }

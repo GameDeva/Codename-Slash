@@ -17,47 +17,30 @@ namespace Codename___Slash
             // NOTE: Below assumes weapons are complete when created, 
             // TODO: For pickup weapons that are half empty, need to refactor
             //          to take these values as parameters
-            MaximumAmmoCarry = 256;
+            MaximumAmmoCarry = 1024;
             MaximumMagHold = 64;
-            TimeBetweenShots = 0.1f;
+            MaxTimeBetweenShots = 0.05f;
             BulletMoveSpeed = 500f;
             BulletDecayTime = 1f;
 
             CurrentAmmoCarry = MaximumAmmoCarry;
             CurrentMagHold = MaximumMagHold;
-
-            AmmoPerShot = 1;
             
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            //if(BulletsFired.Count != 0)
-            //{
-            //    foreach (Bullet bullet in BulletsFired)
-            //    {
-
-            //        bullet.position += BulletMoveSpeed * bullet.moveDirection * (float) gameTime.ElapsedGameTime.TotalSeconds;
-            //    } 
-            //}
-
-            base.Update(gameTime);
         }
 
         public override void Shoot(Vector2 firePoint, Vector2 fireDirection)
         {
-            // Todo: OBJECT POOLING NEEDS TO HAPPEN PLS. 
-            for (int i = 0; i < AmmoPerShot; i++)
+            if(currentTimerBetweenShots > MaxTimeBetweenShots)
             {
                 CurrentMagHold--;
-                // BulletsFired.Add(new Bullet(firePoint, fireDirection));
+                // Let UI or others know shot has been fired
                 OnShootAction?.Invoke();
-                // Bullet b = new Bullet(firePoint, fireDirection);
-
-                OnBulletCreated?.Invoke(new ArgsBullet(firePoint, fireDirection, BulletTexture));
+                // Create bullet with given arguments
+                OnBulletCreated?.Invoke(new ArgsBullet(firePoint, fireDirection, BulletTexture, BulletDecayTime, BulletMoveSpeed));
+                // Reset timer
+                currentTimerBetweenShots = 0.0f;
             }
-
-            base.Shoot(firePoint, fireDirection);
+            
         }
 
     }

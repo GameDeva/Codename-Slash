@@ -16,27 +16,34 @@ namespace Codename___Slash
 
     public class ArgsBullet : IArgs
     {
-        public Texture2D bulletTexture;
-        public Vector2 position;
-        public Vector2 direction;
+        public Texture2D BulletTexture { get; private set; }
+        public Vector2 Position { get; private set; }
+        public Vector2 Direction { get; private set; }
+        public float MaxLiveTime { get; private set; }
+        public float MoveSpeed { get; private set; }
 
-        public ArgsBullet(Vector2 position, Vector2 direction, Texture2D bulletTexture)
+        public ArgsBullet(Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed)
         {
-            this.position = position;
-            this.direction = direction;
-            this.bulletTexture = bulletTexture;
+            Position = position;
+            Direction = direction;
+            BulletTexture = bulletTexture;
+            MaxLiveTime = maxLiveTime;
+            MoveSpeed = moveSpeed;
         }
 
     }
 
     public class ArgsEnemy : IArgs
     {
-        public Vector2 position;
-        // more args
+        public Vector2 Position { get; private set; }
+        public float StartingHealth { get; private set; }
+        public string InitialState { get; private set; }
 
-        public ArgsEnemy(Vector2 position)
+        public ArgsEnemy(Vector2 position, float startingHealth, string initialState)
         {
-            this.position = position;
+            Position = position;
+            StartingHealth = startingHealth;
+            InitialState = initialState;
         }
 
     }

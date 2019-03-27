@@ -20,21 +20,6 @@ namespace Codename___Slash
         Full,   // for entire tile
         None
     }
-
-    // Info of each tile on the grid
-    public struct TileInfo
-    {
-        public string texturePath;
-        public Texture2D texture;
-        public Direction collision;
-        public bool enemySpawnpoint;
-
-        public void SetTexture(Texture2D texture)
-        {
-            this.texture = texture;
-        }
-
-    }
     
     public struct Section
     {
