@@ -69,7 +69,7 @@ namespace Codename___Slash
         private void UpdateWeaponPosition(Vector2 heroPosition)
         {
             mouseState = Mouse.GetState();
-
+            
             // dirToMouse = new Vector2(mouseState.Position.X, mouseState.Position.Y) - heroPosition;
 
             rotationAngleWeapon = (float)Math.Atan2(mouseState.Position.Y - heroPosition.Y, mouseState.Position.X - heroPosition.X);

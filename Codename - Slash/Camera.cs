@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Codename___Slash
 {
     public class Camera
     {
-        public Matrix Transform { get; private set; }
+        public static Matrix Transform { get; private set; }
 
         public Camera()
         {
@@ -19,7 +20,7 @@ namespace Codename___Slash
 
         // TODO: Change target to Living Entity parent class so camera can also follow 
         // Used to follow the player around during gameplay state
-        public void Follow(Hero target)
+        public static Vector2 Follow(Hero target)
         {
             // TODO: Could be moved to initialise, if there is not real time screen resizing option. 
             // Offset created based on aspect ratio of the screen
@@ -34,6 +35,12 @@ namespace Codename___Slash
             // Assign transform of camera
             Transform = position * offset;
 
+            return Vector2.Transform(target.Position, Transform);
+        }
+
+        public static Vector2 UpdateMousePos(MouseState mouse)
+        {
+            return Vector2.Transform(new Vector2(mouse.Position.X, mouse.Position.Y), Transform);
         }
     }
 }

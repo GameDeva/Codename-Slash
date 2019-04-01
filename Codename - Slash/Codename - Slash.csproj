@@ -51,6 +51,7 @@
     <Compile Include="EnemyStates\IdleState.cs" />
     <Compile Include="EnemyStates\ShortRangeAttackState.cs" />
     <Compile Include="EnemyStates\StateMachine.cs" />
+    <Compile Include="GameInfo.cs" />
     <Compile Include="GameObjectPool.cs" />
     <Compile Include="Hero Related\Bullet.cs" />
     <Compile Include="Camera.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="InputHandling\InputListener.cs" />
     <Compile Include="InputHandling\MouseEventArgs.cs" />
     <Compile Include="EnemyStates\State.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="MapGen.cs" />
     <Compile Include="Scene Management\Collision.cs" />
     <Compile Include="Scene Management\CollisionManager.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
@@ -101,10 +104,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\TileInfo1.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="Content\info.xml" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -25,11 +25,10 @@ namespace Codename___Slash
     public class TileInfo
     {
         // public int cs;
-
+        public string name;
         public string texturePath;
         // public Texture2D Texture { get; set; }
-        // public Direction collision;
-        public bool enemySpawnpoint;
+        public bool collision;
 
         //private static TileInfo instance = null;
         //public static TileInfo Instance { get { if (instance == null) { instance = new TileInfo(); return instance; } return instance; } set { instance = value; } }
@@ -64,14 +63,16 @@ namespace Codename___Slash
 
         private const int mapGridSize = 64; // Width and Height
         private const int TilesInSection = 8; // Width and Height
-        
+        private const int tileSize = 50; // Width and Height
+
         public Section[,] mapSections;
-        
+        string[,] arr;
+
         //private int currentMapNumber;
         //private Vector2Int currentHeroPos;
         //private Deque<Deque<Section>> currentChunk;
         //private int renderChunkSize;
-        
+
         //private List<Section> currentGridsDisplayed;
 
         private ContentManager content;
@@ -92,22 +93,31 @@ namespace Codename___Slash
         
         public void InitialiseNewMap(int mapNumber) // , Vector2Int heroPos, int renderChunkSize
         {
-            string[,] arr = new string[mapGridSize,mapGridSize];
+            arr = new string[mapGridSize,mapGridSize];
             
             // Load map into the 2d array from the csv file
             Loader.ReadCSVFileTo2DArray(string.Format("Content/Maps/Map{0}.csv", mapNumber), ref arr);
 
             // List<TileInfo> tileInfoList = new List<TileInfo>();
-            TileInfo grassInfo = new TileInfo();
+            // TileInfo grassInfo = new TileInfo();
             // Test
-            Loader.ReadXML(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref grassInfo);
-            stringToTexture.Add("Grass", content.Load<Texture2D>(grassInfo.texturePath));
+            // Loader.ReadXML(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref grassInfo);
+            // stringToTexture.Add("Grass", content.Load<Texture2D>(grassInfo.texturePath));
+            GameInfo info = GameInfo.Instance;
 
+            Loader.ReadXML(string.Format("Content/TileInfo{0}.xml", mapNumber), ref info);
 
             // Load the appropriate tileinfo into dictionary 
+            int dicSize = info.tileInfoList.Count();
+            for(int i = 0; i < dicSize; i++)
+            {
+                stringToTexture.Add(info.tileInfoList[i].name, content.Load<Texture2D>(info.tileInfoList[i].texturePath));
+            }
+
+
             // Loader.XMLToDictionary(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref stringToTile);
             // Load the textures for each tile into each trileInfo struct 
-            foreach(string key in stringToTile.Keys)
+            foreach (string key in stringToTile.Keys)
             {
                 // TODO : add back in
                 // stringToTile[key].Texture = content.Load<Texture2D>(stringToTile[key].texturePath);
@@ -143,49 +153,67 @@ namespace Codename___Slash
                 }
             }
 
-            //// Reinitialise values when creating a new map, or newly assign if first time
-            //ResetHeroPosition(heroPos);
-            //currentMapNumber = MapNumber;
-            //currentMap = new Map(1, 8);
-            //currentGridsDisplayed = new List<Section>();
-            //currentChunk = null;
-            //this.renderChunkSize = renderChunkSize;
+                    //// Reinitialise values when creating a new map, or newly assign if first time
+                    //ResetHeroPosition(heroPos);
+                    //currentMapNumber = MapNumber;
+                    //currentMap = new Map(1, 8);
+                    //currentGridsDisplayed = new List<Section>();
+                    //currentChunk = null;
+                    //this.renderChunkSize = renderChunkSize;
 
-            //// Read XML map data onto the new Map object, based on mapNumber
-            //// Should update Section Values with TilesInfo
-            //Loader.ReadXML(string.Format("Content/Maps/{0}.xml", MapNumber), ref currentMap);
-        }
+                    //// Read XML map data onto the new Map object, based on mapNumber
+                    //// Should update Section Values with TilesInfo
+                    //Loader.ReadXML(string.Format("Content/Maps/{0}.xml", MapNumber), ref currentMap);
+                }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             // Test by drawing 1 section
-            Rectangle tileRect = new Rectangle(0, 0, 100, 100);
+            Rectangle tileRect = new Rectangle(0, 0, tileSize, tileSize);
             // TileInfo tileInfo = new TileInfo();
             
             Vector2 origin = new Vector2(0, 0);
 
-            for (int i = 0; i < 8; i++)
+
+            for (int i = 0; i < 512; i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int j = 0; j < 512; j++)
                 {
+                    // Get appropriate tile's texture
+                    Texture2D tex = stringToTexture[arr[i, j]];
 
-
-                    for (int y = 0; y < TilesInSection; y++)
-                    {
-                        for (int x = 0; x < TilesInSection; x++)
-                        {
-                            // Get appropriate tile's texture
-                            Texture2D tex = stringToTexture[mapSections[i, j].sectionTiles[x, y]];
-
-                            // Draw texture in appropriate position
-                            spriteBatch.Draw(tex, tileRect, null, Color.White, 0, origin, SpriteEffects.None, 0);
-                            tileRect.X += 100;
-                        }
-                        tileRect.X = 0;
-                        tileRect.Y += 100;
-                    }
+                    // Draw texture in appropriate position
+                    spriteBatch.Draw(tex, tileRect, null, Color.Red, 0, origin, SpriteEffects.None, 0);
+                    tileRect.X += tileSize;
                 }
+                tileRect.X = 0;
+                tileRect.Y += tileSize;
             }
+
+
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    for (int j = 0; j < 8; j++)
+            //    {
+
+
+            //        for (int y = 0; y < TilesInSection; y++)
+            //        {
+            //            for (int x = 0; x < TilesInSection; x++)
+            //            {
+            //                // Get appropriate tile's texture
+            //                Texture2D tex = stringToTexture[mapSections[i, j].sectionTiles[y, x]];
+
+            //                // Draw texture in appropriate position
+            //                spriteBatch.Draw(tex, tileRect, null, Color.White, 0, origin, SpriteEffects.None, 0);
+            //                tileRect.X += tileSize;
+            //            }
+            //            tileRect.X = i * tileSize * TilesInSection;
+            //            tileRect.Y += tileSize;
+            //        }
+            //        tileRect.Y = j * tileSize * TilesInSection;
+            //    }
+            //}
         }
 
 

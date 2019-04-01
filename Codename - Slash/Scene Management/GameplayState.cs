@@ -16,7 +16,8 @@ namespace Codename___Slash
 
         private Hero hero; // Hero instance for this gameplay session
         private Camera camera; // Camera instance for this gameplay session
-        private MapGenerator mapGenerator;
+        // private MapGenerator mapGenerator;
+        private MapGen mapGen;
         private EnemyDirector enemyDirector;
         private PoolManager poolManager;
         private CollisionManager collisionManager;
@@ -30,7 +31,8 @@ namespace Codename___Slash
             poolManager = PoolManager.Instance;
             collisionManager = CollisionManager.Instance;
             enemyDirector = EnemyDirector.Instance;
-            mapGenerator = MapGenerator.Instance;
+            // mapGenerator = MapGenerator.Instance;
+            mapGen = new MapGen();
 
             // TODO : Based on serialization, saved hero could have several bits of data already stored i.e. weapons held, points scored 
             hero = new Hero(new Vector2(800, 500), stateContent);
@@ -38,9 +40,13 @@ namespace Codename___Slash
             
             camera = new Camera();
 
-            mapGenerator.Initialise(game.Services);
-            mapGenerator.InitialiseNewMap(1);
-
+            //mapGenerator.Initialise(game.Services);
+            //mapGenerator.InitialiseNewMap(1);
+            mapGen.Initialise(game.Services);
+            mapGen.GetMapData("Walkway");
+            mapGen.GetMapData("BattleArena");
+            mapGen.LoadMapTextures("Walkway");
+            mapGen.LoadMapTextures("BattleArena");
 
             // Initialise the EnemyDirector Singleton
             // IMPORTANT: Order, collisionmanager must be initalised first
@@ -92,7 +98,7 @@ namespace Codename___Slash
             hero.Update(gameTime);
             poolManager.Update(gameTime);
             collisionManager.Update();
-            camera.Follow(hero);
+            Camera.Follow(hero);
             ui.Update();
 
 
@@ -103,18 +109,23 @@ namespace Codename___Slash
         public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
         {
             // transformMatrix: camera.Transform [add as parameter]
-            spriteBatch.Begin();
 
-            mapGenerator.Draw(spriteBatch);
-            hero.Draw(gameTime, spriteBatch);
-            //spriteBatch.End();
+            spriteBatch.Begin();
+            // mapGenerator.Draw(spriteBatch);
+            mapGen.DrawMap("BattleArena", spriteBatch);
             poolManager.Draw(gameTime, spriteBatch);
-            //spriteBatch.Begin();
+
+            
+            
+            hero.Draw(gameTime, spriteBatch);
+            
             ui.Draw(spriteBatch);
+            spriteBatch.End();
+
+
 
             base.Draw(ref gameTime, spriteBatch);
 
-            spriteBatch.End();
         }
         
     }
