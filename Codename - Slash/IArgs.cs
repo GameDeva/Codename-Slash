@@ -21,14 +21,16 @@ namespace Codename___Slash
         public Vector2 Direction { get; private set; }
         public float MaxLiveTime { get; private set; }
         public float MoveSpeed { get; private set; }
+        public Vector2 ColliderSize { get; private set; }
 
-        public ArgsBullet(Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed)
+        public ArgsBullet(Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed, Vector2 colliderSize)
         {
             Position = position;
             Direction = direction;
             BulletTexture = bulletTexture;
             MaxLiveTime = maxLiveTime;
             MoveSpeed = moveSpeed;
+            ColliderSize = colliderSize;
         }
 
     }
@@ -38,10 +40,12 @@ namespace Codename___Slash
         public Vector2 Position { get; private set; }
         public float StartingHealth { get; private set; }
         public string InitialState { get; private set; }
+        public Rectangle LocalBounds { get; private set; }
 
-        public ArgsEnemy(Vector2 position, float startingHealth, string initialState)
+        public ArgsEnemy(Vector2 position, Rectangle localBounds, float startingHealth, string initialState)
         {
             Position = position;
+            LocalBounds = localBounds;
             StartingHealth = startingHealth;
             InitialState = initialState;
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Codename___Slash
 {
-    public class Bullet : GameObject
+    public class Bullet : GameObject, ICollidable, IDamageDealer
     {
         private Texture2D bulletTexture;
         private Vector2 position;
@@ -18,6 +18,14 @@ namespace Codename___Slash
         private float maxLiveTime;
         private float moveSpeed;
 
+        public Point BoundingRectPoint { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Rectangle BoundingRect { get; set; }
+        public bool FlaggedForRemoval { get; set; }
+        public ColliderType ColliderType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private const int dealDamageValue = 5;
+        public int DealDamageValue { get { return dealDamageValue; } set { value = dealDamageValue; } }
+
+        
         public Bullet()
         {
         }
@@ -57,9 +65,24 @@ namespace Codename___Slash
             bulletTexture = a.BulletTexture;
             maxLiveTime = a.MaxLiveTime;
             moveSpeed = a.MoveSpeed;
+            BoundingRect = new Rectangle((int)position.X, (int)position.Y, (int)a.ColliderSize.X, (int)a.ColliderSize.Y);
 
             liveTime = 0f;
             IsActive = true;
+        }
+
+        public bool CollisionTest(ICollidable other)
+        {
+            if (other != null)
+            {
+                return BoundingRect.Intersects(other.BoundingRect);
+            }
+            return false;
+        }
+
+        public void OnCollision(ICollidable other)
+        {
+            IsActive = false;
         }
     }
 }

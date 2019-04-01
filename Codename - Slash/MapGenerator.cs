@@ -20,87 +20,126 @@ namespace Codename___Slash
         Full,   // for entire tile
         None
     }
-    
+
+    // Info of each tile on the grid
+    public class TileInfo
+    {
+        // public int cs;
+
+        public string texturePath;
+        // public Texture2D Texture { get; set; }
+        // public Direction collision;
+        public bool enemySpawnpoint;
+
+        //private static TileInfo instance = null;
+        //public static TileInfo Instance { get { if (instance == null) { instance = new TileInfo(); return instance; } return instance; } set { instance = value; } }
+
+        public void SetTexture(Texture2D texture)
+        {
+            // this.texture = texture;
+        }
+
+    }
+
     public struct Section
     {
-        public string[,] tilesInfo;
+        public string[,] sectionTiles;
 
         public void InitialiseSection(int sectionSize)
         {
-            tilesInfo = new string[sectionSize, sectionSize];
+            sectionTiles = new string[sectionSize, sectionSize];
         }
 
     }
 
     public class MapGenerator
     {
+        // Single creation
+        private static MapGenerator instance;
+        public static MapGenerator Instance { get { if (instance == null) { instance = new MapGenerator(); return instance; } return instance; } set { instance = value; } }
+
+
         public static Dictionary<string, TileInfo> stringToTile;
+        public Dictionary<string, Texture2D> stringToTexture;
 
         private const int mapGridSize = 64; // Width and Height
-        private const int sectionCount = 8; // Width and Height
+        private const int TilesInSection = 8; // Width and Height
         
-        public Section[,] sectionsGrid;
+        public Section[,] mapSections;
         
-        private int currentMapNumber;
-        private Vector2Int currentHeroPos;
-        private Deque<Deque<Section>> currentChunk;
-        private int renderChunkSize;
+        //private int currentMapNumber;
+        //private Vector2Int currentHeroPos;
+        //private Deque<Deque<Section>> currentChunk;
+        //private int renderChunkSize;
         
-        private List<Section> currentGridsDisplayed;
+        //private List<Section> currentGridsDisplayed;
 
         private ContentManager content;
 
-        public MapGenerator(IServiceProvider serivceProvider)
+        // Collider add event
+        public Action<ICollidable, ColliderType> OnAddStaticCollider;
+
+        public void Initialise(IServiceProvider serivceProvider)
         {
             content = new ContentManager(serivceProvider, "Content/");
 
             // Create sectionGrid 2d array to reference to each section of the map
-            sectionsGrid = new Section[sectionCount, sectionCount];
+            mapSections = new Section[TilesInSection, TilesInSection];
 
             stringToTile = new Dictionary<string, TileInfo>();
-
+            stringToTexture = new Dictionary<string, Texture2D>();
         }
         
         public void InitialiseNewMap(int mapNumber) // , Vector2Int heroPos, int renderChunkSize
         {
-            string[,] arr = new string[64,64];
+            string[,] arr = new string[mapGridSize,mapGridSize];
             
             // Load map into the 2d array from the csv file
             Loader.ReadCSVFileTo2DArray(string.Format("Content/Maps/Map{0}.csv", mapNumber), ref arr);
-            
+
+            // List<TileInfo> tileInfoList = new List<TileInfo>();
+            TileInfo grassInfo = new TileInfo();
+            // Test
+            Loader.ReadXML(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref grassInfo);
+            stringToTexture.Add("Grass", content.Load<Texture2D>(grassInfo.texturePath));
+
+
             // Load the appropriate tileinfo into dictionary 
-            Loader.XMLToDictionary(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref stringToTile);
+            // Loader.XMLToDictionary(string.Format("Content/Maps/TileInfo{0}.xml", mapNumber), ref stringToTile);
             // Load the textures for each tile into each trileInfo struct 
             foreach(string key in stringToTile.Keys)
             {
-                stringToTile[key].SetTexture(content.Load<Texture2D>(stringToTile[key].texturePath));
+                // TODO : add back in
+                // stringToTile[key].Texture = content.Load<Texture2D>(stringToTile[key].texturePath);
             }
 
-            for (int i = 0; i < mapGridSize; i+=sectionCount)
+            // Loop through the mapsize, with increments of the number tiles wide/high in each section
+            for (int j = 0; j < mapGridSize; j += TilesInSection)
             {
-                for (int j = 0; j < mapGridSize; j+=sectionCount)
+                for (int i = 0; i < mapGridSize; i+=TilesInSection)
                 {
                     // Each subgrid loop
+                    //
 
                     // Create new section 
                     Section s = new Section();
                     // Initalise the 2d array in seciton with sectionCount
-                    s.InitialiseSection(sectionCount);
-                    // Attach to the sectionsgrid on the map
-                    sectionsGrid[i % sectionCount, j % sectionCount] = s;
+                    s.InitialiseSection(TilesInSection);
 
-                    for (int x = 0; x < sectionCount; x++)
+                    for (int y = 0; y < TilesInSection; y++)
                     {
-                        for (int y = 0; y < sectionCount; y++)
+                        for (int x = 0; x < TilesInSection; x++)
                         {
                             // each tile in a subgrid loop
-
+                            //
 
                             // Add the tile name to each subgrid from the map
-                            s.tilesInfo[x, y] = arr[i + x, j + y];
+                            s.sectionTiles[x, y] = arr[i + x, j + y];
                         }
                     }
-
+                    
+                    // Attach to the sectionsgrid on the map
+                    mapSections[i / TilesInSection, j / TilesInSection] = s;
                 }
             }
 
@@ -120,27 +159,33 @@ namespace Codename___Slash
         public void Draw(SpriteBatch spriteBatch)
         {
             // Test by drawing 1 section
-            Rectangle tileRect = new Rectangle(0, 0, 1, 1);
+            Rectangle tileRect = new Rectangle(0, 0, 100, 100);
             // TileInfo tileInfo = new TileInfo();
-
+            
             Vector2 origin = new Vector2(0, 0);
-            for (int x = 0; x < sectionCount; x++)
+
+            for (int i = 0; i < 8; i++)
             {
-                for (int y = 0; y < sectionCount; y++)
+                for (int j = 0; j < 8; j++)
                 {
-                    // Get appropriate tile
-                    TileInfo tileInfo = stringToTile[sectionsGrid[0, 0].tilesInfo[x,y]];
-
-                    tileRect.X = x;
-                    tileRect.Y = y;
-
-                    spriteBatch.Draw(tileInfo.texture, tileRect, null, Color.White, 0, origin, SpriteEffects.None, 0);
 
 
+                    for (int y = 0; y < TilesInSection; y++)
+                    {
+                        for (int x = 0; x < TilesInSection; x++)
+                        {
+                            // Get appropriate tile's texture
+                            Texture2D tex = stringToTexture[mapSections[i, j].sectionTiles[x, y]];
+
+                            // Draw texture in appropriate position
+                            spriteBatch.Draw(tex, tileRect, null, Color.White, 0, origin, SpriteEffects.None, 0);
+                            tileRect.X += 100;
+                        }
+                        tileRect.X = 0;
+                        tileRect.Y += 100;
+                    }
                 }
             }
-
-
         }
 
 

@@ -18,7 +18,7 @@ namespace Codename___Slash.EnemyStates
         public override void Enter(Enemy owner)
         {
             owner.DrawColor = Color.White;
-            owner.animator.AttachAnimation(owner.EnemyAnimations.IdleAnimation);
+            owner.Animator.AttachAnimation(owner.EnemyAnimations.IdleAnimation);
         }
 
         public override void Execute(Enemy owner, float deltaTime)

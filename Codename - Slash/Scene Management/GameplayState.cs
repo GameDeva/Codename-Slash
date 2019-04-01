@@ -17,37 +17,39 @@ namespace Codename___Slash
         private Hero hero; // Hero instance for this gameplay session
         private Camera camera; // Camera instance for this gameplay session
         private MapGenerator mapGenerator;
+        private EnemyDirector enemyDirector;
         private PoolManager poolManager;
+        private CollisionManager collisionManager;
 
         private UI ui; // UI instance for this gameplay session
         
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
-            // Create the appropriate map TODO : change to level state logic 
-            // map = new MapGenerator(game.Services);
-            
+            // Store reference to singleton Managers
+            poolManager = PoolManager.Instance;
+            collisionManager = CollisionManager.Instance;
+            enemyDirector = EnemyDirector.Instance;
+            mapGenerator = MapGenerator.Instance;
+
             // TODO : Based on serialization, saved hero could have several bits of data already stored i.e. weapons held, points scored 
             hero = new Hero(new Vector2(800, 500), stateContent);
             ui = new UI(stateContent, ref hero);
             
             camera = new Camera();
 
-            mapGenerator = new MapGenerator(game.Services);
-            // mapGenerator.InitialiseNewMap(1);
+            mapGenerator.Initialise(game.Services);
+            mapGenerator.InitialiseNewMap(1);
 
-            // TileInfo tileInfo = new TileInfo();
-
-            // Loader.ReadXML("Content/Maps/TileInfo1.xml");
 
             // Initialise the EnemyDirector Singleton
-            EnemyDirector.Instance = new EnemyDirector();
-            EnemyDirector.Instance.Initialise(hero, stateContent);
-
-            poolManager = new PoolManager();
+            // IMPORTANT: Order, collisionmanager must be initalised first
+            collisionManager.Initialise();
+            enemyDirector.Initialise(hero, stateContent);
             poolManager.Initialise(hero);
 
-            EnemyDirector.Instance.Create();
+            
+            EnemyDirector.Instance.CreateEnemies();
 
             base.Enter(game);
             
@@ -88,8 +90,8 @@ namespace Codename___Slash
             // Handle State object Updates
             commandManager.Update();
             hero.Update(gameTime);
-            EnemyDirector.Instance.Update(gameTime);
             poolManager.Update(gameTime);
+            collisionManager.Update();
             camera.Follow(hero);
             ui.Update();
 
@@ -103,10 +105,9 @@ namespace Codename___Slash
             // transformMatrix: camera.Transform [add as parameter]
             spriteBatch.Begin();
 
+            mapGenerator.Draw(spriteBatch);
             hero.Draw(gameTime, spriteBatch);
-            // mapGenerator.Draw(spriteBatch);
             //spriteBatch.End();
-            EnemyDirector.Instance.Draw(gameTime, spriteBatch);
             poolManager.Draw(gameTime, spriteBatch);
             //spriteBatch.Begin();
             ui.Draw(spriteBatch);

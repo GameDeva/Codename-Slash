@@ -54,6 +54,7 @@
     <Compile Include="GameObjectPool.cs" />
     <Compile Include="Hero Related\Bullet.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Hero Related\IDamageDealer.cs" />
     <Compile Include="InputHandling\Command.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameObject.cs" />
@@ -62,6 +63,8 @@
     <Compile Include="InputHandling\InputListener.cs" />
     <Compile Include="InputHandling\MouseEventArgs.cs" />
     <Compile Include="EnemyStates\State.cs" />
+    <Compile Include="Scene Management\Collision.cs" />
+    <Compile Include="Scene Management\CollisionManager.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
     <Compile Include="IDamageable.cs" />
     <Compile Include="IPoolable.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="MapGenerator.cs" />
     <Compile Include="Hero Related\Hero.cs" />
     <Compile Include="InputHandling\InputHandler.cs" />
+    <Compile Include="Scene Management\ICollidable.cs" />
     <Compile Include="Scene Management\MenuState.cs" />
     <Compile Include="ObjectPool.cs" />
     <Compile Include="Scene Management\OptionsState.cs" />
@@ -78,7 +82,6 @@
     <Compile Include="Scene Management\GameState.cs" />
     <Compile Include="Hero Related\Shotgun.cs" />
     <Compile Include="Scene Management\PoolManager.cs" />
-    <Compile Include="TileInfo.cs" />
     <Compile Include="UI.cs" />
     <Compile Include="Misc\Vector2Int.cs" />
     <Compile Include="Hero Related\Weapon.cs" />
@@ -101,6 +104,7 @@
     <None Include="Content\TileInfo1.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Content\info.xml" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

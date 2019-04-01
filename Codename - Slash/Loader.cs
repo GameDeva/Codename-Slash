@@ -53,24 +53,6 @@ namespace Codename___Slash
             }
         }
 
-        public static void ReadXML(string filename)
-        {
-            try
-            {
-                using (StreamReader reader = new StreamReader(filename))
-                {
-                    TileInfo.Instance = (TileInfo)new XmlSerializer(typeof(TileInfo)).Deserialize(reader.BaseStream);
-                }
-            }
-            catch (Exception e)
-            {
-                // If we've caught an exception, output an error message
-                // describing the error
-                Console.WriteLine("ERROR: XML File could not be deserialized!");
-                Console.WriteLine("Exception Message: " + e.Message);
-            }
-        }
-
         public static void ReadXMLList<T>(string filename, ref List<T> infoObjList)
         {
             try

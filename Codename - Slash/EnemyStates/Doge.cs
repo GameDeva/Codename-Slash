@@ -15,9 +15,11 @@ namespace Codename___Slash.EnemyStates
         private float distanceToBeginChase = 500.0f;
         private float distanceToBeginAttack = 75.0f;
 
+        public override bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public Doge()
         {
-
+            DealDamageValue = 10;
         }
 
 
@@ -39,7 +41,7 @@ namespace Codename___Slash.EnemyStates
             MoveSpeed = 100.0f;
             DrawColor = Color.White;
 
-            animator = new Animator();
+            Animator = new Animator();
 
             EnemyAnimations = EnemyDirector.Instance.DogeAnimations;
             // Position = new Vector2(0);
@@ -71,6 +73,10 @@ namespace Codename___Slash.EnemyStates
             //// Set the starting state of the FSM
             //stateMachine.Initialise("idle");
 
+            // Collider Related
+            colliderSize = new Vector2Int(2, 2);
+            BoundingRect = new Rectangle((int)Position.X, (int)Position.Y, colliderSize.X, colliderSize.Y);
+
             base.OnPoolInstantiation();
         }
 
@@ -84,10 +90,17 @@ namespace Codename___Slash.EnemyStates
             Position = a.Position;
             CurrentHealth = a.StartingHealth;
 
-            // Assign values
-            animator.AttachAnimation(EnemyAnimations.IdleAnimation);
+            base.OnSpawnFromPool(args);
+        }
 
-            IsActive = true;
+        public override void TakeDamage(int damagePoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void TakeDamage(int damagePoints, Vector2 direction)
+        {
+            throw new NotImplementedException();
         }
 
         #region Condition Methods for Transitions

@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
-<!--List<Keyvaluepair> of string to tiles that can be used-->
-<!-- <KeyValuePair> -->
-<!-- <entry key="Grass"> -->
-	<!-- <value> -->
-		<!-- <texturePath>"Maps/TileTextures/grass"</texturePath> -->
-		<!-- <collision>None</collision> -->
-		<!-- <enemySpawnPoint>true</enemySpawnPoint> -->
-	<!-- </value> -->
-<!-- </entry> -->
-<!-- <entry key="Dirt"> -->
-	<!-- <value> -->
-		<!-- <texturePath>"Maps/TileTextures/dirt"</texturePath> -->
-		<!-- <collision>Full</collision> -->
-		<!-- <enemySpawnPoint>false</enemySpawnPoint> -->
-	<!-- </value> -->
-<!-- </entry> -->
-<!-- </KeyValuePair> -->
-
 <TileInfo>
-	<cs> 1 </cs>
-	<!-- <texturePath>"Maps/TileTextures/grass"</texturePath> -->
-	<!-- <collision>None</collision> -->
-	<!-- <enemySpawnPoint>true</enemySpawnPoint> -->
+  <texturePath>Sprites/TileTextures/grass</texturePath>
+  <!--<collision>Full</collision>-->
+  <enemySpawnPoint>false</enemySpawnPoint>
 </TileInfo>
-

@@ -77,7 +77,7 @@ namespace Codename___Slash
             {
                 // MediaPlayer.IsRepeating = true;
                 song = Content.Load<Song>("Sound/Music/Everybody-Dies-Instrumental");
-                MediaPlayer.Play(song);
+                // MediaPlayer.Play(song);
             }
             catch { }
         }

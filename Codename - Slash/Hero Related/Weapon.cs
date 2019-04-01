@@ -28,6 +28,7 @@ namespace Codename___Slash
         public float MaxTimeBetweenShots { get; protected set; }
         public float BulletMoveSpeed { get; protected set; }
         public float BulletDecayTime { get; protected set; }
+        public Vector2 BulletColliderSize { get; protected set; }
 
         protected float currentTimerBetweenShots;
 

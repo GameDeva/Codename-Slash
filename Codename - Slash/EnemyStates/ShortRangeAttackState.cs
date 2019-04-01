@@ -31,7 +31,7 @@ namespace Codename___Slash.EnemyStates
         public override void Enter(Enemy owner)
         {
             owner.DrawColor = Color.Red;
-            owner.animator.AttachAnimation(owner.EnemyAnimations.IdleAnimation);
+            owner.Animator.AttachAnimation(owner.EnemyAnimations.IdleAnimation);
 
             // 
             InAttack = startWithAttack;

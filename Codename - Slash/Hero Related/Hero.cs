@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Codename___Slash
 {
-    public class Hero : IDamageable
+    public class Hero : IDamageable, ICollidable
     {
         // Hero stats
         public float MaxHealth { get; private set; }
@@ -33,12 +33,26 @@ namespace Codename___Slash
         private Animation up;
         private Animation sideRight;
         private Animation down;
-        
+
         public Animator Animator { get; private set; }
         private SpriteEffects heroSpriteEffects = SpriteEffects.None;
+        
+        private Rectangle localBounds;
+        public Rectangle BoundingRect
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - Animator.Origin.X) + localBounds.X;
+                int top = (int)Math.Round(Position.Y - Animator.Origin.Y) + localBounds.Y;
 
-        // Player Spawned sprites
-        public WeaponHandler WeaponHandler { get; private set; } 
+                return new Rectangle(left, top, localBounds.Width, localBounds.Height);
+            }
+            set { }
+        }
+        public bool FlaggedForRemoval { get; set; }
+        public ColliderType ColliderType { get { return ColliderType.hero; } set { value = ColliderType.hero; } }
+
+        public WeaponHandler WeaponHandler { get; private set; }
 
         private Vector2 movement;
         private float maxMoveSpeed = 300f;
@@ -57,7 +71,7 @@ namespace Codename___Slash
 
             prevVelocity = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
-
+            
         }
 
         public void Reset(Vector2 position)
@@ -90,6 +104,14 @@ namespace Codename___Slash
             up = new Animation(content.Load<Texture2D>("Sprites/Hero/2_north"), 4, 0.1f, true);  
             down = new Animation(content.Load<Texture2D>("Sprites/Hero/2_south2"), 4, 0.1f, true);
             sideRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_side"), 4, 0.1f, true);
+
+            // Calculate bounds within texture size.            
+            int width = (int)(idle.FrameWidth * 0.8);
+            int left = (idle.FrameWidth - width) / 2;
+            int height = (int)(idle.FrameHeight * 0.8);
+            int top = idle.FrameHeight - height;
+            localBounds = new Rectangle(left, top, width, height);
+
 
             Reset(position);
             
@@ -259,6 +281,29 @@ namespace Codename___Slash
 
             TakeDamage(damagePoints);
         }
-        
+
+        public bool CollisionTest(ICollidable other)
+        {
+            if (other != null)
+            {
+                return BoundingRect.Intersects(other.BoundingRect);
+            }
+            return false;
+        }
+
+        public void OnCollision(ICollidable other)
+        {
+            // Get rectangle of the intersection/collision depth
+            Rectangle r = Rectangle.Intersect(BoundingRect, other.BoundingRect);
+
+            // Move the collider in the opposite direction by that amount
+            position += new Vector2(-r.Width, -r.Height);
+            
+            if (other.ColliderType == ColliderType.enemy)
+            {
+                TakeDamage((other as IDamageDealer).DealDamageValue);
+            } 
+
+        }
     }
 }
