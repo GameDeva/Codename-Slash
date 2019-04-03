@@ -40,7 +40,23 @@ namespace Codename___Slash
         public abstract bool FlaggedForRemoval { get; set; }
         public ColliderType ColliderType { get { return ColliderType.enemy; } set { value = ColliderType.enemy; } }
         public int DealDamageValue { get; set; }
-        
+
+        public List<ColliderType> interactionTypes;
+        public List<ColliderType> InteractionTypes
+        {
+            get
+            {
+                if (interactionTypes == null)
+                {
+                    List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.hero);
+                    i.Add(ColliderType.heroAttack);
+                    i.Add(ColliderType.enemy);
+                    i.Add(ColliderType.staticEnvironment); return i;
+                }
+                return interactionTypes;
+            }
+        }
+
         public Enemy()
         {
         }

@@ -52,6 +52,7 @@ namespace Codename___Slash
             GameState.GameplayState.InitialiseState(this);
             GameState.ProtocolState.InitialiseState(this);
             GameState.AwardsState.InitialiseState(this);
+            GameState.GameOverState.InitialiseState(this);
 
             // Set first state
             state = GameState.MenuState;
@@ -142,9 +143,9 @@ namespace Codename___Slash
             Color[] data = new Color[rect.Width * rect.Height];
             for (int i = 0; i < data.Length; ++i) data[i] = Color.Red;
             tex.SetData(data);
-            
+
             Vector2 coor = new Vector2(rect.X, rect.Y);
-            
+
             spriteBatch.Draw(tex, coor, Color.Red * 0.3f);
         }
 

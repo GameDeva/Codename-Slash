@@ -7,12 +7,13 @@ using Microsoft.Xna.Framework;
 
 namespace Codename___Slash
 {
-    public class StaticCollider : ICollidable
+    public class ReachBoxTrigger : ICollidable
     {
         public Rectangle BoundingRect { get; set; }
         public bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ColliderType ColliderType { get; set; }
 
+        public bool Active { get; set; } = false;
         public List<ColliderType> interactionTypes;
         public List<ColliderType> InteractionTypes
         {
@@ -20,30 +21,37 @@ namespace Codename___Slash
             {
                 if (interactionTypes == null)
                 {
-                    List<ColliderType> i = new List<ColliderType>(); return i;
+                    List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.hero); return i;
                 }
                 return interactionTypes;
             }
         }
-        public StaticCollider(Rectangle boundingRect, ColliderType colliderType)
+
+        public Action Triggered;
+
+        public ReachBoxTrigger(Rectangle BoundingRect)
         {
-            BoundingRect = boundingRect;
-            ColliderType = colliderType;
+            this.BoundingRect = BoundingRect;
+            ColliderType = ColliderType.triggerRegions;
+
         }
 
         public bool CollisionTest(ICollidable other)
         {
             if (other != null)
             {
-                return BoundingRect.Intersects(other.BoundingRect);
+                if (other.ColliderType == ColliderType.hero && Active)
+                {
+                    return BoundingRect.Intersects(other.BoundingRect);
+                }
             }
             return false;
         }
 
         public void OnCollision(ICollidable other)
         {
-            // Do nothing
-            // The other guy will take care of his explosion/repulsion etc
+            Active = false;
+            Triggered?.Invoke();
         }
     }
 }

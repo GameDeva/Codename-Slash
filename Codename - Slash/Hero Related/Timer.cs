@@ -42,6 +42,7 @@ namespace Codename___Slash
         public void Start()
         {
             Running = true;
+            currentTimerValue = 0.0f;
         }
 
         // Stop Timer

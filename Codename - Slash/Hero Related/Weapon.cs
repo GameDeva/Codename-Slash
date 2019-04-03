@@ -33,8 +33,8 @@ namespace Codename___Slash
         protected float currentTimerBetweenShots;
 
         // 
-        public int CurrentAmmoCarry { get; protected set; }
-        public int CurrentMagHold { get; protected set; }
+        public int CurrentAmmoCarry { get; set; }
+        public int CurrentMagHold { get; set; }
 
         public List<Bullet> BulletsFired { get; protected set; }
 

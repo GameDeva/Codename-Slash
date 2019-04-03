@@ -13,7 +13,6 @@ namespace Codename___Slash
 {
     public class GameplayUI : UI
     {
-        
         private SpriteFont hudFont;
         private Texture2D templateSquare;
 
@@ -22,7 +21,7 @@ namespace Codename___Slash
         Vector2 center;
 
         private Rectangle healthRectangle;
-        private Rectangle shieldRectangle;
+        private Rectangle dashRectangle;
         private Rectangle weaponIconRectangle;
         
         private Hero hero;
@@ -35,22 +34,32 @@ namespace Codename___Slash
 
         // 
         private int healthRemaining;
+        private int stageNumber;
 
-        public GameplayUI(ContentManager content, ref Hero hero) : base(content)
+        public GameplayUI(ContentManager content) : base(content)
+        {
+
+        }
+
+        public void Initialise(SaveData saveData, ref Hero hero)
         {
             this.hero = hero;
             healthRemaining = 100;
-            healthRectangle = new Rectangle((int)hudLocation.X, 40, 50, healthRemaining * 2);
-            shieldRectangle = new Rectangle(70, 40, 20, 200);
-            weaponIconRectangle = new Rectangle(150, 50, 100, 40);
-
-            titleSafeArea = new Rectangle(10, 0, 100, 100);
+            
+            titleSafeArea = new Rectangle(10, 32, 100, 100);
             hudLocation = new Vector2(titleSafeArea.X, titleSafeArea.Y);
             center = new Vector2(titleSafeArea.X + titleSafeArea.Width / 2.0f,
                                          titleSafeArea.Y + titleSafeArea.Height / 2.0f);
+            healthRectangle = new Rectangle(titleSafeArea.X, titleSafeArea.Y + 32, 50, healthRemaining * 2);
+            dashRectangle = new Rectangle(70, titleSafeArea.Y + 32, 20, 200);
+            weaponIconRectangle = new Rectangle(150, titleSafeArea.Y + 32, 100, 40);
+
+
+            stageNumber = saveData.stageNumber;
 
             hero.WeaponHandler.OnWeaponSwap += OnWeaponSwap;
             hero.OnDamage += OnTakeDamage;
+            StageManager.Instance.OnCompleteStage += NextStage;
         }
 
         public override void Update()
@@ -97,14 +106,16 @@ namespace Codename___Slash
 
         private void DrawFont(SpriteBatch spriteBatch)
         {
-            string text = "Mani";
+            string text = "Geezer101";
             // string weaponName = "[WepName]";
             
-            spriteBatch.DrawString(hudFont, text, hudLocation, Color.White);
+            // spriteBatch.DrawString(hudFont, text, hudLocation, Color.White);
             spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.White);
 
+            spriteBatch.DrawString(hudFont, "Stage: " + stageNumber.ToString(), new Vector2(Game1.SCREENWIDTH-200, hudLocation.Y), Color.White);
+
             spriteBatch.Draw(templateSquare, healthRectangle, Color.Red);
-            spriteBatch.Draw(templateSquare, shieldRectangle, Color.Blue);
+            spriteBatch.Draw(templateSquare, dashRectangle, Color.Blue);
             if(weaponIconUI != null)
             {
                 spriteBatch.Draw(weaponIconUI, weaponIconRectangle, Color.Black);
@@ -148,6 +159,11 @@ namespace Codename___Slash
         {
             healthRemaining -= damageVal;
             healthRectangle.Height = healthRemaining * 2;
+        }
+
+        private void NextStage()
+        {
+            stageNumber++;
         }
     }
 }

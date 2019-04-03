@@ -17,6 +17,7 @@ namespace Codename___Slash
         private static PoolManager instance;
         public static PoolManager Instance { get { if (instance == null) { instance = new PoolManager(); return instance; } return instance; } set { instance = value; } }
 
+        private StageManager stageManager;
 
         ObjectPool<Bullet> bulletPool;
         ObjectPool<Doge> dogePool;
@@ -29,21 +30,22 @@ namespace Codename___Slash
         private List<Enemy> enemiesAlive;
 
         // Collider add event
-        public Action<ICollidable, ColliderType> OnAddDynamicCollider;
+        public Action<ICollidable> OnAddCollider;
 
         public void Initialise(Hero hero)
         {
-            // Add hero's collider
-            OnAddDynamicCollider?.Invoke(hero, hero.ColliderType);
+            //
+            stageManager = StageManager.Instance;
 
-            // TODO: Depends on how many there can be on the map
+            // Add hero's collider
+            OnAddCollider?.Invoke(hero);
+            
             bulletPool = new ObjectPool<Bullet>(100);
-            dogePool = new ObjectPool<Doge>(10);
-            skullPool = new ObjectPool<Skull>(10);
-            baldPool = new ObjectPool<Bald>(10);
-            darkPool = new ObjectPool<Dark>(10);
+
 
             // Attach all listeners
+            stageManager.OnCreateEnemyPools += CreateStageSpecificPools;
+            stageManager.OnCompleteStage += DeleteStageSpecificPools;
             hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
             EnemyDirector.Instance.OnCreateDoge += SpawnDoge;
             EnemyDirector.Instance.OnCreateSkull += SpawnSkull;
@@ -52,6 +54,30 @@ namespace Codename___Slash
 
             bulletsAlive = new List<Bullet>();
             enemiesAlive = new List<Enemy>();
+        }
+
+        // Create pools based on 
+        public void CreateStageSpecificPools(StageData stageData)
+        {
+            if(stageData.maxDogeCount > 0)
+                dogePool = new ObjectPool<Doge>(stageData.maxDogeCount);
+            if (stageData.maxSkullCount > 0)
+                skullPool = new ObjectPool<Skull>(stageData.maxSkullCount);
+            if (stageData.maxBaldCount > 0)
+                baldPool = new ObjectPool<Bald>(stageData.maxBaldCount);
+            if (stageData.maxDarkCount > 0)
+                darkPool = new ObjectPool<Dark>(stageData.maxDarkCount);
+        }
+
+        // Delete pools 
+        public void DeleteStageSpecificPools()
+        {
+            // TODO: Manually delete dynamic memeory 
+
+            dogePool = null;
+            skullPool = null;
+            baldPool = null;
+            darkPool = null;
         }
 
         public void Update(float deltaTime)
@@ -63,7 +89,6 @@ namespace Codename___Slash
                 if (bulletsAlive[i].IsActive)
                 {
                     bulletsAlive[i].Update(deltaTime);
-                    
                 }
                 else
                 {
@@ -103,7 +128,7 @@ namespace Codename___Slash
                 if (enemiesAlive[i].IsActive)
                 {
                     enemiesAlive[i].Draw(deltaTime, spriteBatch);
-                    Game1.DrawRect(spriteBatch, enemiesAlive[i].BoundingRect);
+                    // Game1.DrawRect(spriteBatch, enemiesAlive[i].BoundingRect);
                 }
             }
         }
@@ -113,7 +138,7 @@ namespace Codename___Slash
         {
             Bullet bullet = bulletPool.SpawnFromPool(args);
             bulletsAlive.Add(bullet);
-            OnAddDynamicCollider?.Invoke(bullet, ColliderType.heroAttack);
+            OnAddCollider?.Invoke(bullet);
         }
 
         // Enemy Spawns
@@ -122,25 +147,25 @@ namespace Codename___Slash
         {
             Doge doge = dogePool.SpawnFromPool(args);
             enemiesAlive.Add(doge);
-            OnAddDynamicCollider?.Invoke(doge, ColliderType.enemy);
+            OnAddCollider?.Invoke(doge);
         }
         private void SpawnSkull(IArgs args)
         {
             Skull skull = skullPool.SpawnFromPool(args);
             enemiesAlive.Add(skull);
-            OnAddDynamicCollider?.Invoke(skull, ColliderType.enemy);
+            OnAddCollider?.Invoke(skull);
         }
         private void SpawnBald(IArgs args)
         {
             Bald bald = baldPool.SpawnFromPool(args);
             enemiesAlive.Add(bald);
-            OnAddDynamicCollider?.Invoke(bald, ColliderType.enemy);
+            OnAddCollider?.Invoke(bald);
         }
         private void SpawnDark(IArgs args)
         {
             Dark dark = darkPool.SpawnFromPool(args);
             enemiesAlive.Add(dark);
-            OnAddDynamicCollider?.Invoke(dark, ColliderType.enemy);
+            OnAddCollider?.Invoke(dark);
         }
     }
 }

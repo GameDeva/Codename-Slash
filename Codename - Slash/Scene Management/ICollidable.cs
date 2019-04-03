@@ -14,6 +14,7 @@ namespace Codename___Slash
         Rectangle BoundingRect { get; set; }
         bool FlaggedForRemoval { get; set; }
         ColliderType ColliderType { get; set; }
+        List<ColliderType> InteractionTypes { get; } // Types of colliders it can interact with
 
         bool CollisionTest(ICollidable other);
         void OnCollision(ICollidable other);

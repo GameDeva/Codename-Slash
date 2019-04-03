@@ -76,6 +76,7 @@
     <Compile Include="Scene Management\Collision.cs" />
     <Compile Include="Scene Management\CollisionManager.cs" />
     <Compile Include="Scene Management\Dark.cs" />
+    <Compile Include="Scene Management\ReachBoxTrigger.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
     <Compile Include="IDamageable.cs" />
     <Compile Include="IPoolable.cs" />
@@ -85,8 +86,8 @@
     <Compile Include="Hero Related\Hero.cs" />
     <Compile Include="InputHandling\InputHandler.cs" />
     <Compile Include="Scene Management\ICollidable.cs" />
-    <Compile Include="Scene Management\LevelManager.cs" />
-    <Compile Include="Scene Management\MenuState.cs" />
+    <Compile Include="Scene Management\StageManager.cs" />
+    <Compile Include="Scene Management\MainMenuState.cs" />
     <Compile Include="ObjectPool.cs" />
     <Compile Include="Scene Management\OptionsState.cs" />
     <Compile Include="Program.cs" />

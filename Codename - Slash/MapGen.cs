@@ -31,6 +31,7 @@ namespace Codename___Slash
         public Action OnRemoveAllStaticColliders;
         public Action OnRemoveAllTriggerRegions;
         
+        // Same content as gameplaystate
         public void Initialise(IServiceProvider serivceProvider)
         {
             content = new ContentManager(serivceProvider, "Content/");
@@ -72,6 +73,11 @@ namespace Codename___Slash
                 }
             }
 
+        }
+
+        public void UnloadAllMapContent()
+        {
+            content.Unload();
         }
 
         public void AssignMapToDraw(string mapName)

@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Codename___Slash
 {
-    public class Stage
+    public class StageData
     {
         public int stageNumer;
 
         // 
         public int enemiesToFight;
+        public int intervalBetweenSpawn;
+        public int spawnPointCount;
 
         // Number of enemies of each type that can be present at 1 time 
         public int maxDogeCount;

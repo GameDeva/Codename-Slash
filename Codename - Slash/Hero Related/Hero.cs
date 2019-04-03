@@ -14,8 +14,8 @@ namespace Codename___Slash
     public class Hero : IDamageable, ICollidable
     {
         // Hero stats
-        private bool dead;
-        public float MaxHealth { get; private set; }
+        public bool Dead { get; private set; }
+        public float MaxHealth { get; private set; } = 100;
         public float CurrentHealth { get; private set; }
 
         public Vector2 Position { get { return position; } }
@@ -54,6 +54,11 @@ namespace Codename___Slash
         public ColliderType ColliderType { get { return ColliderType.hero; } set { value = ColliderType.hero; } }
 
         public WeaponHandler WeaponHandler { get; private set; }
+        public List<ColliderType> interactionTypes;
+        public List<ColliderType> InteractionTypes { get { if (interactionTypes == null) { List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.enemy);
+                    i.Add(ColliderType.interactableObjects);
+                    i.Add(ColliderType.triggerRegions);
+                    i.Add(ColliderType.staticEnvironment); return i; } return interactionTypes; } }
 
         private Vector2 movement;
         private float maxMoveSpeed = 300f;
@@ -67,33 +72,41 @@ namespace Codename___Slash
         public Action<int> OnDamage;
         public Action OnDeath;
 
-        public Hero(Vector2 position, ContentManager content)
+        public Hero(ContentManager content)
         {
             Animator = new Animator();
             WeaponHandler = new WeaponHandler();
-
-            this.position = position;
+            ResetPosition();
             prevVelocity = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
-            
+            Dead = false;
+            CurrentHealth = MaxHealth;
         }
 
-        public void Reset(Vector2 position)
+        public void ResetPosition()
         {
-            this.position = position;
-            Animator.AttachAnimation(idle);
+            position = new Vector2(1600, 1000);
+        }
 
+        public void Reset()
+        {
+            // ResetPosition();
+            Animator.AttachAnimation(idle);
+            Dead = false;
+            CurrentHealth = MaxHealth;
 
         }
 
         public void Update(float deltaTime)
         {
-            invulnerabilityTimer.Update(deltaTime);
-            WeaponHandler.Update(position, deltaTime);
-            ApplyMovement(deltaTime);
-            AttachAnimation();
-            ResetMovement();
-            
+            if (!Dead)
+            {
+                invulnerabilityTimer.Update(deltaTime);
+                WeaponHandler.Update(position, deltaTime);
+                ApplyMovement(deltaTime);
+                AttachAnimation();
+                ResetMovement();
+            }
         }
 
         public void LoadContent(ContentManager content)
@@ -116,7 +129,7 @@ namespace Codename___Slash
             localBounds = new Rectangle(left, top, width, height);
 
 
-            Reset(position);
+            Reset();
             
         }
 
@@ -294,6 +307,7 @@ namespace Codename___Slash
                 invulnerabilityTimer.Start();
                 OnDamage?.Invoke(damagePoints);
             } else {
+                Dead = true;
                 OnDeath?.Invoke();
             }
         }
@@ -316,11 +330,14 @@ namespace Codename___Slash
 
         public void OnCollision(ICollidable other)
         {
-            // Get rectangle of the intersection/collision depth
-            Rectangle r = Rectangle.Intersect(BoundingRect, other.BoundingRect);
+            if(other.ColliderType != ColliderType.triggerRegions)
+            {
+                // Get rectangle of the intersection/collision depth
+                Rectangle r = Rectangle.Intersect(BoundingRect, other.BoundingRect);
 
-            // Move the collider in the opposite direction by that amount
-            position += new Vector2(r.Width, r.Height);
+                // Move the collider in the opposite direction by that amount
+                position += new Vector2(r.Width, r.Height);
+            }
             
             if (other.ColliderType == ColliderType.enemy && !invulnerabilityTimer.Running)
             {

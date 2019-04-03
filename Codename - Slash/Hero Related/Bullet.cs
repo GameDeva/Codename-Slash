@@ -21,11 +21,13 @@ namespace Codename___Slash
         public Point BoundingRectPoint { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Rectangle BoundingRect { get; set; }
         public bool FlaggedForRemoval { get; set; }
-        public ColliderType ColliderType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ColliderType ColliderType { get; set; }
         private const int dealDamageValue = 5;
         public int DealDamageValue { get { return dealDamageValue; } set { value = dealDamageValue; } }
 
-        
+        public List<ColliderType> interactionTypes;
+        public List<ColliderType> InteractionTypes { get { if (interactionTypes == null) { List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.enemy); i.Add(ColliderType.staticEnvironment); return i; } return interactionTypes; } }
+
         public Bullet()
         {
         }
@@ -80,6 +82,8 @@ namespace Codename___Slash
 
         public void OnCollision(ICollidable other)
         {
+
+
             IsActive = false;
         }
     }
