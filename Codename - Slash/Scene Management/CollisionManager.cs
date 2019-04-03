@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Codename___Slash
 {
@@ -11,7 +12,9 @@ namespace Codename___Slash
         hero,
         enemy,
         heroAttack,
-        environment
+        staticEnvironment, 
+        interactableObjects, 
+        triggerRegions
     }
 
     public class CollisionManager
@@ -21,13 +24,15 @@ namespace Codename___Slash
         public static CollisionManager Instance { get { if (instance == null) { instance = new CollisionManager(); return instance; } return instance; } set { instance = value; } }
 
         private PoolManager poolmanager;
-        private MapGenerator mapGenerator;
+        private MapGen mapGenerator;
 
         private List<ICollidable> heroes = new List<ICollidable>(); // Kept when adding coop mode, with more than 1 hero
         private List<ICollidable> enemyEntities = new List<ICollidable>();
         private List<ICollidable> heroAttacks = new List<ICollidable>();
-        private List<ICollidable> environmentColliders = new List<ICollidable>();
-        
+        private List<ICollidable> staticEnvironmentColliders = new List<ICollidable>();
+        private List<ICollidable> interactbleObjectColliders = new List<ICollidable>();
+        private List<ICollidable> triggerRegionColliders = new List<ICollidable>();
+
         private HashSet<Collision> collisionOccuranceList = new HashSet<Collision>(new CollisionComparer());
 
         // TODO: If there is issue with performance when it comes to switch statements,
@@ -45,8 +50,14 @@ namespace Codename___Slash
                 case ColliderType.heroAttack:
                     heroAttacks.Add(c);
                     break;
-                case ColliderType.environment:
-                    environmentColliders.Add(c);
+                case ColliderType.staticEnvironment:
+                    staticEnvironmentColliders.Add(c);
+                    break;
+                case ColliderType.interactableObjects:
+                    interactbleObjectColliders.Add(c);
+                    break;
+                case ColliderType.triggerRegions:
+                    triggerRegionColliders.Add(c);
                     break;
             }
         }
@@ -64,8 +75,8 @@ namespace Codename___Slash
                 case ColliderType.heroAttack:
                     heroAttacks.Remove(c);
                     break;
-                case ColliderType.environment:
-                    environmentColliders.Remove(c);
+                case ColliderType.staticEnvironment:
+                    staticEnvironmentColliders.Remove(c);
                     break;
             }
         }
@@ -74,11 +85,11 @@ namespace Codename___Slash
         {
             // Get reference to singleton instances
             poolmanager = PoolManager.Instance;
-            mapGenerator = MapGenerator.Instance;
+            mapGenerator = MapGen.Instance;
 
             poolmanager.OnAddDynamicCollider += AddCollidable;
-            mapGenerator.OnAddStaticCollider += AddCollidable;
-
+            mapGenerator.OnAddcollider += AddCollidable;
+            mapGenerator.OnRemoveAllStaticColliders += RemoveAllStaticColliders;
         }
 
         public void Update()
@@ -96,7 +107,7 @@ namespace Codename___Slash
             }
 
             // 
-            // Hero attacks vs Enemies & enironment
+            // Hero attacks vs Enemies & staticEnv & interactableItems
             foreach (ICollidable heroAttack in heroAttacks)
             {
                 // Check collisions with enemies
@@ -109,7 +120,7 @@ namespace Codename___Slash
                     }
                 }
                 // Check collisions with environment
-                foreach (ICollidable environment in environmentColliders)
+                foreach (ICollidable environment in staticEnvironmentColliders)
                 {
                     // If the two objects are colliding then add them to the set
                     if (heroAttack.CollisionTest(environment))
@@ -117,11 +128,19 @@ namespace Codename___Slash
                         collisionOccuranceList.Add(new Collision(heroAttack, environment));
                     }
                 }
-
+                // Check collisions with itneractables
+                foreach (ICollidable io in interactbleObjectColliders)
+                {
+                    // If the two objects are colliding then add them to the set
+                    if (heroAttack.CollisionTest(io))
+                    {
+                        collisionOccuranceList.Add(new Collision(heroAttack, io));
+                    }
+                }
             }
 
             // 
-            // Enemies vs Enemies & environment
+            // Enemies vs Enemies & staticEnv
             foreach (ICollidable enemyEntity1 in enemyEntities)
             {
                 // Check collisions with enemies
@@ -141,7 +160,7 @@ namespace Codename___Slash
                 }
 
                 // Check collisions with environment
-                foreach (ICollidable environment in environmentColliders)
+                foreach (ICollidable environment in staticEnvironmentColliders)
                 {
                     // If the two objects are colliding then add them to the set
                     if (enemyEntity1.CollisionTest(environment))
@@ -152,7 +171,7 @@ namespace Codename___Slash
             }
 
             // 
-            // Hero vs Enemies & environment
+            // Hero vs Enemies & staticEnv & TriggerRegions
             foreach (ICollidable hero1 in heroes)
             {
                 // Check collisions with other heroes
@@ -180,7 +199,7 @@ namespace Codename___Slash
                 }
 
                 // Check collisions with environment
-                foreach (ICollidable environment in environmentColliders)
+                foreach (ICollidable environment in staticEnvironmentColliders)
                 {
                     // If the two objects are colliding then add them to the set
                     if (hero1.CollisionTest(environment))
@@ -188,9 +207,27 @@ namespace Codename___Slash
                         collisionOccuranceList.Add(new Collision(hero1, environment));
                     }
                 }
+
+                // Check collisions with triggers
+                foreach (ICollidable trigger in triggerRegionColliders)
+                {
+                    // If the two objects are colliding then add them to the set
+                    if (hero1.CollisionTest(trigger))
+                    {
+                        collisionOccuranceList.Add(new Collision(hero1, trigger));
+                    }
+                }
             }
         }
 
+        public void DebugDraw(SpriteBatch spriteBatch)
+        {
+            foreach (ICollidable staticEnv in staticEnvironmentColliders)
+            {
+                Game1.DrawRect(spriteBatch, staticEnv.BoundingRect);
+            }
+
+        }
 
         private void ResolveCollisions()
         {
@@ -198,6 +235,11 @@ namespace Codename___Slash
             {
                 c.Resolve();
             }
+        }
+
+        private void RemoveAllStaticColliders()
+        {
+            staticEnvironmentColliders.Clear();
         }
     }
 }

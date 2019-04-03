@@ -10,9 +10,9 @@ namespace Codename___Slash
     public class StateMachine
     {
         private Enemy owner;
-        private List<State> stateList;
+        private List<NPCState> stateList;
 
-        private State m_CurrentState;
+        private NPCState m_CurrentState;
 
         public StateMachine()
             : this(null)
@@ -22,7 +22,7 @@ namespace Codename___Slash
         public StateMachine(Enemy owner)
         {
             this.owner = owner;
-            stateList = new List<State>();
+            stateList = new List<NPCState>();
             m_CurrentState = null;
         }
 
@@ -35,12 +35,12 @@ namespace Codename___Slash
             }
         }
 
-        public void AddState(State state)
+        public void AddState(NPCState state)
         {
             stateList.Add(state);
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(float deltaTime)
         {
             // Null check the current state of the FSM
             if (m_CurrentState == null) return;
@@ -60,7 +60,7 @@ namespace Codename___Slash
             }
 
             // Execute the current state
-            m_CurrentState.Execute(owner, (float) gameTime.ElapsedGameTime.TotalSeconds);
+            m_CurrentState.Execute(owner, deltaTime);
         }
     }
 

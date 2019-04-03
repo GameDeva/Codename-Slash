@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Codename___Slash.EnemyStates
 {
-    public class FleeState : State
+    public class FleeState : NPCState
     {
         public FleeState(string name)
         {

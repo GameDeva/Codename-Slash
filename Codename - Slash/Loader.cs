@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace Codename___Slash
 {
     public class Loader
     {
+        public static bool NewLineOnAttributes { get; set; }
+
         /// <summary>
         /// Reads a csv file to a 2d array of strings
         /// </summary>
@@ -28,6 +31,22 @@ namespace Codename___Slash
             }
         }
 
+
+        /// <summary>
+        /// Serializes an object to an XML file.
+        /// </summary>
+        public static void ToXmlFile(Object obj, string filePath)
+        {
+            var xs = new XmlSerializer(obj.GetType());
+            var ns = new XmlSerializerNamespaces();
+            var ws = new XmlWriterSettings { Indent = true, NewLineOnAttributes = NewLineOnAttributes, OmitXmlDeclaration = true };
+            ns.Add("", "");
+
+            using (XmlWriter writer = XmlWriter.Create(filePath, ws))
+            {
+                xs.Serialize(writer, obj);
+            }
+        }
 
         /// <summary>
         /// XML Reader generic method that takes in a xml file and pushes its contents into the given object 

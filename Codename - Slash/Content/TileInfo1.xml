@@ -1,21 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
-<!--List<Keyvaluepair> of string to tiles that can be used-->
-<!--<keyValueList>
-<entry key="Grass">
-	<value>
-		<texturePath>"Maps/TileTextures/grass"</texturePath>
-		<collision>None</collision>
-		<enemySpawnPoint>true</enemySpawnPoint>
-	</value>
-</entry>
-<entry key="Dirt">
-
-</entry>
-</keyValueList>-->
-
-<TileInfo>
-  <texturePath>"Maps/TileTextures/dirt"</texturePath>
-  <!--<collision>Full</collision>-->
-  <enemySpawnPoint>false</enemySpawnPoint>
-</TileInfo>
+<GameInfo>
+	<tileInfoList>
+		<TileInfo>
+			<name>310</name>
+			<texturePath>Sprites/TileTextures/tile310</texturePath>
+			<collision>true</collision>
+		</TileInfo>
+		<TileInfo>
+			<name>295</name>
+			<texturePath>Sprites/TileTextures/tile295</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>392</name>
+			<texturePath>Sprites/TileTextures/tile392</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>423</name>
+			<texturePath>Sprites/TileTextures/tile423</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>713</name>
+			<texturePath>Sprites/TileTextures/tile713</texturePath>
+			<collision>false</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>327</name>
+			<texturePath>Sprites/TileTextures/tile327</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>359</name>
+			<texturePath>Sprites/TileTextures/tile359</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>328</name>
+			<texturePath>Sprites/TileTextures/tile328</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>390</name>
+			<texturePath>Sprites/TileTextures/tile390</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		<TileInfo>
+			<name>800</name>
+			<texturePath>Sprites/TileTextures/tile800</texturePath>
+			<collision>true</collision>	
+		</TileInfo>
+		
+	</tileInfoList>
+</GameInfo>

@@ -27,8 +27,15 @@ namespace Codename___Slash.EnemyStates
 
         // Animations
         public EnemyAnimations DogeAnimations { get; private set; }
-
+        public EnemyAnimations SkullAnimations { get; private set; }
+        public EnemyAnimations BaldAnimations { get; private set; }
+        public EnemyAnimations DarkAnimations { get; private set; }
+        
+        // Localbounds
         public Rectangle DogeLocalBounds { get; private set; }
+        public Rectangle SkullLocalBounds { get; private set; }
+        public Rectangle BaldLocalBounds { get; private set; }
+        public Rectangle DarkLocalBounds { get; private set; }
 
         public void Initialise(Hero hero, ContentManager content)
         {
@@ -40,29 +47,61 @@ namespace Codename___Slash.EnemyStates
                 new Animation(content.Load<Texture2D>("Sprites/Enemies/Doge_down"), 3, 0.1f, true),
                 new Animation(content.Load<Texture2D>("Sprites/Enemies/Doge_right"), 3, 0.1f, true),
                 new Animation(content.Load<Texture2D>("Sprites/Enemies/Doge_left"), 3, 0.1f, true));
+            SkullAnimations = new EnemyAnimations(new Animation(content.Load<Texture2D>("Sprites/Enemies/Skull_idle"), 1, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Skull_up"), 3, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Skull_down"), 3, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Skull_right"), 3, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Skull_left"), 3, 0.1f, true));
+            BaldAnimations = new EnemyAnimations(new Animation(content.Load<Texture2D>("Sprites/Enemies/Bald_idle"), 1, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Bald_up"), 3, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Bald_down"), 3, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Bald_right"), 3, 0.1f, true),
+                new Animation(content.Load<Texture2D>("Sprites/Enemies/Bald_left"), 3, 0.1f, true));
+            DarkAnimations = new EnemyAnimations(new Animation(content.Load<Texture2D>("Sprites/Enemies/Dark_idle"), 1, 0.1f, true),
+                            new Animation(content.Load<Texture2D>("Sprites/Enemies/Dark_up"), 3, 0.1f, true),
+                            new Animation(content.Load<Texture2D>("Sprites/Enemies/Dark_down"), 3, 0.1f, true),
+                            new Animation(content.Load<Texture2D>("Sprites/Enemies/Dark_right"), 3, 0.1f, true),
+                            new Animation(content.Load<Texture2D>("Sprites/Enemies/Dark_left"), 3, 0.1f, true));
 
             // Calculate bounds within texture size.            
-            int width = (int)(DogeAnimations.IdleAnimation.FrameWidth * 0.8);
+            //
+            int width = (int)(DogeAnimations.IdleAnimation.FrameWidth);
             int left = (DogeAnimations.IdleAnimation.FrameWidth - width) / 2;
-            int height = (int)(DogeAnimations.IdleAnimation.FrameHeight * 0.8);
-            int top = DogeAnimations.IdleAnimation.FrameHeight - height;
+            int height = (int)(DogeAnimations.IdleAnimation.FrameHeight *2);
+            int top = DogeAnimations.IdleAnimation.FrameHeight - height+16;
             DogeLocalBounds = new Rectangle(left, top, width, height);
-
-
-            //enemiesAlive.Add(new Doge(DogeAnimations, new Vector2(300, 300)));
-            //enemiesAlive.Add(new Doge(DogeAnimations, new Vector2(500, 500)));
-            //enemiesAlive.Add(new Doge(DogeAnimations, new Vector2(700, 100)));
-            //enemiesAlive.Add(new Doge(DogeAnimations, new Vector2(300, 800)));
-
+            //             
+            width = (int)(DogeAnimations.IdleAnimation.FrameWidth);
+            left = (DogeAnimations.IdleAnimation.FrameWidth - width) / 2;
+            height = (int)(DogeAnimations.IdleAnimation.FrameHeight * 2);
+            top = DogeAnimations.IdleAnimation.FrameHeight - height + 16;
+            SkullLocalBounds = new Rectangle(left, top, width, height);
+            //             
+            width = (int)(DogeAnimations.IdleAnimation.FrameWidth);
+            left = (DogeAnimations.IdleAnimation.FrameWidth - width) / 2;
+            height = (int)(DogeAnimations.IdleAnimation.FrameHeight * 2);
+            top = DogeAnimations.IdleAnimation.FrameHeight - height + 16;
+            BaldLocalBounds = new Rectangle(left, top, width, height);
+            // 
+            width = (int)(DogeAnimations.IdleAnimation.FrameWidth);
+            left = (DogeAnimations.IdleAnimation.FrameWidth - width) / 2;
+            height = (int)(DogeAnimations.IdleAnimation.FrameHeight * 2);
+            top = DogeAnimations.IdleAnimation.FrameHeight - height + 16;
+            BaldLocalBounds = new Rectangle(left, top, width, height);
+                        
         }
 
         public void CreateEnemies()
         {
+            CreateEnemy("Skull", SkullLocalBounds, new Vector2(100, 100), 100, "chase");
+            //CreateEnemy("Skull", SkullLocalBounds, new Vector2(800, 500), 100, "chase");
+            //CreateEnemy("Skull", SkullLocalBounds, new Vector2(400, 900), 100, "chase");
+            //CreateEnemy("Skull", SkullLocalBounds, new Vector2(900, 100), 100, "chase");
 
-            CreateEnemy("Doge", DogeLocalBounds, new Vector2(300, 300), 100, "idle");
-            CreateEnemy("Doge", DogeLocalBounds, new Vector2(500, 500), 100, "idle");
-            CreateEnemy("Doge", DogeLocalBounds, new Vector2(700, 100), 100, "idle");
-            CreateEnemy("Doge", DogeLocalBounds, new Vector2(300, 800), 100, "idle");
+            //CreateEnemy("Doge", DogeLocalBounds, new Vector2(300, 300), 100, "idle");
+            //CreateEnemy("Doge", DogeLocalBounds, new Vector2(500, 500), 100, "idle");
+            //CreateEnemy("Doge", DogeLocalBounds, new Vector2(700, 100), 100, "idle");
+            //CreateEnemy("Doge", DogeLocalBounds, new Vector2(300, 800), 100, "idle");
         }
 
         public float SqrDistanceToHeroFrom(Vector2 position)
@@ -94,16 +133,17 @@ namespace Codename___Slash.EnemyStates
             }
             else if(type.Equals("Bald", StringComparison.OrdinalIgnoreCase))
             {
-
+                OnCreateBald?.Invoke(new ArgsEnemy(spawnPoint, localBounds, startingHealth, initialState));
             }
             else if (type.Equals("Skull", StringComparison.OrdinalIgnoreCase))
             {
-
+                OnCreateSkull?.Invoke(new ArgsEnemy(spawnPoint, localBounds, startingHealth, initialState));
             }
             else if(type.Equals("Dark", StringComparison.OrdinalIgnoreCase))
             {
-
-            } else
+                OnCreateDark?.Invoke(new ArgsEnemy(spawnPoint, localBounds, startingHealth, initialState));
+            }
+            else
             {
                 Console.WriteLine("Enemy creation type not recognised");
             }

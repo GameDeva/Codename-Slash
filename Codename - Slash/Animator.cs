@@ -34,13 +34,13 @@ namespace Codename___Slash
         /// <summary>
         /// Advances the time position and draws the current frame of the animation.
         /// </summary>
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position, SpriteEffects spriteEffects, Color? color = null)
+        public void Draw(float deltaTime, SpriteBatch spriteBatch, Vector2 position, SpriteEffects spriteEffects, Color? color = null)
         {
             if (Animation == null)
                 throw new NotSupportedException("No animation is currently playing.");
 
             // Process passing time.
-            time += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            time += deltaTime;
             while (time > Animation.FrameTime)
             {
                 time -= Animation.FrameTime;

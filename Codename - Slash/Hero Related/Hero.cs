@@ -14,6 +14,7 @@ namespace Codename___Slash
     public class Hero : IDamageable, ICollidable
     {
         // Hero stats
+        private bool dead;
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
 
@@ -61,7 +62,9 @@ namespace Codename___Slash
         private float dashAcc;
         private bool shouldDash;
 
-        public Action OnDamage;
+        private Timer invulnerabilityTimer = new Timer(2.0f);
+        
+        public Action<int> OnDamage;
         public Action OnDeath;
 
         public Hero(Vector2 position, ContentManager content)
@@ -69,6 +72,7 @@ namespace Codename___Slash
             Animator = new Animator();
             WeaponHandler = new WeaponHandler();
 
+            this.position = position;
             prevVelocity = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
             
@@ -82,15 +86,14 @@ namespace Codename___Slash
 
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(float deltaTime)
         {
-            WeaponHandler.Update(position, (float) gameTime.ElapsedGameTime.TotalSeconds);
-            
-            ApplyMovement(gameTime);
+            invulnerabilityTimer.Update(deltaTime);
+            WeaponHandler.Update(position, deltaTime);
+            ApplyMovement(deltaTime);
             AttachAnimation();
             ResetMovement();
             
-
         }
 
         public void LoadContent(ContentManager content)
@@ -106,9 +109,9 @@ namespace Codename___Slash
             sideRight = new Animation(content.Load<Texture2D>("Sprites/Hero/2_side"), 4, 0.1f, true);
 
             // Calculate bounds within texture size.            
-            int width = (int)(idle.FrameWidth * 0.8);
+            int width = (int)(idle.FrameWidth);
             int left = (idle.FrameWidth - width) / 2;
-            int height = (int)(idle.FrameHeight * 0.8);
+            int height = (int)(idle.FrameHeight);
             int top = idle.FrameHeight - height;
             localBounds = new Rectangle(left, top, width, height);
 
@@ -117,7 +120,7 @@ namespace Codename___Slash
             
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             // Flip the sprite to face the way we are moving.
             if (velocity.X < 0)
@@ -128,8 +131,11 @@ namespace Codename___Slash
             }
 
             // Draw that sprite.
-            Animator.Draw(gameTime, spriteBatch, Position, heroSpriteEffects);
-
+            Animator.Draw(deltaTime, spriteBatch, Position, heroSpriteEffects);
+            
+            if(invulnerabilityTimer.Running)
+                Game1.DrawRect(spriteBatch, BoundingRect);
+            
             // Draw Weapon Related things
             WeaponHandler.Draw(spriteBatch, position);
         }
@@ -141,11 +147,10 @@ namespace Codename___Slash
             movement.Y = 0.0f;
         }
 
-        private void ApplyMovement(GameTime gameTime)
+        private void ApplyMovement(float deltaTime)
         {
-            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             // movement.Normalize(); // TODO: not working
-            velocity += movement * moveAcc * elapsed;
+            velocity += movement * moveAcc * deltaTime;
             // if(movement == Vector2.Zero)
             velocity *= friction;
 
@@ -163,8 +168,24 @@ namespace Codename___Slash
             velocity.Y = MathHelper.Clamp(Velocity.Y, -maxMoveSpeed, maxMoveSpeed);
 
             prevPosition = position;
-            position += Velocity * elapsed;
+            position += Velocity * deltaTime;
             position = new Vector2((float)Math.Round(Position.X), (float)Math.Round(Position.Y));
+
+            // Boundary colliders
+            if(MapGen.Instance.CurrentMapColliderType == MapCollider.BattleArena)
+            {
+                position.X = MathHelper.Clamp(position.X, (BoundingRect.Width / 2) + 32, (Game1.SCREENWIDTH - BoundingRect.Width / 2) - 32);
+                position.Y = MathHelper.Clamp(position.Y, (BoundingRect.Height / 2) + 64, (Game1.SCREENHEIGHT - BoundingRect.Height / 2) - 64);
+            } else if(MapGen.Instance.CurrentMapColliderType == MapCollider.Walkway)
+            {
+                // position.X = MathHelper.Clamp(position.X, (BoundingRect.Width / 2) + 224, (Game1.SCREENWIDTH - BoundingRect.Width / 2) - 224);
+                position.Y = MathHelper.Clamp(position.Y, (BoundingRect.Height / 2) + 416, (Game1.SCREENHEIGHT - BoundingRect.Height / 2) - 416);
+            } else
+            {
+                position.X = MathHelper.Clamp(position.X, (BoundingRect.Width / 2) + 32, (Game1.SCREENWIDTH - BoundingRect.Width / 2) + 64); // Only min is important
+                position.Y = MathHelper.Clamp(position.Y, (BoundingRect.Height / 2) + 416, (Game1.SCREENHEIGHT - BoundingRect.Height / 2) - 416);
+            }
+
 
             // prevVelocity = velocity;
         }
@@ -268,11 +289,13 @@ namespace Codename___Slash
         public void TakeDamage(int damagePoints)
         {
             CurrentHealth -= damagePoints;
-            OnDamage?.Invoke();
-
-            // Health below 0, then player is dead
-            // if()    
-
+            if(CurrentHealth > 0)
+            {
+                invulnerabilityTimer.Start();
+                OnDamage?.Invoke(damagePoints);
+            } else {
+                OnDeath?.Invoke();
+            }
         }
 
         public void TakeDamage(int damagePoints, Vector2 direction) 
@@ -297,9 +320,9 @@ namespace Codename___Slash
             Rectangle r = Rectangle.Intersect(BoundingRect, other.BoundingRect);
 
             // Move the collider in the opposite direction by that amount
-            position += new Vector2(-r.Width, -r.Height);
+            position += new Vector2(r.Width, r.Height);
             
-            if (other.ColliderType == ColliderType.enemy)
+            if (other.ColliderType == ColliderType.enemy && !invulnerabilityTimer.Running)
             {
                 TakeDamage((other as IDamageDealer).DealDamageValue);
             } 

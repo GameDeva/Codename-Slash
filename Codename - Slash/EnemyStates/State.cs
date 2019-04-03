@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Codename___Slash
 {
-    public abstract class State
+    public abstract class NPCState
     {
         public abstract void Enter(Enemy owner);
         public abstract void Exit(Enemy owner);
@@ -34,10 +34,10 @@ namespace Codename___Slash
 
     public class Transition
     {
-        public readonly State NextState;
+        public readonly NPCState NextState;
         public readonly Func<bool> Condition;
 
-        public Transition(State nextState, Func<bool> condition)
+        public Transition(NPCState nextState, Func<bool> condition)
         {
             NextState = nextState;
             Condition = condition;

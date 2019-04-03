@@ -18,9 +18,11 @@ namespace Codename___Slash
         // List of states
         // Stored as static auto properties, since the game will only have one game state
         // This saves memory from having to instaniate new states every time
-        public static MenuState MenuState { get; } = new MenuState();
-        public static OptionsState OptionsState { get; } = new OptionsState();
+        public static MainMenuState MenuState { get; } = new MainMenuState();
+        public static AwardsState AwardsState { get; } = new AwardsState();
+        public static ProtocolState ProtocolState { get; } = new ProtocolState();
         public static GameplayState GameplayState { get; } = new GameplayState();
+        public static GameOverState GameOverState { get; } = new GameOverState();
 
         protected CommandManager commandManager;
         protected IServiceProvider services;
@@ -62,8 +64,8 @@ namespace Codename___Slash
         }
 
         // Update method for each scene
-        public virtual GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler) { return null; }
+        public virtual GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler) { return null; }
 
-        public virtual void Draw(ref GameTime gameTime, SpriteBatch spriteBatch) { }
+        public virtual void Draw(float deltaTime, SpriteBatch spriteBatch) { }
     }
 }

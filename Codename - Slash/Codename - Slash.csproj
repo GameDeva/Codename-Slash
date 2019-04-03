@@ -43,19 +43,25 @@
   <ItemGroup>
     <Compile Include="Animation.cs" />
     <Compile Include="Animator.cs" />
+    <Compile Include="EnemyStates\Bald.cs" />
+    <Compile Include="EnemyStates\ChargeState.cs" />
     <Compile Include="EnemyStates\ChaseState.cs" />
     <Compile Include="EnemyStates\Doge.cs" />
     <Compile Include="EnemyStates\Enemy.cs" />
     <Compile Include="EnemyStates\EnemyDirector.cs" />
     <Compile Include="EnemyStates\FleeState.cs" />
     <Compile Include="EnemyStates\IdleState.cs" />
+    <Compile Include="EnemyStates\PowerupState.cs" />
     <Compile Include="EnemyStates\ShortRangeAttackState.cs" />
+    <Compile Include="EnemyStates\Skull.cs" />
     <Compile Include="EnemyStates\StateMachine.cs" />
     <Compile Include="GameInfo.cs" />
     <Compile Include="GameObjectPool.cs" />
     <Compile Include="Hero Related\Bullet.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Hero Related\GameOverState.cs" />
     <Compile Include="Hero Related\IDamageDealer.cs" />
+    <Compile Include="Hero Related\Timer.cs" />
     <Compile Include="InputHandling\Command.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameObject.cs" />
@@ -66,8 +72,10 @@
     <Compile Include="EnemyStates\State.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapGen.cs" />
+    <Compile Include="Scene Management\AwardsState.cs" />
     <Compile Include="Scene Management\Collision.cs" />
     <Compile Include="Scene Management\CollisionManager.cs" />
+    <Compile Include="Scene Management\Dark.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
     <Compile Include="IDamageable.cs" />
     <Compile Include="IPoolable.cs" />
@@ -77,6 +85,7 @@
     <Compile Include="Hero Related\Hero.cs" />
     <Compile Include="InputHandling\InputHandler.cs" />
     <Compile Include="Scene Management\ICollidable.cs" />
+    <Compile Include="Scene Management\LevelManager.cs" />
     <Compile Include="Scene Management\MenuState.cs" />
     <Compile Include="ObjectPool.cs" />
     <Compile Include="Scene Management\OptionsState.cs" />
@@ -85,10 +94,17 @@
     <Compile Include="Scene Management\GameState.cs" />
     <Compile Include="Hero Related\Shotgun.cs" />
     <Compile Include="Scene Management\PoolManager.cs" />
-    <Compile Include="UI.cs" />
+    <Compile Include="Scene Management\ProtocolState.cs" />
+    <Compile Include="Scene Management\SaveData.cs" />
+    <Compile Include="Scene Management\Stage.cs" />
+    <Compile Include="Scene Management\Wave.cs" />
+    <Compile Include="Scene Management\WeaponSaveData.cs" />
+    <Compile Include="StaticCollider.cs" />
+    <Compile Include="GameplayUI.cs" />
     <Compile Include="Misc\Vector2Int.cs" />
     <Compile Include="Hero Related\Weapon.cs" />
     <Compile Include="Hero Related\WeaponHandler.cs" />
+    <Compile Include="UI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Deque, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

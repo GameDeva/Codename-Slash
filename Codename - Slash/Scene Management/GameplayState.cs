@@ -13,16 +13,23 @@ namespace Codename___Slash
 {
     public class GameplayState : GameState
     {
-
         private Hero hero; // Hero instance for this gameplay session
-        private Camera camera; // Camera instance for this gameplay session
+        // private Camera camera; // Camera instance for this gameplay session
         // private MapGenerator mapGenerator;
         private MapGen mapGen;
         private EnemyDirector enemyDirector;
         private PoolManager poolManager;
         private CollisionManager collisionManager;
+        private LevelManager levelManager;
 
-        private UI ui; // UI instance for this gameplay session
+        public int CurrentScore { get; private set; }
+        public int CurrentStage { get; private set; }
+
+        private GameplayUI ui; // UI instance for this gameplay session
+
+        private Timer deathTimer = new Timer(3.0f);
+
+        public Action<SaveData> OnSaveData;
         
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
@@ -31,14 +38,14 @@ namespace Codename___Slash
             poolManager = PoolManager.Instance;
             collisionManager = CollisionManager.Instance;
             enemyDirector = EnemyDirector.Instance;
-            // mapGenerator = MapGenerator.Instance;
-            mapGen = new MapGen();
+            mapGen = MapGen.Instance;
+            levelManager = LevelManager.Instance;
 
             // TODO : Based on serialization, saved hero could have several bits of data already stored i.e. weapons held, points scored 
-            hero = new Hero(new Vector2(800, 500), stateContent);
-            ui = new UI(stateContent, ref hero);
+            hero = new Hero(new Vector2(600, 1000), stateContent);
+            ui = new GameplayUI(stateContent, ref hero);
             
-            camera = new Camera();
+            // camera = new Camera();
 
             //mapGenerator.Initialise(game.Services);
             //mapGenerator.InitialiseNewMap(1);
@@ -55,7 +62,15 @@ namespace Codename___Slash
             poolManager.Initialise(hero);
 
             
+            mapGen.AssignMapToDraw("BattleArena");
+            mapGen.ChangeMapColliders(MapCollider.BattleArena);
+             
+
             EnemyDirector.Instance.CreateEnemies();
+
+            hero.OnDeath += OnHeroDeath;
+
+            SaveGame();
 
             base.Enter(game);
             
@@ -64,7 +79,7 @@ namespace Codename___Slash
         protected override void LoadContent() 
         {
             hero.LoadContent(stateContent);
-            ui.LoadContent(stateContent);
+            ui.LoadContent();
         }
 
         public override void Exit(Game1 game)
@@ -90,43 +105,77 @@ namespace Codename___Slash
         }
 
 
-        public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
+        public override GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler)
         {
-            
-            // Handle State object Updates
-            commandManager.Update();
-            hero.Update(gameTime);
-            poolManager.Update(gameTime);
-            collisionManager.Update();
-            Camera.Follow(hero);
-            ui.Update();
+            if(!deathTimer.Running)
+            {
+                // Handle State object Updates
+                commandManager.Update();
+                hero.Update(deltaTime);
+                poolManager.Update(deltaTime);
+                collisionManager.Update();
+                // Camera.Follow(hero);
+                ui.Update();
+
+            } else if()
 
 
-            base.Update(game, ref gameTime, ref inputHandler);
+            base.Update(game, deltaTime, ref inputHandler);
             return null;
         }
 
-        public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             // transformMatrix: camera.Transform [add as parameter]
 
             spriteBatch.Begin();
             // mapGenerator.Draw(spriteBatch);
-            mapGen.DrawMap("BattleArena", spriteBatch);
-            poolManager.Draw(gameTime, spriteBatch);
+            mapGen.DrawMap(spriteBatch);
+            poolManager.Draw(deltaTime, spriteBatch);
 
             
             
-            hero.Draw(gameTime, spriteBatch);
+            hero.Draw(deltaTime, spriteBatch);
             
             ui.Draw(spriteBatch);
+
+            collisionManager.DebugDraw(spriteBatch);
             spriteBatch.End();
 
 
 
-            base.Draw(ref gameTime, spriteBatch);
+            base.Draw(deltaTime, spriteBatch);
 
         }
         
+        private void OnHeroDeath()
+        {
+            deathTimer.Start();
+        }
+
+        private void SaveGame()
+        {
+            CurrentScore = 1;
+            CurrentStage = 10;
+
+            SaveData saveData = new SaveData();
+            saveData.currentScore = CurrentScore;
+            saveData.stageNumber = CurrentStage;
+
+            // Test
+            saveData.weaponDataList = new List<WeaponSaveData>();
+            saveData.weaponDataList.Add(new WeaponSaveData(10, 2));
+            saveData.weaponDataList.Add(new WeaponSaveData(15, 20));
+            saveData.weaponDataList.Add(new WeaponSaveData(10, 2));
+
+            //saveData.weaponDataList = new List<WeaponSaveData>();
+            //foreach(Weapon w in hero.WeaponHandler.WeaponsList)
+            //{
+            //    saveData.weaponDataList.Add(new WeaponSaveData(w.CurrentAmmoCarry, w.CurrentMagHold));
+            //}
+
+            Loader.ToXmlFile(saveData, "SaveFile.xml");
+        }
+
     }
 }

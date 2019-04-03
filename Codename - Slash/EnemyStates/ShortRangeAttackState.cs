@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Codename___Slash.EnemyStates
 {
-    public class ShortRangeAttackState : State
+    public class ShortRangeAttackState : NPCState
     {
         private float attackSpeed;
         private float timeBetweenAttacks;

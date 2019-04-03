@@ -12,7 +12,7 @@ namespace Codename___Slash
         private static GameInfo instance;
         public static GameInfo Instance { get { if (instance == null) { instance = new GameInfo(); return instance; } return instance; } set { instance = value; } }
         
-        public List<TileInfo> tileInfoList = new List<TileInfo>();
+        // public List<TileInfo> tileInfoList = new List<TileInfo>();
 
 
     }

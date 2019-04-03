@@ -28,11 +28,11 @@ namespace Codename___Slash.EnemyStates
 
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(float deltaTime)
         {
-            stateMachine.Update(gameTime);
+            stateMachine.Update(deltaTime);
 
-            base.Update(gameTime);
+            base.Update(deltaTime);
         }
 
         public override void OnPoolInstantiation()
@@ -66,7 +66,7 @@ namespace Codename___Slash.EnemyStates
 
             // Add the created states to the FSM
             stateMachine.AddState(idle);
-            stateMachine.AddState(flee);
+            // stateMachine.AddState(flee);
             stateMachine.AddState(chase);
             stateMachine.AddState(shortRangeAttack);
 
@@ -102,11 +102,6 @@ namespace Codename___Slash.EnemyStates
         {
             throw new NotImplementedException();
         }
-
-        #region Condition Methods for Transitions
-
-
-        #endregion
 
     }
 }

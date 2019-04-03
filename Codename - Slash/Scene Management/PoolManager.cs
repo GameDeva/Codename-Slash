@@ -20,6 +20,10 @@ namespace Codename___Slash
 
         ObjectPool<Bullet> bulletPool;
         ObjectPool<Doge> dogePool;
+        ObjectPool<Skull> skullPool;
+        ObjectPool<Bald> baldPool;
+        ObjectPool<Dark> darkPool;
+
 
         private List<Bullet> bulletsAlive;
         private List<Enemy> enemiesAlive;
@@ -32,17 +36,25 @@ namespace Codename___Slash
             // Add hero's collider
             OnAddDynamicCollider?.Invoke(hero, hero.ColliderType);
 
+            // TODO: Depends on how many there can be on the map
             bulletPool = new ObjectPool<Bullet>(100);
             dogePool = new ObjectPool<Doge>(10);
+            skullPool = new ObjectPool<Skull>(10);
+            baldPool = new ObjectPool<Bald>(10);
+            darkPool = new ObjectPool<Dark>(10);
 
+            // Attach all listeners
             hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
             EnemyDirector.Instance.OnCreateDoge += SpawnDoge;
+            EnemyDirector.Instance.OnCreateSkull += SpawnSkull;
+            EnemyDirector.Instance.OnCreateBald += SpawnBald;
+            EnemyDirector.Instance.OnCreateDark += SpawnDark;
 
             bulletsAlive = new List<Bullet>();
             enemiesAlive = new List<Enemy>();
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(float deltaTime)
         {
             // Update all gameobjects 
             // int size = spawnedObjects.Count;
@@ -50,7 +62,7 @@ namespace Codename___Slash
             {
                 if (bulletsAlive[i].IsActive)
                 {
-                    bulletsAlive[i].Update(gameTime);
+                    bulletsAlive[i].Update(deltaTime);
                     
                 }
                 else
@@ -63,7 +75,7 @@ namespace Codename___Slash
             {
                 if (enemiesAlive[i].IsActive)
                 {
-                    enemiesAlive[i].Update(gameTime);
+                    enemiesAlive[i].Update(deltaTime);
 
                 }
                 else
@@ -74,7 +86,7 @@ namespace Codename___Slash
 
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             // Draw all gameobjects 
             // int size = spawnedObjects.Count;
@@ -82,7 +94,7 @@ namespace Codename___Slash
             {
                 if (bulletsAlive[i].IsActive)
                 {
-                    bulletsAlive[i].Draw(gameTime, spriteBatch);
+                    bulletsAlive[i].Draw(deltaTime, spriteBatch);
                 }
             }
 
@@ -90,7 +102,8 @@ namespace Codename___Slash
             {
                 if (enemiesAlive[i].IsActive)
                 {
-                    enemiesAlive[i].Draw(gameTime, spriteBatch);
+                    enemiesAlive[i].Draw(deltaTime, spriteBatch);
+                    Game1.DrawRect(spriteBatch, enemiesAlive[i].BoundingRect);
                 }
             }
         }
@@ -103,12 +116,31 @@ namespace Codename___Slash
             OnAddDynamicCollider?.Invoke(bullet, ColliderType.heroAttack);
         }
 
+        // Enemy Spawns
+        //
         private void SpawnDoge(IArgs args)
         {
             Doge doge = dogePool.SpawnFromPool(args);
             enemiesAlive.Add(doge);
             OnAddDynamicCollider?.Invoke(doge, ColliderType.enemy);
         }
-
+        private void SpawnSkull(IArgs args)
+        {
+            Skull skull = skullPool.SpawnFromPool(args);
+            enemiesAlive.Add(skull);
+            OnAddDynamicCollider?.Invoke(skull, ColliderType.enemy);
+        }
+        private void SpawnBald(IArgs args)
+        {
+            Bald bald = baldPool.SpawnFromPool(args);
+            enemiesAlive.Add(bald);
+            OnAddDynamicCollider?.Invoke(bald, ColliderType.enemy);
+        }
+        private void SpawnDark(IArgs args)
+        {
+            Dark dark = darkPool.SpawnFromPool(args);
+            enemiesAlive.Add(dark);
+            OnAddDynamicCollider?.Invoke(dark, ColliderType.enemy);
+        }
     }
 }

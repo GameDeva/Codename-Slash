@@ -19,9 +19,9 @@ namespace Codename___Slash
 
         public abstract void OnSpawnFromPool(IArgs args);
 
-        public abstract void Update(GameTime gameTime);
+        public abstract void Update(float deltaTime);
 
-        public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+        public abstract void Draw(float deltaTime, SpriteBatch spriteBatch);
 
 
 

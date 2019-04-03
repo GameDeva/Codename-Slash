@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<TileInfo>
-  <texturePath>Sprites/TileTextures/grass</texturePath>
-  <!--<collision>Full</collision>-->
-  <enemySpawnPoint>false</enemySpawnPoint>
-</TileInfo>

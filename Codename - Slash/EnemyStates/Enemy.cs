@@ -20,6 +20,9 @@ namespace Codename___Slash
         public EnemyAnimations EnemyAnimations { get; protected set; }
         public Animator Animator { get; protected set; }
 
+
+        public float maxHealth;
+
         // Collider properties
         protected Vector2Int colliderSize;
         private Rectangle localBounds;
@@ -60,14 +63,14 @@ namespace Codename___Slash
             IsActive = true;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(float deltaTime)
         {
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             // Draw that sprite.
-            Animator.Draw(gameTime, spriteBatch, Position, SpriteEffects.None, DrawColor);
+            Animator.Draw(deltaTime, spriteBatch, Position, SpriteEffects.None, DrawColor);
         }
 
         public bool CollisionTest(ICollidable other)

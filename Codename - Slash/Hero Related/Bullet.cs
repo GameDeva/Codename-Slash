@@ -30,10 +30,8 @@ namespace Codename___Slash
         {
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(float deltaTime)
         {
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             position += moveSpeed * moveDirection * deltaTime;
 
             if (liveTime < maxLiveTime)
@@ -43,7 +41,7 @@ namespace Codename___Slash
 
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(bulletTexture, position, Color.White);
             

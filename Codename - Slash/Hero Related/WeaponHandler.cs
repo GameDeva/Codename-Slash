@@ -15,7 +15,7 @@ namespace Codename___Slash
         public delegate void ActionRef<Weapon>(ref Weapon previousWeapon, ref Weapon newWeapon);
         public Action<IArgs> OnSpawnBullet;
 
-        private List<Weapon> weaponsList;
+        public List<Weapon> WeaponsList { get; private set; }
         public Weapon EquippedWeapon { get { return equippedWeapon; } set { equippedWeapon = value; } }
         private Weapon equippedWeapon;
         private int equippedWeaponIndex;
@@ -30,7 +30,7 @@ namespace Codename___Slash
         
         public WeaponHandler()
         {
-            weaponsList = new List<Weapon>();
+            WeaponsList = new List<Weapon>();
             
 
         }
@@ -38,8 +38,8 @@ namespace Codename___Slash
         public void LoadContent(ContentManager content)
         {
             // TODO : Maybe switch texture loading to weapon class? Not sure. 
-            weaponsList.Add(new MachineGun(content.Load<Texture2D>("Sprites/Weapons/mg/mg_UI_icon"), content.Load<Texture2D>("Sprites/Weapons/mg/mg_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta")));
-            weaponsList.Add(new Shotgun(content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/bulletb")));
+            WeaponsList.Add(new MachineGun(content.Load<Texture2D>("Sprites/Weapons/mg/mg_UI_icon"), content.Load<Texture2D>("Sprites/Weapons/mg/mg_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta")));
+            WeaponsList.Add(new Shotgun(content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/bulletb")));
 
 
             // TODO: move this to own class for weapon swapping
@@ -84,7 +84,7 @@ namespace Codename___Slash
         {
             Console.WriteLine("Next weapon");
 
-            if(equippedWeaponIndex == weaponsList.Count - 1)
+            if(equippedWeaponIndex == WeaponsList.Count - 1)
             {
                 EquipWeapon(0);
                 // equippedWeapon = weaponsList[0];
@@ -102,7 +102,7 @@ namespace Codename___Slash
 
             if (equippedWeaponIndex == 0)
             {
-                EquipWeapon(weaponsList.Count - 1);
+                EquipWeapon(WeaponsList.Count - 1);
                 // equippedWeapon = weaponsList[weaponsList.Count - 1];
             }
             else
@@ -114,7 +114,7 @@ namespace Codename___Slash
 
         private void EquipWeapon(int weaponIndex)
         {
-            equippedWeapon = weaponsList[weaponIndex];
+            equippedWeapon = WeaponsList[weaponIndex];
             equippedWeaponIndex = weaponIndex;
 
             equippedWeapon.OnBulletCreated += SpawnBullet;

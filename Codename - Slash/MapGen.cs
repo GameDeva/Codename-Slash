@@ -11,14 +11,25 @@ namespace Codename___Slash
 {
     public class MapGen
     {
+        // Single creation
+        private static MapGen instance;
+        public static MapGen Instance { get { if (instance == null) { instance = new MapGen(); return instance; } return instance; } set { instance = value; } }
+
         // Values used for this game
         private const int mapGridSizeX = 60; // Width 
         private const int mapGridSizeY = 32; // Height
         private const int tileSize = 32; 
 
         private ContentManager content;
-
         private Dictionary<string, Map> mapDictionary;
+
+        private string currentMapToDraw;
+        public MapCollider CurrentMapColliderType { get; private set; }
+
+        // Collider add event
+        public Action<ICollidable, ColliderType> OnAddcollider; // Either staticCollider or trigger region created in this class
+        public Action OnRemoveAllStaticColliders;
+        public Action OnRemoveAllTriggerRegions;
         
         public void Initialise(IServiceProvider serivceProvider)
         {
@@ -63,15 +74,20 @@ namespace Codename___Slash
 
         }
 
-        public void DrawMap(string mapName, SpriteBatch spriteBatch)
+        public void AssignMapToDraw(string mapName)
+        {
+            currentMapToDraw = mapName;
+        }
+
+        public void DrawMap(SpriteBatch spriteBatch)
         {
             // Test by drawing 1 section
-            Rectangle tileRect = new Rectangle(0, 0, tileSize, tileSize);
+            Rectangle tileRect = new Rectangle(0, 32, tileSize, tileSize);
             // TileInfo tileInfo = new TileInfo();
 
             Vector2 origin = new Vector2(0, 0);
 
-            Map map = mapDictionary[mapName];
+            Map map = mapDictionary[currentMapToDraw];
 
             for (int y = 0; y < mapGridSizeY; y++)
             {
@@ -87,8 +103,40 @@ namespace Codename___Slash
                 tileRect.X = 0;
                 tileRect.Y += tileSize;
             }
+
         }
 
+        // Change the static colliders of the scene/map
+        public void ChangeMapColliders(MapCollider colliderType)
+        {
+            //// If not changing the type and not first time, return
+            //if (currentMapColliderType == colliderType)
+            //    return;
+                        
+            //switch (colliderType)
+            //{
+            //    case MapCollider.BattleArena:
+            //        break;
+            //    case MapCollider.BattleArenaExitOpen:
 
+            //        break;
+            //    case MapCollider.Walkway:
+
+            //        break;
+
+            //}
+
+            CurrentMapColliderType = colliderType;
+
+        }
+    }
+
+    // Since the game features limited maps, there will only be 3 types of static collider setups
+    // Todo: For expandability, add a system that creates large rectangle colliders using data for each map
+    public enum MapCollider
+    {
+        Walkway, 
+        BattleArena,
+        BattleArenaExitOpen
     }
 }

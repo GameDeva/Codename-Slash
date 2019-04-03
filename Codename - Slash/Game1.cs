@@ -21,6 +21,8 @@ namespace Codename___Slash
         private InputHandler inputHandler;
         private GameState state;
 
+        private SaveData saveData;
+
         private Song song;
 
         public Game1()
@@ -48,12 +50,13 @@ namespace Codename___Slash
             // Initalise all states
             GameState.MenuState.InitialiseState(this);
             GameState.GameplayState.InitialiseState(this);
-            GameState.OptionsState.InitialiseState(this);
+            GameState.ProtocolState.InitialiseState(this);
+            GameState.AwardsState.InitialiseState(this);
 
             // Set first state
             state = GameState.MenuState;
             state.Enter(this);
-
+            
             base.Initialize();
         }
 
@@ -102,7 +105,7 @@ namespace Codename___Slash
         {
             // IMPORTANT
             // Scene/Game State handling area
-            GameState s = state.Update(this, ref gameTime, ref inputHandler);
+            GameState s = state.Update(this, (float) gameTime.ElapsedGameTime.TotalSeconds, ref inputHandler);
             if (s != null)
             {
                 state.Exit(this); // Call previous state's exit method 
@@ -124,11 +127,26 @@ namespace Codename___Slash
             // TODO: Add your drawing code here
             // spriteBatch.Begin();
 
-            state.Draw(ref gameTime, spriteBatch);
+            state.Draw((float)gameTime.ElapsedGameTime.TotalSeconds, spriteBatch);
 
             // spriteBatch.End();
 
             base.Draw(gameTime);
         }
+
+
+        public static void DrawRect(SpriteBatch spriteBatch, Rectangle rect)
+        {
+            Texture2D tex = new Texture2D(spriteBatch.GraphicsDevice, rect.Width, rect.Height);
+
+            Color[] data = new Color[rect.Width * rect.Height];
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.Red;
+            tex.SetData(data);
+            
+            Vector2 coor = new Vector2(rect.X, rect.Y);
+            
+            spriteBatch.Draw(tex, coor, Color.Red * 0.3f);
+        }
+
     }
 }

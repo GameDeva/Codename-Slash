@@ -28,19 +28,19 @@ namespace Codename___Slash
             base.LoadContent();
         }
 
-        public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
+        public override GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler)
         {
 
 
-            base.Update(game, ref gameTime, ref inputHandler);
+            base.Update(game, deltaTime, ref inputHandler);
             return null;
         }
 
-        public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
 
 
-            base.Draw(ref gameTime, spriteBatch);
+            base.Draw(deltaTime, spriteBatch);
         }
 
     }

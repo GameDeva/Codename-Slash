@@ -16,25 +16,48 @@ namespace Codename___Slash
         public Texture2D texture;
         public Rectangle destRect;
 
-
         public UIElement(Texture2D texture, Rectangle destRect)
         {
             this.texture = texture;
             this.destRect = destRect;
         }
+    }
 
+    public struct Button
+    {
+        public Texture2D texture;
+        public Rectangle destRect;
+        public bool onHoover;
+        public bool onPressDown;
+        public bool onSelect;
+        public GameState stateToReturn;
+
+        public Button(Texture2D texture, Rectangle destRect, GameState stateToReturn)
+        {
+            this.texture = texture;
+            this.destRect = destRect;
+            onHoover = false;
+            onPressDown = false;
+            onSelect = false;
+            this.stateToReturn = stateToReturn;
+        }
     }
 
 
-    public class MenuState : GameState
+    public class MainMenuState : GameState
     {
-        UIElement title;
-        UIElement spaceToBegin;
-        UIElement highscores;
-        UIElement quit;
+        private List<UIElement> uIElements;
+        private List<Button> buttons;
+        private Button buttonOnHoover;
+        private MouseState mouseState;
+
+        private UI ui;
 
         public override void Enter(Game1 game)
         {
+            ui = new UI(game.Content);
+            uIElements = new List<UIElement>();
+            buttons = new List<Button>();
             base.Enter(game);
         }
 
@@ -45,42 +68,114 @@ namespace Codename___Slash
 
         protected override void LoadContent()
         {
-            title = new UIElement(stateContent.Load<Texture2D>("UI/Title"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199));
-            spaceToBegin = new UIElement(stateContent.Load<Texture2D>("UI/SpaceToBegin"), new Rectangle((Game1.SCREENWIDTH / 2) - (1227 / 2), 450, 1227, 133));
-            highscores = new UIElement(stateContent.Load<Texture2D>("UI/Highscores"), new Rectangle((Game1.SCREENWIDTH / 2) - (747 / 2), 650, 747, 107));
-            quit = new UIElement(stateContent.Load<Texture2D>("UI/Quit"), new Rectangle((Game1.SCREENWIDTH / 2) - (291 / 2), 800, 291, 119));
+            // TODO: Change all button mappings toa appropriate states
+            // Load and add all the UI elements
+            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/Title"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (400 / 2), 450, 400, 94), GameplayState));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/NewGame"), new Rectangle((Game1.SCREENWIDTH / 2) - (454 / 2), 550, 454, 100), GameplayState));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Protocol"), new Rectangle((Game1.SCREENWIDTH / 2) - (423 / 2), 650, 423, 84), ProtocolState));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Awards"), new Rectangle((Game1.SCREENWIDTH / 2) - (360 / 2), 750, 360, 94), AwardsState));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Quit"), new Rectangle((Game1.SCREENWIDTH / 2) - (205 / 2), 850, 205, 104), null));
 
+            ui.LoadContent();
 
             base.LoadContent();
         }
 
-        public override GameState Update(Game1 game, ref GameTime gameTime, ref InputHandler inputHandler)
+        protected override void InitialiseKeyBindings()
         {
-            // Console.WriteLine("In menu state");
+            if (commandManager != null)
+            {
+                commandManager.AddMouseBinding(MouseButton.LEFT, OnSelect);
+            }
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                game.Exit();
+            base.InitialiseKeyBindings();
+        }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-                return GameplayState;
+        private void OnSelect(eButtonState arg1, Vector2 arg2)
+        {
+            // Attach current button
+            if(arg1 == eButtonState.DOWN && buttonOnHoover.onHoover)
+            {
+                buttonOnHoover.onHoover = true;
+                buttonOnHoover.onPressDown = true;
+            }
 
+            // Button has been selected
+            if(arg1 == eButtonState.UP && buttonOnHoover.onHoover)
+            {
+                buttonOnHoover.onPressDown = false;
+                buttonOnHoover.onSelect = true;
+
+            } else if(arg1 == eButtonState.UP && !buttonOnHoover.onHoover)
+            {
+                buttonOnHoover.onHoover = false;
+            }
+        }
+
+        public override GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler)
+        {
+
+            ui.Update();
+            
+            // Get mouse point
+            mouseState = Mouse.GetState();
+            Point mousePosition = new Point(mouseState.X, mouseState.Y);
+
+            buttonOnHoover.onHoover = false;
+            // Check if hovering over any UIElement
+            foreach(Button button in buttons)
+            {
+                // Or is mouse over button
+                if (button.destRect.Contains(mousePosition))
+                {
+                    buttonOnHoover.onHoover = false;
+                    buttonOnHoover.onPressDown = false;
+                    buttonOnHoover.onSelect = false;
+                    buttonOnHoover = button;
+                    buttonOnHoover.onHoover = true;
+                    break;
+                }
+            }
+
+
+            commandManager.Update();
+            // If button has been selected
+            if (buttonOnHoover.onSelect && buttonOnHoover.stateToReturn != null)
+            {
+                return buttonOnHoover.stateToReturn;
+            }
             // Exmaple return statement:::: return GameState.optionState;
 
-            base.Update(game, ref gameTime, ref inputHandler);
+            base.Update(game, deltaTime, ref inputHandler);
             return null;
         }
 
-        public override void Draw(ref GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(title.texture, title.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
-            spriteBatch.Draw(spaceToBegin.texture, spaceToBegin.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
-            spriteBatch.Draw(highscores.texture, highscores.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
-            spriteBatch.Draw(quit.texture, quit.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
+
+            // Draw ui elements
+            foreach (UIElement element in uIElements)
+            {
+                spriteBatch.Draw(element.texture, element.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
+            }
+
+            // Draw the hover rect
+            if (buttonOnHoover.onHoover)
+                Game1.DrawRect(spriteBatch, buttonOnHoover.destRect);
+
+            // Draw buttons
+            foreach (Button element in buttons)
+            {
+                spriteBatch.Draw(element.texture, element.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
+            }
+
+            ui.Draw(spriteBatch);
+
             spriteBatch.End();
-            base.Draw(ref gameTime, spriteBatch);
+            base.Draw(deltaTime, spriteBatch);
         }
-        
 
     }
 }
