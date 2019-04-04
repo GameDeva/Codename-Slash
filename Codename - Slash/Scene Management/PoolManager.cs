@@ -39,7 +39,7 @@ namespace Codename___Slash
         public void Initialise(Hero hero)
         {
             //
-            stageManager = StageManager.Instance;
+            // stageManager = StageManager.Instance;
 
             // Add hero's collider
             OnAddCollider?.Invoke(hero);
@@ -48,8 +48,10 @@ namespace Codename___Slash
 
 
             // Attach all listeners
-            stageManager.OnCreateEnemyPools += CreateStageSpecificPools;
-            stageManager.OnCompleteStage += DeleteStageSpecificPools;
+            // stageManager.OnCreateEnemyPools += CreateStageSpecificPools;
+            // stageManager.OnCompleteStage += DeleteStageSpecificPools;
+
+
             hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
             EnemyDirector.Instance.OnCreateDoge += SpawnDoge;
             EnemyDirector.Instance.OnCreateSkull += SpawnSkull;

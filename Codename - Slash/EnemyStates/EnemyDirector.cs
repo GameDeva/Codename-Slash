@@ -74,13 +74,13 @@ namespace Codename___Slash
         {
             this.hero = hero;
             this.content = content;
-            stageManager = StageManager.Instance;
+            // stageManager = StageManager.Instance;
             poolManager = PoolManager.Instance;
             random = new Random();
             spawnPoints = new List<Point>();
 
-            stageManager.OnNewStage += OnNewStage;
-            stageManager.ToggleEnemyGeneration += SpawnToggle;
+            // stageManager.OnNewStage += OnNewStage;
+            // stageManager.ToggleEnemyGeneration += SpawnToggle;
 
             poolManager.OnDeath += OnEnemyDeath;
 
@@ -88,7 +88,7 @@ namespace Codename___Slash
         }
 
         // On enter new stage
-        private void OnNewStage(StageData stageData)
+        public void OnNewStage(StageData stageData)
         {
             // Get all stage data 
             enemiesToKillToWin = stageData.enemiesToFight;
@@ -244,25 +244,24 @@ namespace Codename___Slash
 
         }
 
-        public void Update(float deltaTime)
+        public bool Update(float deltaTime)
         {
             spawnIntervalTimer += deltaTime;
-
-            if (shouldSpawn)
+            
+            if (killCount >= enemiesToKillToWin)
             {
-                if (killCount >= enemiesToKillToWin)
-                {
-                    OnBeatAllEnemies?.Invoke();
-                }
-
-                // Spawning should be allowed, must have finished interval, must not spawn too many enemies
-                if (spawnIntervalTimer > currentIntervalBetweenSpawns && (currentDogeCount < maxDogeCount || currentSkullCount < maxSkullCount || currentBaldCount < maxBaldCount || currentDarkCount < maxDarkCount))
-                {
-                    spawnIntervalTimer = 0.0f;
-                    SpawnEnemy();
-                }
+                return true;
             }
 
+            // Spawning should be allowed, must have finished interval, must not spawn too many enemies
+            if (spawnIntervalTimer > currentIntervalBetweenSpawns && (currentDogeCount < maxDogeCount || currentSkullCount < maxSkullCount || currentBaldCount < maxBaldCount || currentDarkCount < maxDarkCount))
+            {
+                spawnIntervalTimer = 0.0f;
+                SpawnEnemy();
+            }
+
+            return false;
+        
         }
 
         public float SqrDistanceToHeroFrom(Vector2 position)

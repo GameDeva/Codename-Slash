@@ -20,10 +20,11 @@ namespace Codename___Slash
         private EnemyDirector enemyDirector;
         private PoolManager poolManager;
         private CollisionManager collisionManager;
-        private StageManager stageManager;
+        private MapGen mapGen;
 
         public int CurrentScore { get; private set; }
         public int CurrentStage { get; private set; }
+        public StageData CurrentStageData { get; private set; }
 
         private GameplayUI ui; // UI instance for this gameplay session
 
@@ -34,13 +35,12 @@ namespace Codename___Slash
 
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
-        {            
+        {
             // Store reference to singleton Managers
+            mapGen = MapGen.Instance;
             poolManager = PoolManager.Instance;
             collisionManager = CollisionManager.Instance;
             enemyDirector = EnemyDirector.Instance;
-            stageManager = StageManager.Instance;
-            stageManager = StageManager.Instance;
 
             hero = new Hero(stateContent);
             ui = new GameplayUI(stateContent);
@@ -50,17 +50,26 @@ namespace Codename___Slash
             collisionManager.Initialise();
             enemyDirector.Initialise(hero, stateContent);
             poolManager.Initialise(hero);
-            stageManager.Initialise(game.Services, hero);
+
+            mapGen.Initialise(game.Services);
+            mapGen.GetMapData("Walkway");
+            mapGen.GetMapData("BattleArena");
+            
+            mapGen.LoadMapTextures("BattleArena");
+            mapGen.AssignMapToDraw("BattleArena");
+
+            mapGen.ChangeMapColliders(MapCollider.BattleArena);
 
             // Continue based on load or new game
             SetupSession();
-            stageManager.NewSession(CurrentStage);
-            stageManager.OnStageBegin();
             ui.Initialise(currentSaveData, ref hero);
 
+            UpdateStageData(1);
+            enemyDirector.OnNewStage(CurrentStageData);
+            poolManager.CreateStageSpecificPools(CurrentStageData);
+            
             // Attach events
             hero.OnDeath += OnHeroDeath;
-            stageManager.OnResetHeroPosition += hero.ResetPosition;
 
             base.Enter(game);
             
@@ -68,23 +77,23 @@ namespace Codename___Slash
 
         protected override void LoadContent() 
         {
-            hero.LoadContent(stateContent);
             // Load content from all managers
-
-
+            hero.LoadContent(stateContent);
             ui.LoadContent();
         }
 
         protected override void UnloadContent()
         {
             // Unload all obj's content
-
+            poolManager.DeleteStageSpecificPools();
 
             base.UnloadContent();
         }
 
         public override void Exit(Game1 game)
         {
+            // destroy all objects and pools
+
             
             base.Exit(game);
         }
@@ -111,8 +120,14 @@ namespace Codename___Slash
         {
             // Handle State object Updates
             commandManager.Update();
-            hero.Update(deltaTime); 
-            enemyDirector.Update(deltaTime);
+            hero.Update(deltaTime);
+
+            // If returns true then level has been complete
+            if(enemyDirector.Update(deltaTime))
+            {
+                return GameOverState;
+            }
+
             collisionManager.Update();
             poolManager.Update(deltaTime);
             // Camera.Follow(hero);
@@ -139,8 +154,8 @@ namespace Codename___Slash
             // transformMatrix: camera.Transform [add as parameter]
 
             spriteBatch.Begin();
-            // mapGenerator.Draw(spriteBatch);
-            stageManager.Draw(deltaTime, spriteBatch);
+            mapGen.DrawMap(spriteBatch);
+            // stageManager.Draw(deltaTime, spriteBatch);
             poolManager.Draw(deltaTime, spriteBatch);
 
             
@@ -227,6 +242,13 @@ namespace Codename___Slash
             File.Delete("SaveFile.xml");
         }
 
+        // Load given stage
+        public void UpdateStageData(int n)
+        {
+            StageData s = new StageData();
+            Loader.ReadXML(string.Format("Content/StageData/Stage{0}.xml", n), ref s);
+            CurrentStageData = s;
+        }
 
     }
 }

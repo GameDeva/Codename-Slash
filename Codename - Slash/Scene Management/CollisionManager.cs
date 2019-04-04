@@ -110,6 +110,7 @@ namespace Codename___Slash
 
         public void Initialise()
         {
+            collidablesList.Clear();
             // Get reference to singleton instances
             poolmanager = PoolManager.Instance;
             // mapGenerator = MapGen.Instance;
@@ -117,9 +118,9 @@ namespace Codename___Slash
             poolmanager.OnAddCollider += AddCollidable;
             poolmanager.OnRemoveCollider += RemoveCollidable;
             poolmanager.OnRemoveAllCollidersOfType += RemoveAllOfType;
-            // mapGenerator.OnAddcollider += AddCollidable;
-            StageManager.Instance.OnAddCollider += AddCollidable;
-            StageManager.Instance.OnRemoveCollider += RemoveCollidable;
+            //// mapGenerator.OnAddcollider += AddCollidable;
+            //StageManager.Instance.OnAddCollider += AddCollidable;
+            //StageManager.Instance.OnRemoveCollider += RemoveCollidable;
             // mapGenerator.OnRemoveAllStaticColliders += RemoveAllStaticColliders;
         }
 
