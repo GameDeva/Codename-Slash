@@ -21,7 +21,7 @@ namespace Codename___Slash
         public Animator Animator { get; protected set; }
 
 
-        public float maxHealth;
+        public float maxHealth = 100;
 
         // Collider properties
         protected Vector2Int colliderSize;
@@ -57,6 +57,9 @@ namespace Codename___Slash
             }
         }
 
+        public Action<Vector2> OnDamage;
+        public Action<Enemy, Vector2> OnDeath;
+
         public Enemy()
         {
         }
@@ -91,7 +94,7 @@ namespace Codename___Slash
 
         public bool CollisionTest(ICollidable other)
         {
-            if (other != null)
+            if (other != null && IsActive)
             {
                 return BoundingRect.Intersects(other.BoundingRect);
             }
@@ -99,11 +102,11 @@ namespace Codename___Slash
         }
         public void OnCollision(ICollidable other)
         {
-            // Get rectangle of the intersection/collision depth
-            Rectangle r = Rectangle.Intersect(BoundingRect, other.BoundingRect);
+            //// Get rectangle of the intersection/collision depth
+            //Rectangle r = Rectangle.Intersect(BoundingRect, other.BoundingRect);
 
-            // Move the collider in the opposite direction by that amount
-            Position += new Vector2(-r.Width, -r.Height);
+            //// Move the collider in the opposite direction by that amount
+            //Position += new Vector2(-r.Width, -r.Height);
 
             // Take damage if collision with hero attack
             if (other.ColliderType == ColliderType.heroAttack)
@@ -111,7 +114,20 @@ namespace Codename___Slash
                 TakeDamage((other as IDamageDealer).DealDamageValue);
             } 
         }
-        public abstract void TakeDamage(int damagePoints);
+        public virtual void TakeDamage(int damagePoints)
+        {
+            CurrentHealth -= damagePoints;
+            if (CurrentHealth > 0)
+            {
+                OnDamage?.Invoke(Position);
+            }
+            else
+            {
+                IsActive = false;
+                OnDeath?.Invoke(this, Position);
+            }
+        }
+
         public abstract void TakeDamage(int damagePoints, Vector2 direction);
     }
 

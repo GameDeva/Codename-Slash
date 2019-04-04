@@ -23,11 +23,6 @@ namespace Codename___Slash.EnemyStates
         }
 
 
-        public Doge(EnemyAnimations enemyAnimations, Vector2 initialPosition)
-        {
-
-        }
-
         public override void Update(float deltaTime)
         {
             stateMachine.Update(deltaTime);
@@ -95,7 +90,7 @@ namespace Codename___Slash.EnemyStates
 
         public override void TakeDamage(int damagePoints)
         {
-            throw new NotImplementedException();
+            base.TakeDamage(damagePoints);
         }
 
         public override void TakeDamage(int damagePoints, Vector2 direction)

@@ -34,7 +34,9 @@ namespace Codename___Slash
 
         // 
         private int healthRemaining;
+        private bool completeStageText;
         private int stageNumber;
+        private int score;
 
         public GameplayUI(ContentManager content) : base(content)
         {
@@ -59,7 +61,15 @@ namespace Codename___Slash
 
             hero.WeaponHandler.OnWeaponSwap += OnWeaponSwap;
             hero.OnDamage += OnTakeDamage;
-            StageManager.Instance.OnCompleteStage += NextStage;
+            StageManager.Instance.OnCompleteStage += CompleteStage;
+            StageManager.Instance.OnNewStage += BeginStage;
+            EnemyDirector.Instance.ScoreIncrement += IncrementScore;
+        }
+
+        private void BeginStage(StageData stageData)
+        {
+            completeStageText = false;
+            stageNumber = stageData.stageNumer;
         }
 
         public override void Update()
@@ -113,6 +123,11 @@ namespace Codename___Slash
             spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.White);
 
             spriteBatch.DrawString(hudFont, "Stage: " + stageNumber.ToString(), new Vector2(Game1.SCREENWIDTH-200, hudLocation.Y), Color.White);
+            spriteBatch.DrawString(hudFont, "Score: " + score.ToString(), new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y+32), Color.White);
+
+            if(completeStageText)
+                spriteBatch.DrawString(hudFont, "Next one ->", new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y + 32), Color.White);
+
 
             spriteBatch.Draw(templateSquare, healthRectangle, Color.Red);
             spriteBatch.Draw(templateSquare, dashRectangle, Color.Blue);
@@ -161,9 +176,14 @@ namespace Codename___Slash
             healthRectangle.Height = healthRemaining * 2;
         }
 
-        private void NextStage()
+        private void CompleteStage()
         {
-            stageNumber++;
+            completeStageText = true;
+        }
+
+        private void IncrementScore(int increment)
+        {
+            score += increment;
         }
     }
 }

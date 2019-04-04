@@ -19,9 +19,16 @@ namespace Codename___Slash
         private float moveSpeed;
 
         public Point BoundingRectPoint { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Rectangle BoundingRect { get; set; }
+        public Rectangle BoundingRect
+        {
+            get
+            {
+                return new Rectangle(position.ToPoint(), new Point(12));
+            }
+            set { }
+        }
         public bool FlaggedForRemoval { get; set; }
-        public ColliderType ColliderType { get; set; }
+        public ColliderType ColliderType { get; set; } = ColliderType.heroAttack;
         private const int dealDamageValue = 5;
         public int DealDamageValue { get { return dealDamageValue; } set { value = dealDamageValue; } }
 
@@ -45,13 +52,12 @@ namespace Codename___Slash
 
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(bulletTexture, position, Color.White);
+            spriteBatch.Draw(bulletTexture, position, Color.Black);
             
         }
 
         public override void OnPoolInstantiation()
         {
-            
         }
 
         public override void OnSpawnFromPool(IArgs args)
@@ -65,7 +71,7 @@ namespace Codename___Slash
             bulletTexture = a.BulletTexture;
             maxLiveTime = a.MaxLiveTime;
             moveSpeed = a.MoveSpeed;
-            BoundingRect = new Rectangle((int)position.X, (int)position.Y, (int)a.ColliderSize.X, (int)a.ColliderSize.Y);
+            // BoundingRect = new Rectangle((int)position.X, (int)position.Y, (int)a.ColliderSize.X, (int)a.ColliderSize.Y);
 
             liveTime = 0f;
             IsActive = true;
@@ -73,7 +79,7 @@ namespace Codename___Slash
 
         public bool CollisionTest(ICollidable other)
         {
-            if (other != null)
+            if (other != null && IsActive)
             {
                 return BoundingRect.Intersects(other.BoundingRect);
             }
@@ -82,8 +88,6 @@ namespace Codename___Slash
 
         public void OnCollision(ICollidable other)
         {
-
-
             IsActive = false;
         }
     }

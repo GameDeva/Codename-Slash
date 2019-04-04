@@ -3,7 +3,7 @@
 	<stageNumber>1</stageNumber>
 	<enemiesToFight>5</enemiesToFight>
 	<intervalBetweenSpawn>3</intervalBetweenSpawn>
-	<spawnPointCount>1</spawnPointCount>
+	<spawnPointCount>4</spawnPointCount>
 	<maxDogeCount>5</maxDogeCount>
 	<maxBaldCount>0</maxBaldCount>
 	<maxSkullCount>5</maxSkullCount>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Codename___Slash.EnemyStates;
 
 namespace Codename___Slash
 {
@@ -17,12 +18,36 @@ namespace Codename___Slash
         public static EnemyDirector Instance { get { if (instance == null) { instance = new EnemyDirector(); return instance; } return instance; } set { instance = value; } }
 
         private StageManager stageManager;
+        private PoolManager poolManager;
         private ContentManager content;
-        // 
+
+
+        #region Enemy spawner members
         private Random random;
         private bool shouldSpawn;
         private float spawnIntervalTimer;
-        private List<Enemy> enemiesAlive;
+        private float currentIntervalBetweenSpawns;
+        private List<Point> spawnPoints;
+        public float probDogeSpwan;
+        public float probBaldSpwan;
+        public float probSkullSpwan;
+        public float probDarkSpwan;
+        public float probHealthDrop;
+        public float probAmmoDrop;
+        public int enemiesToKillToWin;
+        public int maxDogeCount;
+        public int maxBaldCount;
+        public int maxSkullCount;
+        public int maxDarkCount;
+
+        public int currentDogeCount;
+        public int currentBaldCount;
+        public int currentSkullCount;
+        public int currentDarkCount;
+
+        public int killCount;
+        #endregion
+
         private Hero hero;
 
         // Actions
@@ -30,6 +55,8 @@ namespace Codename___Slash
         public Action<IArgs> OnCreateBald;
         public Action<IArgs> OnCreateSkull;
         public Action<IArgs> OnCreateDark;
+        public Action<int> ScoreIncrement;
+        public Action OnBeatAllEnemies;
 
         // Animations
         public EnemyAnimations DogeAnimations { get; private set; }
@@ -45,25 +72,119 @@ namespace Codename___Slash
 
         public void Initialise(Hero hero, ContentManager content)
         {
-            enemiesAlive = new List<Enemy>();
             this.hero = hero;
             this.content = content;
             stageManager = StageManager.Instance;
+            poolManager = PoolManager.Instance;
             random = new Random();
+            spawnPoints = new List<Point>();
 
-            stageManager.OnLoadEnemyContent += LoadEnemyContent;
+            stageManager.OnNewStage += OnNewStage;
             stageManager.ToggleEnemyGeneration += SpawnToggle;
-            // Calculate bounds within texture size.            
-            //
 
-                        
+            poolManager.OnDeath += OnEnemyDeath;
+
+
+        }
+
+        // On enter new stage
+        private void OnNewStage(StageData stageData)
+        {
+            // Get all stage data 
+            enemiesToKillToWin = stageData.enemiesToFight;
+            currentIntervalBetweenSpawns = stageData.intervalBetweenSpawn;
+            // spawnPoints = new List<Point>(stageData.spawnPointCount);
+            probDogeSpwan = stageData.probDogeSpwan;
+            probBaldSpwan = stageData.probBaldSpwan;
+            probSkullSpwan = stageData.probSkullSpwan;
+            probDarkSpwan = stageData.probDarkSpwan;
+            maxDogeCount = stageData.maxDogeCount;
+            maxSkullCount = stageData.maxSkullCount;
+            maxBaldCount = stageData.maxSkullCount;
+            maxDarkCount = stageData.maxDarkCount;
+
+            probAmmoDrop = stageData.probAmmoDrop;
+            probHealthDrop = stageData.probHealthDrop;
+
+            SetupSpawnPoints(stageData.spawnPointCount);
+            
+            // Reset old values
+            spawnIntervalTimer = 0.0f;
+            currentBaldCount = 0;
+            currentDarkCount = 0;
+            currentDogeCount = 0;
+            currentSkullCount = 0;
+            killCount = 0;
+
+            LoadEnemyContent(stageData);
+        }
+
+        // Get set number of portals with 
+        private void SetupSpawnPoints(int count)
+        {
+            if (spawnPoints.Count > 0)
+                spawnPoints.Clear();
+
+            for(int i = 0; i < count; i++)
+            {
+                spawnPoints.Add(new Point(random.Next(32, Game1.SCREENWIDTH - 31), random.Next(32, Game1.SCREENHEIGHT - 31)));
+            }
+        }
+
+        private Point GetRandomSpawnPoint()
+        {
+            if(spawnPoints.Count != 0)
+            {
+                return spawnPoints[random.Next(0, spawnPoints.Count)];
+            }
+            return new Point(0);
+        }
+
+        // Spawn next enemy type based on the probbaility 
+        private void SpawnEnemy()
+        {
+            double r = 1 - random.NextDouble();
+            Point p = GetRandomSpawnPoint();
+
+            if(r < probDogeSpwan && probDogeSpwan != 0) // Doge
+            {
+                if(currentDogeCount < maxDogeCount)
+                {
+                    CreateEnemy("Doge", DogeLocalBounds, p.ToVector2(), 100, "chase");
+                    currentDogeCount++;
+                }
+                return;
+            }
+            else if(r < probDogeSpwan + probSkullSpwan && probSkullSpwan != 0) // Skull
+            {
+                if (currentSkullCount < maxSkullCount)
+                {
+                    CreateEnemy("Skull", SkullLocalBounds, p.ToVector2(), 100, "chase");
+                    currentSkullCount++;
+                }
+                return;
+            }
+            else if(r < probDogeSpwan + probSkullSpwan + probBaldSpwan && probBaldSpwan != 0) // Bald
+            {
+                if (currentBaldCount < maxBaldCount)
+                {
+                    CreateEnemy("Bald", BaldLocalBounds, p.ToVector2(), 100, "chase");
+                    currentBaldCount++;
+                }
+                return;
+            }
+            else if(currentDarkCount < maxDarkCount && probDarkSpwan != 0) // Dark
+            {
+                CreateEnemy("Dark", DarkLocalBounds, p.ToVector2(), 100, "rest");
+                currentDarkCount++;
+                return;
+            }
+
         }
 
         // Load in all enemy files only if the probability of spawning in this stage is high
         private void LoadEnemyContent(StageData stageData)
         {
-            spawnIntervalTimer = 0.0f;
-
             if (stageData.probDogeSpwan > 0)
             {
                 DogeAnimations = new EnemyAnimations(new Animation(content.Load<Texture2D>("Sprites/Enemies/Doge_idle"), 1, 0.1f, true),
@@ -126,23 +247,22 @@ namespace Codename___Slash
         public void Update(float deltaTime)
         {
             spawnIntervalTimer += deltaTime;
-            
-            // Random spawning with rand and values
-            if (shouldSpawn && spawnIntervalTimer > 10)
+
+            if (shouldSpawn)
             {
-                spawnIntervalTimer = 0.0f;
+                if (killCount >= enemiesToKillToWin)
+                {
+                    OnBeatAllEnemies?.Invoke();
+                }
 
-
-                CreateEnemy("Skull", SkullLocalBounds, new Vector2(100, 100), 100, "chase");
-                CreateEnemy("Skull", SkullLocalBounds, new Vector2(800, 500), 100, "chase");
-                CreateEnemy("Skull", SkullLocalBounds, new Vector2(400, 900), 100, "chase");
-                CreateEnemy("Skull", SkullLocalBounds, new Vector2(900, 100), 100, "chase");
-
-                CreateEnemy("Doge", DogeLocalBounds, new Vector2(300, 300), 100, "idle");
-                CreateEnemy("Doge", DogeLocalBounds, new Vector2(500, 500), 100, "idle");
-                CreateEnemy("Doge", DogeLocalBounds, new Vector2(700, 100), 100, "idle");
-                CreateEnemy("Doge", DogeLocalBounds, new Vector2(300, 800), 100, "idle");
+                // Spawning should be allowed, must have finished interval, must not spawn too many enemies
+                if (spawnIntervalTimer > currentIntervalBetweenSpawns && (currentDogeCount < maxDogeCount || currentSkullCount < maxSkullCount || currentBaldCount < maxBaldCount || currentDarkCount < maxDarkCount))
+                {
+                    spawnIntervalTimer = 0.0f;
+                    SpawnEnemy();
+                }
             }
+
         }
 
         public float SqrDistanceToHeroFrom(Vector2 position)
@@ -161,9 +281,41 @@ namespace Codename___Slash
             return hero.Position;
         }
 
-        private void OnEnemyDestroyed(Enemy enemy)
+        private void OnEnemyDeath(Enemy enemy)
         {
-
+            if (enemy is Doge)
+            {
+                if(currentDogeCount>0)
+                {
+                    ScoreIncrement?.Invoke(10);
+                    currentDogeCount--;
+                }
+            } else if(enemy is Skull)
+            {
+                if (currentSkullCount > 0)
+                {
+                    ScoreIncrement?.Invoke(25);
+                    currentSkullCount--;
+                }
+            }
+            else if (enemy is Bald)
+            {
+                if (currentBaldCount > 0)
+                {
+                    ScoreIncrement?.Invoke(50);
+                    currentBaldCount--;
+                }
+            }
+            else if (enemy is Dark)
+            {
+                if (currentDarkCount > 0)
+                {
+                    currentDarkCount--;
+                    ScoreIncrement?.Invoke(100);
+                }
+            }
+            killCount++;
+            
         }
 
         private void CreateEnemy(string type, Rectangle localBounds, Vector2 spawnPoint, float startingHealth, string initialState)
@@ -189,12 +341,6 @@ namespace Codename___Slash
                 Console.WriteLine("Enemy creation type not recognised");
             }
 
-        }
-
-        // Spawn next enemy type based on the probbaility of the current stage
-        private void SpawnEnemy()
-        {
-            double ran = random.NextDouble();
         }
 
         private void SpawnToggle(bool val)

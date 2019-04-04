@@ -22,7 +22,7 @@ namespace Codename___Slash
             MaxTimeBetweenShots = 0.05f;
             BulletMoveSpeed = 500f;
             BulletDecayTime = 1f;
-            BulletColliderSize = new Vector2(2, 2);
+            BulletColliderSize = new Vector2(12, 12);
 
             CurrentAmmoCarry = MaximumAmmoCarry;
             CurrentMagHold = MaximumMagHold;

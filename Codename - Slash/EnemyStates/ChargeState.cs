@@ -27,7 +27,7 @@ namespace Codename___Slash.EnemyStates
         {
             Done = false;
             currentTimer = 0.0f;
-            owner.DrawColor = Color.Red;
+            owner.DrawColor = Color.IndianRed;
             owner.Animator.AttachAnimation(owner.EnemyAnimations.DownAnimation);
 
             initialPosition = owner.Position;

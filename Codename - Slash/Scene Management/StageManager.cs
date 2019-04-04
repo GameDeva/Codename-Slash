@@ -25,7 +25,8 @@ namespace Codename___Slash
 
         // 
         public Action<ICollidable> OnAddCollider;
-        public Action<StageData> OnLoadEnemyContent;
+        public Action<ICollidable> OnRemoveCollider;
+        public Action<StageData> OnNewStage;
         public Action<StageData> OnCreateEnemyPools;
         public Action OnResetHeroPosition;
         public Action OnCompleteStage;
@@ -42,11 +43,8 @@ namespace Codename___Slash
 
             // Create trigger regions
             LeaveWalkwayTrigger = new ReachBoxTrigger(new Rectangle(Game1.SCREENWIDTH, Game1.SCREENHEIGHT / 3, 10, Game1.SCREENHEIGHT / 3));
-            OnAddCollider?.Invoke(LeaveWalkwayTrigger);
             BeginBattleTrigger = new ReachBoxTrigger(new Rectangle(Game1.SCREENWIDTH / 2, Game1.SCREENHEIGHT / 2, Game1.SCREENWIDTH / 2, Game1.SCREENHEIGHT / 2));
-            OnAddCollider?.Invoke(BeginBattleTrigger);
             LeaveBattleArenaTrigger = new ReachBoxTrigger(new Rectangle(Game1.SCREENWIDTH, Game1.SCREENHEIGHT / 3, 10, Game1.SCREENHEIGHT / 3));
-            OnAddCollider?.Invoke(LeaveBattleArenaTrigger);
 
             LeaveWalkwayTrigger.Active = false;
             LeaveBattleArenaTrigger.Active = false;
@@ -57,6 +55,7 @@ namespace Codename___Slash
             LeaveWalkwayTrigger.Triggered += OnReachBattleArena;
             BeginBattleTrigger.Triggered += BeginBattle;
             LeaveBattleArenaTrigger.Triggered += OnStageBegin;
+            EnemyDirector.Instance.OnBeatAllEnemies += OnStageEnd;
 
         }
         
@@ -73,6 +72,8 @@ namespace Codename___Slash
             mapGen.AssignMapToDraw("BattleArena");
             OnResetHeroPosition?.Invoke();
             BeginBattleTrigger.Active = true;
+            OnRemoveCollider?.Invoke(LeaveWalkwayTrigger);
+            OnAddCollider?.Invoke(BeginBattleTrigger);
 
             mapGen.ChangeMapColliders(MapCollider.BattleArena);
             
@@ -81,6 +82,7 @@ namespace Codename___Slash
         // 
         private void BeginBattle()
         {
+            OnRemoveCollider?.Invoke(BeginBattleTrigger);
             ToggleEnemyGeneration?.Invoke(true);
 
 
@@ -93,6 +95,7 @@ namespace Codename___Slash
             mapGen.LoadMapTextures("Walkway");
             mapGen.AssignMapToDraw("Walkway");
             mapGen.ChangeMapColliders(MapCollider.Walkway);
+            OnAddCollider?.Invoke(LeaveWalkwayTrigger);
 
             //
             // TODO: Do on separate thread,  put below after the thread has finished
@@ -101,7 +104,7 @@ namespace Codename___Slash
             UpdateStageData(CurrentStageData.stageNumer + 1); // Load next stage
 
             // Load the enemy content
-            OnLoadEnemyContent?.Invoke(CurrentStageData);
+            OnNewStage?.Invoke(CurrentStageData);
             OnCreateEnemyPools?.Invoke(CurrentStageData);
             
 
@@ -110,10 +113,13 @@ namespace Codename___Slash
         // When stage complete i.e. all enemies are dead
         public void OnStageEnd()
         {
+            ToggleEnemyGeneration?.Invoke(true);
             mapGen.ChangeMapColliders(MapCollider.BattleArenaExitOpen);
             LeaveBattleArenaTrigger.Active = true;
             OnCompleteStage?.Invoke();
-            
+            OnAddCollider?.Invoke(LeaveBattleArenaTrigger);
+
+
         }
 
         public void NewSession(int stageNumber)

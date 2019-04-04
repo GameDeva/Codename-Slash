@@ -24,13 +24,17 @@ namespace Codename___Slash
         ObjectPool<Skull> skullPool;
         ObjectPool<Bald> baldPool;
         ObjectPool<Dark> darkPool;
-
+        // ObjectPool<>
 
         private List<Bullet> bulletsAlive;
         private List<Enemy> enemiesAlive;
 
         // Collider add event
         public Action<ICollidable> OnAddCollider;
+        public Action<ICollidable> OnRemoveCollider;
+        public Action<ColliderType> OnRemoveAllCollidersOfType;
+
+        public Action<Enemy> OnDeath;
 
         public void Initialise(Hero hero)
         {
@@ -74,10 +78,16 @@ namespace Codename___Slash
         {
             // TODO: Manually delete dynamic memeory 
 
-            dogePool = null;
-            skullPool = null;
-            baldPool = null;
-            darkPool = null;
+            // Remove all colliders
+            OnRemoveAllCollidersOfType?.Invoke(ColliderType.enemy);
+
+            // Remove all from lists
+            
+
+            //dogePool = null;
+            //skullPool = null;
+            //baldPool = null;
+            //darkPool = null;
         }
 
         public void Update(float deltaTime)
@@ -92,6 +102,7 @@ namespace Codename___Slash
                 }
                 else
                 {
+                    OnRemoveCollider?.Invoke(bulletsAlive[i]);
                     bulletsAlive.RemoveAt(i);
                 }
             }
@@ -105,6 +116,7 @@ namespace Codename___Slash
                 }
                 else
                 {
+                    OnRemoveCollider?.Invoke(enemiesAlive[i]);
                     enemiesAlive.RemoveAt(i);
                 }
             }
@@ -120,6 +132,7 @@ namespace Codename___Slash
                 if (bulletsAlive[i].IsActive)
                 {
                     bulletsAlive[i].Draw(deltaTime, spriteBatch);
+                    // Game1.DrawRect(spriteBatch, bulletsAlive[i].BoundingRect);
                 }
             }
 
@@ -133,7 +146,14 @@ namespace Codename___Slash
             }
         }
 
-        
+        private void OnEnemyDeath(Enemy enemy, Vector2 position)
+        {
+            OnDeath.Invoke(enemy);
+            SpawnDeathEffect(position);
+            
+        }
+
+
         private void SpawnBullet(IArgs args)
         {
             Bullet bullet = bulletPool.SpawnFromPool(args);
@@ -147,25 +167,43 @@ namespace Codename___Slash
         {
             Doge doge = dogePool.SpawnFromPool(args);
             enemiesAlive.Add(doge);
+            doge.OnDamage += SpawnEnemyHitEffect;
+            doge.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(doge);
         }
         private void SpawnSkull(IArgs args)
         {
             Skull skull = skullPool.SpawnFromPool(args);
             enemiesAlive.Add(skull);
+            skull.OnDamage += SpawnEnemyHitEffect;
+            skull.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(skull);
         }
         private void SpawnBald(IArgs args)
         {
             Bald bald = baldPool.SpawnFromPool(args);
             enemiesAlive.Add(bald);
+            bald.OnDamage += SpawnEnemyHitEffect;
+            bald.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(bald);
         }
         private void SpawnDark(IArgs args)
         {
             Dark dark = darkPool.SpawnFromPool(args);
             enemiesAlive.Add(dark);
+            dark.OnDamage += SpawnEnemyHitEffect;
+            dark.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(dark);
+        }
+        
+        private void SpawnEnemyHitEffect(Vector2 position)
+        {
+            
+        }
+
+        private void SpawnDeathEffect(Vector2 position)
+        {
+
         }
     }
 }

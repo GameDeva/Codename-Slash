@@ -51,4 +51,19 @@ namespace Codename___Slash
         }
 
     }
+
+    public class ArgsEffect : IArgs
+    {
+        public Vector2 Position { get; private set; }
+        public float AliveTime { get; private set; }
+        public Animation Animation { get; private set; }
+        
+        public ArgsEffect(Vector2 position, float aliveTime, Animation animation)
+        {
+            Position = position;
+            AliveTime = aliveTime;
+            Animation = animation;
+        }
+
+    }
 }

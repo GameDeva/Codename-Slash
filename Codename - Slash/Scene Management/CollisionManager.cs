@@ -42,13 +42,26 @@ namespace Codename___Slash
 
         // TODO: If there is issue with performance when it comes to switch statements,
         //          when adding or removing colliders, change up the pattern, i.e. separate methods
-        public void AddCollidable(ICollidable c)
+        private void AddCollidable(ICollidable c)
         {
             collidablesList.Add(c);
         }
-        public void RemoveCollidable(ICollidable c)
+        private void RemoveCollidable(ICollidable c)
         {
             collidablesList.Remove(c);
+        }
+        // Removes all of certain type
+        private void RemoveAllOfType(ColliderType c)
+        {
+            for(int i = collidablesList.Count -1; i >= 0; i--)
+            {
+                if (collidablesList[i].ColliderType == c)
+                    collidablesList.RemoveAt(i);
+            }
+        }
+        private void RemoveAll()
+        {
+            collidablesList.Clear();
         }
 
         //private void AddCollidable(ICollidable c, ColliderType colliderType)
@@ -99,11 +112,14 @@ namespace Codename___Slash
         {
             // Get reference to singleton instances
             poolmanager = PoolManager.Instance;
-            mapGenerator = MapGen.Instance;
+            // mapGenerator = MapGen.Instance;
 
             poolmanager.OnAddCollider += AddCollidable;
+            poolmanager.OnRemoveCollider += RemoveCollidable;
+            poolmanager.OnRemoveAllCollidersOfType += RemoveAllOfType;
             // mapGenerator.OnAddcollider += AddCollidable;
             StageManager.Instance.OnAddCollider += AddCollidable;
+            StageManager.Instance.OnRemoveCollider += RemoveCollidable;
             // mapGenerator.OnRemoveAllStaticColliders += RemoveAllStaticColliders;
         }
 

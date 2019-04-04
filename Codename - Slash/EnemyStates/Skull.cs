@@ -102,7 +102,7 @@ namespace Codename___Slash.EnemyStates
 
         public override void TakeDamage(int damagePoints)
         {
-            throw new NotImplementedException();
+            base.TakeDamage(damagePoints);
         }
 
         public override void TakeDamage(int damagePoints, Vector2 direction)
