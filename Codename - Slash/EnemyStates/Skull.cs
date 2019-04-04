@@ -11,7 +11,7 @@ namespace Codename___Slash.EnemyStates
     {
         private StateMachine stateMachine;
 
-        private float distanceToBeginPowerup = 100.0f;
+        private float distanceToBeginPowerup = 200.0f;
         private float DistanceOfCharge { get { return distanceToBeginPowerup * 2; } }
         
         // public Vector2 CurrentChargeToPosition { get; set; }

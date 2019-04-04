@@ -13,18 +13,27 @@ namespace Codename___Slash
 {
     public class GameOverState : GameState
     {
+        private SpriteFont hudFont;
+
         private List<UIElement> uIElements;
         private List<Button> buttons;
         private Button buttonOnHoover;
         private MouseState mouseState;
 
+        private ContentManager content;
+
+        private int finalScore;
         private UI ui;
 
         public override void Enter(Game1 game)
         {
+            content = game.Content;
+
             ui = new UI(game.Content);
             uIElements = new List<UIElement>();
             buttons = new List<Button>();
+
+            finalScore = GameplayState.UI.Score;
             base.Enter(game);
         }
 
@@ -35,11 +44,13 @@ namespace Codename___Slash
 
         protected override void LoadContent()
         {
+            // Load fonts
+            hudFont = content.Load<SpriteFont>("UI/Fonts/Hud");
             // TODO: Change all button mappings toa appropriate states
             // Load and add all the UI elements
-            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
-            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 3) - (82 / 2), 350, 82, 85), GameplayState));
-            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/BackToMain"), new Rectangle((Game1.SCREENWIDTH / 2) - (250 / 2), 850, 250, 96), MenuState));
+            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 2) - (287 /2), 650, 287, 90), GameplayState));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/BackToMain"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), MenuState));
 
             ui.LoadContent();
 
@@ -119,6 +130,8 @@ namespace Codename___Slash
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
+
+            spriteBatch.DrawString(hudFont, "Final Score: " + finalScore.ToString(), new Vector2(Game1.SCREENWIDTH/2 - 100, Game1.SCREENHEIGHT / 2), Color.White);
 
             // Draw ui elements
             foreach (UIElement element in uIElements)

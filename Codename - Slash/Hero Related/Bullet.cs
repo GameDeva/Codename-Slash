@@ -17,20 +17,20 @@ namespace Codename___Slash
         private Vector2 moveDirection;
         private float maxLiveTime;
         private float moveSpeed;
+        private int colliderSize = 15;
 
         public Point BoundingRectPoint { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Rectangle BoundingRect
         {
             get
             {
-                return new Rectangle(position.ToPoint(), new Point(12));
+                return new Rectangle(position.ToPoint(), new Point(colliderSize));
             }
             set { }
         }
         public bool FlaggedForRemoval { get; set; }
         public ColliderType ColliderType { get; set; } = ColliderType.heroAttack;
-        private const int dealDamageValue = 5;
-        public int DealDamageValue { get { return dealDamageValue; } set { value = dealDamageValue; } }
+        public int DealDamageValue { get; set; }
 
         public List<ColliderType> interactionTypes;
         public List<ColliderType> InteractionTypes { get { if (interactionTypes == null) { List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.enemy); i.Add(ColliderType.staticEnvironment); return i; } return interactionTypes; } }
@@ -52,7 +52,7 @@ namespace Codename___Slash
 
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(bulletTexture, position, Color.Black);
+            spriteBatch.Draw(bulletTexture, position, null, null, null, 0, new Vector2(colliderSize/5), Color.LightGreen, SpriteEffects.None, 0);
             
         }
 
@@ -71,6 +71,8 @@ namespace Codename___Slash
             bulletTexture = a.BulletTexture;
             maxLiveTime = a.MaxLiveTime;
             moveSpeed = a.MoveSpeed;
+            colliderSize = (int)a.ColliderSize.X;
+            DealDamageValue = (int)a.DamageValue;
             // BoundingRect = new Rectangle((int)position.X, (int)position.Y, (int)a.ColliderSize.X, (int)a.ColliderSize.Y);
 
             liveTime = 0f;

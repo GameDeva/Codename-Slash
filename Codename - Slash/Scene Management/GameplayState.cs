@@ -26,7 +26,7 @@ namespace Codename___Slash
         public int CurrentStage { get; private set; }
         public StageData CurrentStageData { get; private set; }
 
-        private GameplayUI ui; // UI instance for this gameplay session
+        public GameplayUI UI { get; set; } // UI instance for this gameplay session
 
         private Timer deathTimer = new Timer(3.0f);
 
@@ -43,7 +43,7 @@ namespace Codename___Slash
             enemyDirector = EnemyDirector.Instance;
 
             hero = new Hero(stateContent);
-            ui = new GameplayUI(stateContent);
+            UI = new GameplayUI(stateContent);
 
             // Initialise the EnemyDirector Singleton
             // IMPORTANT: Order, collisionmanager must be initalised first
@@ -62,7 +62,7 @@ namespace Codename___Slash
 
             // Continue based on load or new game
             SetupSession();
-            ui.Initialise(currentSaveData, ref hero);
+            UI.Initialise(currentSaveData, ref hero);
 
             UpdateStageData(1);
             enemyDirector.OnNewStage(CurrentStageData);
@@ -79,7 +79,7 @@ namespace Codename___Slash
         {
             // Load content from all managers
             hero.LoadContent(stateContent);
-            ui.LoadContent();
+            UI.LoadContent();
         }
 
         protected override void UnloadContent()
@@ -131,7 +131,7 @@ namespace Codename___Slash
             collisionManager.Update();
             poolManager.Update(deltaTime);
             // Camera.Follow(hero);
-            ui.Update();
+            UI.Update();
             
             // If hero is dead, death timer would have started automatically 
             // Wait for death timer to pass, then return game over state
@@ -156,13 +156,17 @@ namespace Codename___Slash
             spriteBatch.Begin();
             mapGen.DrawMap(spriteBatch);
             // stageManager.Draw(deltaTime, spriteBatch);
-            poolManager.Draw(deltaTime, spriteBatch);
+            foreach (Point point in enemyDirector.Spawnpoints)
+            {
+                enemyDirector.PortalAnimator.Draw(deltaTime, spriteBatch, point.ToVector2(), SpriteEffects.None, Color.White, 0.2f);
+            }
 
+            poolManager.Draw(deltaTime, spriteBatch);
             
-            
+
             hero.Draw(deltaTime, spriteBatch);
             
-            ui.Draw(spriteBatch);
+            UI.Draw(spriteBatch);
 
             // collisionManager.DebugDraw(spriteBatch);
             spriteBatch.End();

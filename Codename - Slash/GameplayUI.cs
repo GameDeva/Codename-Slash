@@ -36,7 +36,7 @@ namespace Codename___Slash
         private int healthRemaining;
         private bool completeStageText;
         private int stageNumber;
-        private int score;
+        public int Score { get; private set; }
 
         public GameplayUI(ContentManager content) : base(content)
         {
@@ -123,14 +123,14 @@ namespace Codename___Slash
             spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.White);
 
             spriteBatch.DrawString(hudFont, "Stage: " + stageNumber.ToString(), new Vector2(Game1.SCREENWIDTH-200, hudLocation.Y), Color.White);
-            spriteBatch.DrawString(hudFont, "Score: " + score.ToString(), new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y+32), Color.White);
+            spriteBatch.DrawString(hudFont, "Score: " + Score.ToString(), new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y+32), Color.White);
 
-            if(completeStageText)
-                spriteBatch.DrawString(hudFont, "Next one ->", new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y + 32), Color.White);
+            //if(completeStageText)
+            //    spriteBatch.DrawString(hudFont, "Next one ->", new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y + 32), Color.White);
 
 
             spriteBatch.Draw(templateSquare, healthRectangle, Color.Red);
-            spriteBatch.Draw(templateSquare, dashRectangle, Color.Blue);
+            // spriteBatch.Draw(templateSquare, dashRectangle, Color.Blue);
             if(weaponIconUI != null)
             {
                 spriteBatch.Draw(weaponIconUI, weaponIconRectangle, Color.Black);
@@ -183,7 +183,7 @@ namespace Codename___Slash
 
         private void IncrementScore(int increment)
         {
-            score += increment;
+            Score += increment;
         }
     }
 }

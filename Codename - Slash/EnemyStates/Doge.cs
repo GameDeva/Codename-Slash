@@ -12,7 +12,7 @@ namespace Codename___Slash.EnemyStates
     {
         private StateMachine stateMachine;
 
-        private float distanceToBeginChase = 500.0f;
+        private float distanceToBeginChase = 1500.0f;
         private float distanceToBeginAttack = 75.0f;
 
         public override bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

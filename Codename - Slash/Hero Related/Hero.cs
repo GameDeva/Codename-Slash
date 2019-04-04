@@ -237,9 +237,7 @@ namespace Codename___Slash
             }
         }
 
-
-
-
+        
 
         #region Hero Commands
 

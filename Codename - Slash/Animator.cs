@@ -34,7 +34,7 @@ namespace Codename___Slash
         /// <summary>
         /// Advances the time position and draws the current frame of the animation.
         /// </summary>
-        public void Draw(float deltaTime, SpriteBatch spriteBatch, Vector2 position, SpriteEffects spriteEffects, Color? color = null)
+        public void Draw(float deltaTime, SpriteBatch spriteBatch, Vector2 position, SpriteEffects spriteEffects, Color? color = null, float scale = 2.0f)
         {
             if (Animation == null)
                 throw new NotSupportedException("No animation is currently playing.");
@@ -61,7 +61,7 @@ namespace Codename___Slash
 
             // Draw the current frame.
             // spriteBatch.Draw(Animation.SpriteStrip, position, source, Color.White);
-            spriteBatch.Draw(Animation.SpriteStrip, position, source, color.GetValueOrDefault(Color.White), 0.0f, Origin, 2.0f, spriteEffects, 0.0f);
+            spriteBatch.Draw(Animation.SpriteStrip, position, source, color.GetValueOrDefault(Color.White), 0.0f, Origin, scale, spriteEffects, 0.0f);
         }
 
 

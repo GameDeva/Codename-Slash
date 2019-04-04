@@ -39,7 +39,7 @@ namespace Codename___Slash
         {
             // TODO : Maybe switch texture loading to weapon class? Not sure. 
             WeaponsList.Add(new MachineGun(content.Load<Texture2D>("Sprites/Weapons/mg/mg_UI_icon"), content.Load<Texture2D>("Sprites/Weapons/mg/mg_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta")));
-            WeaponsList.Add(new Shotgun(content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/bulletb")));
+            WeaponsList.Add(new Shotgun(content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta")));
 
 
             // TODO: move this to own class for weapon swapping

@@ -27,7 +27,7 @@ namespace Codename___Slash
         private bool shouldSpawn;
         private float spawnIntervalTimer;
         private float currentIntervalBetweenSpawns;
-        private List<Point> spawnPoints;
+        public List<Point> Spawnpoints { get; private set; }
         public float probDogeSpwan;
         public float probBaldSpwan;
         public float probSkullSpwan;
@@ -63,7 +63,9 @@ namespace Codename___Slash
         public EnemyAnimations SkullAnimations { get; private set; }
         public EnemyAnimations BaldAnimations { get; private set; }
         public EnemyAnimations DarkAnimations { get; private set; }
-        
+        public Animation PortalAnimation { get; private set; }
+        public Animator PortalAnimator { get; private set; }
+
         // Localbounds
         public Rectangle DogeLocalBounds { get; private set; }
         public Rectangle SkullLocalBounds { get; private set; }
@@ -77,14 +79,14 @@ namespace Codename___Slash
             // stageManager = StageManager.Instance;
             poolManager = PoolManager.Instance;
             random = new Random();
-            spawnPoints = new List<Point>();
+            Spawnpoints = new List<Point>();
+            PortalAnimator = new Animator();
 
             // stageManager.OnNewStage += OnNewStage;
             // stageManager.ToggleEnemyGeneration += SpawnToggle;
 
             poolManager.OnDeath += OnEnemyDeath;
-
-
+            
         }
 
         // On enter new stage
@@ -122,20 +124,20 @@ namespace Codename___Slash
         // Get set number of portals with 
         private void SetupSpawnPoints(int count)
         {
-            if (spawnPoints.Count > 0)
-                spawnPoints.Clear();
+            if (Spawnpoints.Count > 0)
+                Spawnpoints.Clear();
 
             for(int i = 0; i < count; i++)
             {
-                spawnPoints.Add(new Point(random.Next(32, Game1.SCREENWIDTH - 31), random.Next(32, Game1.SCREENHEIGHT - 31)));
+                Spawnpoints.Add(new Point(random.Next(200, Game1.SCREENWIDTH - 199), random.Next(200, Game1.SCREENHEIGHT - 199)));
             }
         }
 
         private Point GetRandomSpawnPoint()
         {
-            if(spawnPoints.Count != 0)
+            if(Spawnpoints.Count != 0)
             {
-                return spawnPoints[random.Next(0, spawnPoints.Count)];
+                return Spawnpoints[random.Next(0, Spawnpoints.Count)];
             }
             return new Point(0);
         }
@@ -185,6 +187,9 @@ namespace Codename___Slash
         // Load in all enemy files only if the probability of spawning in this stage is high
         private void LoadEnemyContent(StageData stageData)
         {
+            PortalAnimation = new Animation(content.Load<Texture2D>("Sprites/Enemies/portal"), 4, 0.6f, true);
+            PortalAnimator.AttachAnimation(PortalAnimation);
+
             if (stageData.probDogeSpwan > 0)
             {
                 DogeAnimations = new EnemyAnimations(new Animation(content.Load<Texture2D>("Sprites/Enemies/Doge_idle"), 1, 0.1f, true),

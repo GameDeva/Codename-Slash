@@ -40,6 +40,11 @@ namespace Codename___Slash
             currentCursorTexture = cursorTextureList[0];
         }
 
+        public virtual void UnloadContent()
+        {
+            Content.Unload();
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(currentCursorTexture, cursorPos, Color.White);

@@ -22,8 +22,9 @@ namespace Codename___Slash
         public float MaxLiveTime { get; private set; }
         public float MoveSpeed { get; private set; }
         public Vector2 ColliderSize { get; private set; }
+        public float DamageValue { get; private set; }
 
-        public ArgsBullet(Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed, Vector2 colliderSize)
+        public ArgsBullet(Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed, Vector2 colliderSize, float damageValue)
         {
             Position = position;
             Direction = direction;
@@ -31,6 +32,7 @@ namespace Codename___Slash
             MaxLiveTime = maxLiveTime;
             MoveSpeed = moveSpeed;
             ColliderSize = colliderSize;
+            DamageValue = damageValue;
         }
 
     }

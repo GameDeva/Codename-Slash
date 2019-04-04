@@ -141,7 +141,7 @@ namespace Codename___Slash
             Texture2D tex = new Texture2D(spriteBatch.GraphicsDevice, rect.Width, rect.Height);
 
             Color[] data = new Color[rect.Width * rect.Height];
-            for (int i = 0; i < data.Length; ++i) data[i] = Color.Red;
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.IndianRed;
             tex.SetData(data);
 
             Vector2 coor = new Vector2(rect.X, rect.Y);
