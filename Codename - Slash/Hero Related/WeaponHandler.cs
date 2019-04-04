@@ -93,6 +93,8 @@ namespace Codename___Slash
                 EquipWeapon(equippedWeaponIndex + 1);
                 // equippedWeapon = weaponsList[equippedWeaponIndex + 1];
             }
+            OnWeaponSwap?.Invoke(ref equippedWeapon, ref equippedWeapon);
+
         }
 
         public void PreviousWeapon()
@@ -110,6 +112,8 @@ namespace Codename___Slash
                 EquipWeapon(equippedWeaponIndex - 1);
                 // equippedWeapon = weaponsList[equippedWeaponIndex - 1];
             }
+            OnWeaponSwap?.Invoke(ref equippedWeapon, ref equippedWeapon);
+
         }
 
         private void EquipWeapon(int weaponIndex)

@@ -28,7 +28,7 @@ namespace Codename___Slash
 
         public GameplayUI UI { get; set; } // UI instance for this gameplay session
 
-        private Timer deathTimer = new Timer(3.0f);
+        private Timer deathTimer = new Timer(1.0f);
 
         // Contains saved data if any
         private SaveData currentSaveData;
@@ -36,6 +36,8 @@ namespace Codename___Slash
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
+
+            SaveGame(); 
             // Store reference to singleton Managers
             mapGen = MapGen.Instance;
             poolManager = PoolManager.Instance;
@@ -64,7 +66,7 @@ namespace Codename___Slash
             SetupSession();
             UI.Initialise(currentSaveData, ref hero);
 
-            UpdateStageData(1);
+            UpdateStageData(CurrentStage);
             enemyDirector.OnNewStage(CurrentStageData);
             poolManager.CreateStageSpecificPools(CurrentStageData);
             
@@ -189,21 +191,21 @@ namespace Codename___Slash
             if (currentSaveData != null)
             {
                 SetupContinueGame();
+                // Setup session values
+                CurrentScore = currentSaveData.currentScore;
+                CurrentStage = currentSaveData.stageNumber;
+                for (int i = 0; i < hero.WeaponHandler.WeaponsList.Count; i++)
+                {
+                    hero.WeaponHandler.WeaponsList[i].CurrentAmmoCarry = currentSaveData.weaponDataList[i].currentAmmoCarry;
+                    hero.WeaponHandler.WeaponsList[i].CurrentMagHold = currentSaveData.weaponDataList[i].currentMagHold;
+                }
             }
             else
             {
                 SetupNewGame();
+                CurrentStage = 1;
             }
 
-            // Setup session values
-            CurrentScore = currentSaveData.currentScore;
-            CurrentStage = currentSaveData.stageNumber;
-            for(int i = 0; i < hero.WeaponHandler.WeaponsList.Count; i++)
-            {
-                hero.WeaponHandler.WeaponsList[i].CurrentAmmoCarry = currentSaveData.weaponDataList[i].currentAmmoCarry;
-                hero.WeaponHandler.WeaponsList[i].CurrentMagHold = currentSaveData.weaponDataList[i].currentMagHold;
-            }
-            
         }
 
         // Uses saveddata to load game
@@ -244,6 +246,29 @@ namespace Codename___Slash
         private void DeleteSaveFile()
         {
             File.Delete("SaveFile.xml");
+        }
+
+        private void SaveGame()
+        {
+            CurrentScore = 1312;
+            CurrentStage = 2;
+
+            SaveData saveData = new SaveData();
+            saveData.currentScore = CurrentScore;
+            saveData.stageNumber = CurrentStage;
+
+            // Test
+            saveData.weaponDataList = new List<WeaponSaveData>();
+            saveData.weaponDataList.Add(new WeaponSaveData(500, 23));
+            saveData.weaponDataList.Add(new WeaponSaveData(30, 2));
+
+            //saveData.weaponDataList = new List<WeaponSaveData>();
+            //foreach(Weapon w in hero.WeaponHandler.WeaponsList)
+            //{
+            //    saveData.weaponDataList.Add(new WeaponSaveData(w.CurrentAmmoCarry, w.CurrentMagHold));
+            //}
+
+            Loader.ToXmlFile(saveData, "SaveFile.xml");
         }
 
         // Load given stage

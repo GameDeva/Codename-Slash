@@ -10,8 +10,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Codename___Slash
 {
-
-    public class ProtocolState : GameState
+    public class NextStageState : GameState
     {
         private SpriteFont hudFont;
 
@@ -19,8 +18,10 @@ namespace Codename___Slash
         private List<Button> buttons;
         private Button buttonOnHoover;
         private MouseState mouseState;
+
         private ContentManager content;
 
+        private int finalScore;
         private UI ui;
 
         public override void Enter(Game1 game)
@@ -30,6 +31,8 @@ namespace Codename___Slash
             ui = new UI(game.Content);
             uIElements = new List<UIElement>();
             buttons = new List<Button>();
+
+            finalScore = GameplayState.UI.Score;
             base.Enter(game);
         }
 
@@ -42,11 +45,10 @@ namespace Codename___Slash
         {
             // Load fonts
             hudFont = content.Load<SpriteFont>("UI/Fonts/Hud");
-
             // TODO: Change all button mappings toa appropriate states
             // Load and add all the UI elements
-            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/ProtocolBig"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
-            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Back"), new Rectangle((Game1.SCREENWIDTH / 2) - (250 / 2), 850, 250, 96), MenuState));
+            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), GameplayState));
 
             ui.LoadContent();
 
@@ -127,16 +129,13 @@ namespace Codename___Slash
         {
             spriteBatch.Begin();
 
+            spriteBatch.DrawString(hudFont, "Final Score: " + finalScore.ToString(), new Vector2(Game1.SCREENWIDTH / 2 - 100, Game1.SCREENHEIGHT / 2), Color.White);
+
             // Draw ui elements
             foreach (UIElement element in uIElements)
             {
                 spriteBatch.Draw(element.texture, element.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
             }
-
-            spriteBatch.DrawString(hudFont, "WASD to Move", new Vector2(Game1.SCREENWIDTH / 2 -400, Game1.SCREENHEIGHT -700), Color.White);
-            spriteBatch.DrawString(hudFont, "Mouse for Aim", new Vector2(Game1.SCREENWIDTH / 2 - 400, Game1.SCREENHEIGHT - 600), Color.White);
-            spriteBatch.DrawString(hudFont, "Left-Click to Shoot", new Vector2(Game1.SCREENWIDTH / 2 - 400, Game1.SCREENHEIGHT -500), Color.White);
-            spriteBatch.DrawString(hudFont, "Scroll to Swap Weapon", new Vector2(Game1.SCREENWIDTH / 2 - 400, Game1.SCREENHEIGHT -400), Color.White);
 
             // Draw the hover rect
             if (buttonOnHoover.onHoover)
@@ -153,6 +152,5 @@ namespace Codename___Slash
             spriteBatch.End();
             base.Draw(deltaTime, spriteBatch);
         }
-
     }
 }

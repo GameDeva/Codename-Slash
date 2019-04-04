@@ -25,6 +25,8 @@ namespace Codename___Slash
         private int finalScore;
         private UI ui;
 
+        public Action<int> UpdateScores;
+
         public override void Enter(Game1 game)
         {
             content = game.Content;
@@ -34,6 +36,9 @@ namespace Codename___Slash
             buttons = new List<Button>();
 
             finalScore = GameplayState.UI.Score;
+            // UpdateScores?.Invoke(finalScore);
+            AwardsState.UpdateAwardsFileWithNewScore(finalScore);
+
             base.Enter(game);
         }
 

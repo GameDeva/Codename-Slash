@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using System.IO;
 
 namespace Codename___Slash
 {
@@ -17,13 +18,22 @@ namespace Codename___Slash
         private Button buttonOnHoover;
         private MouseState mouseState;
 
+        private SpriteFont hudFont;
+        private ContentManager content;
+
         private UI ui;
+
+        public AwardsData AwardsData { get; private set; }
 
         public override void Enter(Game1 game)
         {
+            content = game.Content;
+
             ui = new UI(game.Content);
             uIElements = new List<UIElement>();
             buttons = new List<Button>();
+            LoadAwardsFile();
+
             base.Enter(game);
         }
 
@@ -34,12 +44,14 @@ namespace Codename___Slash
 
         protected override void LoadContent()
         {
+            // Load fonts
+            hudFont = content.Load<SpriteFont>("UI/Fonts/Hud");
             // TODO: Change all button mappings toa appropriate states
             // Load and add all the UI elements
             uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/AwardsBig"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
-            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/1"), new Rectangle((Game1.SCREENWIDTH / 3) - (82 / 2), 350, 82, 85)));
-            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/2"), new Rectangle((Game1.SCREENWIDTH / 3) - (97 / 2), 450, 97, 85)));
-            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/3"), new Rectangle((Game1.SCREENWIDTH / 3) - (95 / 2), 550, 95, 88)));
+            //uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/1"), new Rectangle((Game1.SCREENWIDTH / 3) - (82 / 2), 350, 82, 85)));
+            //uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/2"), new Rectangle((Game1.SCREENWIDTH / 3) - (97 / 2), 450, 97, 85)));
+            //uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/3"), new Rectangle((Game1.SCREENWIDTH / 3) - (95 / 2), 550, 95, 88)));
             buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Back"), new Rectangle((Game1.SCREENWIDTH / 2) - (250 / 2), 850, 250, 96), MenuState));
             
             ui.LoadContent();
@@ -137,10 +149,42 @@ namespace Codename___Slash
                 spriteBatch.Draw(element.texture, element.destRect, null, Color.White, 0.0f, new Vector2(1), SpriteEffects.None, 1.0f);
             }
 
+            if(AwardsData.scores.Count > 0)
+            {
+                for(int i = 0; i < 10 && i < AwardsData.scores.Count; i++)
+                {
+                    spriteBatch.DrawString(hudFont, AwardsData.scores[i].ToString(), new Vector2(Game1.SCREENWIDTH / 2 - 300, 400 + (i * 40)), Color.White);
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                spriteBatch.DrawString(hudFont, string.Format("{0}. ", i+1), new Vector2(Game1.SCREENWIDTH / 2 - 350, 400 + (i * 40)), Color.White);
+            }
             ui.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(deltaTime, spriteBatch);
+        }
+
+        public void UpdateAwardsFileWithNewScore(int newScore)
+        {
+            AwardsData.scores.Add(newScore);
+            AwardsData.scores.Sort();
+
+            Loader.ToXmlFile(AwardsData, "AwardsFile.xml");
+        }
+
+        private void LoadAwardsFile()
+        {
+            if (File.Exists("AwardsFile.xml"))
+            {
+                AwardsData a = new AwardsData();
+                Loader.ReadXML("AwardsFile.xml", ref a);
+                a.scores.Sort();
+                AwardsData = a;
+            }
+            AwardsData = new AwardsData();
         }
 
     }

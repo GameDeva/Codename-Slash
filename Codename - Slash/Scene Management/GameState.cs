@@ -23,6 +23,7 @@ namespace Codename___Slash
         public static ProtocolState ProtocolState { get; } = new ProtocolState();
         public static GameplayState GameplayState { get; } = new GameplayState();
         public static GameOverState GameOverState { get; } = new GameOverState();
+        // public static NextStageState NextStageState { get; } = new NextStageState();
 
         protected CommandManager commandManager;
         protected IServiceProvider services;

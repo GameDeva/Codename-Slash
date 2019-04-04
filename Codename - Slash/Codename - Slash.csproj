@@ -61,7 +61,9 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Hero Related\GameOverState.cs" />
     <Compile Include="Hero Related\IDamageDealer.cs" />
+    <Compile Include="Hero Related\NextStageState.cs" />
     <Compile Include="Hero Related\Timer.cs" />
+    <Compile Include="InputHandling\AwardsData.cs" />
     <Compile Include="InputHandling\Command.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameObject.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Scene Management\CollisionManager.cs" />
     <Compile Include="Scene Management\Dark.cs" />
     <Compile Include="Scene Management\Effect.cs" />
+    <Compile Include="Scene Management\Pickup.cs" />
     <Compile Include="Scene Management\ReachBoxTrigger.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
     <Compile Include="IDamageable.cs" />

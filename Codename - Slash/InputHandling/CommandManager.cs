@@ -103,8 +103,12 @@ namespace Codename___Slash
         
         public void OnScroll(Scroll scroll)
         {
-            Action<eButtonState, Vector2> action = m_scrollBindings[scroll];
-            action?.Invoke(eButtonState.NONE, new Vector2(1.0f));
+            if(m_scrollBindings.Count != 0)
+            {
+
+                Action<eButtonState, Vector2> action = m_scrollBindings[scroll];
+                action?.Invoke(eButtonState.NONE, new Vector2(1.0f));
+            }
         }
 
         public void AddMouseBinding(MouseButton button, Action<eButtonState, Vector2> action)

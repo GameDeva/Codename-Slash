@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<StageData>
+	<stageNumber>2</stageNumber>
+	<enemiesToFight>30</enemiesToFight>
+	<intervalBetweenSpawn>2</intervalBetweenSpawn>
+	<spawnPointCount>8</spawnPointCount>
+	<maxDogeCount>10</maxDogeCount>
+	<maxBaldCount>0</maxBaldCount>
+	<maxSkullCount>3</maxSkullCount>
+	<maxDarkCount>0</maxDarkCount>
+	<probDogeSpwan>0.4</probDogeSpwan>
+	<probBaldSpwan>0</probBaldSpwan>
+	<probSkullSpwan>0.6</probSkullSpwan>
+	<probDarkSpwan>0</probDarkSpwan>
+	<probHealthDrop>0</probHealthDrop>
+	<probAmmoDrop>0</probAmmoDrop>
+</StageData>
