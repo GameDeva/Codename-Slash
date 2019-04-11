@@ -29,7 +29,9 @@ namespace Codename___Slash
         {
             graphics = new GraphicsDeviceManager(this); // TODO: Maybe not needed here if this is handling in the state classes? 
             Content.RootDirectory = "Content";
-            
+
+            IsFixedTimeStep = false;
+
             graphics.PreferredBackBufferWidth = SCREENWIDTH;
             graphics.PreferredBackBufferHeight = SCREENHEIGHT;
             // graphics.IsFullScreen = true;

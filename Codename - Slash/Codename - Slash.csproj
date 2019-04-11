@@ -79,6 +79,8 @@
     <Compile Include="Scene Management\CollisionManager.cs" />
     <Compile Include="Scene Management\Dark.cs" />
     <Compile Include="Scene Management\Effect.cs" />
+    <Compile Include="Scene Management\GameManager.cs" />
+    <Compile Include="Scene Management\MenuSystem.cs" />
     <Compile Include="Scene Management\Pickup.cs" />
     <Compile Include="Scene Management\ReachBoxTrigger.cs" />
     <Compile Include="Scene Management\GameplayState.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Scene Management\ProtocolState.cs" />
     <Compile Include="Scene Management\SaveData.cs" />
     <Compile Include="Scene Management\StageData.cs" />
+    <Compile Include="Scene Management\WalkwayState.cs" />
     <Compile Include="Scene Management\Wave.cs" />
     <Compile Include="Scene Management\WeaponSaveData.cs" />
     <Compile Include="StaticCollider.cs" />

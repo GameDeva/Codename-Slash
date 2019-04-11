@@ -14,12 +14,12 @@ namespace Codename___Slash
 {
     public class GameplayState : GameState
     {
-        private Hero hero; // Hero instance for this gameplay session
         // private Camera camera; // Camera instance for this gameplay session
         // private MapGenerator mapGenerator;
         private EnemyDirector enemyDirector;
         private PoolManager poolManager;
         private CollisionManager collisionManager;
+        private GameManager gameManager;
         private MapGen mapGen;
 
         public int CurrentScore { get; private set; }
@@ -30,28 +30,25 @@ namespace Codename___Slash
 
         private Timer deathTimer = new Timer(1.0f);
 
-        // Contains saved data if any
-        private SaveData currentSaveData;
-
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
+            
 
-            SaveGame(); 
             // Store reference to singleton Managers
             mapGen = MapGen.Instance;
             poolManager = PoolManager.Instance;
             collisionManager = CollisionManager.Instance;
             enemyDirector = EnemyDirector.Instance;
+            gameManager = GameManager.Instance;
 
-            hero = new Hero(stateContent);
             UI = new GameplayUI(stateContent);
 
             // Initialise the EnemyDirector Singleton
             // IMPORTANT: Order, collisionmanager must be initalised first
             collisionManager.Initialise();
-            enemyDirector.Initialise(hero, stateContent);
-            poolManager.Initialise(hero);
+            enemyDirector.Initialise(gameManager.Hero, stateContent);
+            poolManager.Initialise(gameManager.Hero);
 
             mapGen.Initialise(game.Services);
             mapGen.GetMapData("Walkway");
@@ -63,15 +60,14 @@ namespace Codename___Slash
             mapGen.ChangeMapColliders(MapCollider.BattleArena);
 
             // Continue based on load or new game
-            SetupSession();
-            UI.Initialise(currentSaveData, ref hero);
+            UI.Initialise(GameManager.Instance.CurrentSaveData, gameManager.Hero);
 
             UpdateStageData(CurrentStage);
             enemyDirector.OnNewStage(CurrentStageData);
             poolManager.CreateStageSpecificPools(CurrentStageData);
             
             // Attach events
-            hero.OnDeath += OnHeroDeath;
+            gameManager.Hero.OnDeath += OnHeroDeath;
 
             base.Enter(game);
             
@@ -80,7 +76,7 @@ namespace Codename___Slash
         protected override void LoadContent() 
         {
             // Load content from all managers
-            hero.LoadContent(stateContent);
+            gameManager.Hero.LoadContent(stateContent);
             UI.LoadContent();
         }
 
@@ -104,16 +100,16 @@ namespace Codename___Slash
         {
             if(commandManager != null)
             {
-                commandManager.AddKeyboardBinding(Keys.W, hero.MoveUp);
-                commandManager.AddKeyboardBinding(Keys.D, hero.MoveRight);
-                commandManager.AddKeyboardBinding(Keys.A, hero.MoveLeft);
-                commandManager.AddKeyboardBinding(Keys.S, hero.MoveDown);
-                commandManager.AddKeyboardBinding(Keys.Space, hero.Dash);
+                commandManager.AddKeyboardBinding(Keys.W, gameManager.Hero.MoveUp);
+                commandManager.AddKeyboardBinding(Keys.D, gameManager.Hero.MoveRight);
+                commandManager.AddKeyboardBinding(Keys.A, gameManager.Hero.MoveLeft);
+                commandManager.AddKeyboardBinding(Keys.S, gameManager.Hero.MoveDown);
+                commandManager.AddKeyboardBinding(Keys.Space, gameManager.Hero.Dash);
 
-                commandManager.AddMouseBinding(MouseButton.LEFT, hero.ShootWeapon);
-                commandManager.AddMouseBinding(MouseButton.RIGHT, hero.ShootWeapon);
-                commandManager.AddScrollBinding(Scroll.DOWN, hero.PreviousWeapon);
-                commandManager.AddScrollBinding(Scroll.UP, hero.NextWeapon);
+                commandManager.AddMouseBinding(MouseButton.LEFT, gameManager.Hero.ShootWeapon);
+                commandManager.AddMouseBinding(MouseButton.RIGHT, gameManager.Hero.ShootWeapon);
+                commandManager.AddScrollBinding(Scroll.DOWN, gameManager.Hero.PreviousWeapon);
+                commandManager.AddScrollBinding(Scroll.UP, gameManager.Hero.NextWeapon);
             }
         }
 
@@ -122,7 +118,7 @@ namespace Codename___Slash
         {
             // Handle State object Updates
             commandManager.Update();
-            hero.Update(deltaTime);
+            gameManager.Hero.Update(deltaTime);
 
             // If returns true then level has been complete
             if(enemyDirector.Update(deltaTime))
@@ -137,7 +133,7 @@ namespace Codename___Slash
             
             // If hero is dead, death timer would have started automatically 
             // Wait for death timer to pass, then return game over state
-            if(hero.Dead)
+            if(gameManager.Hero.Dead)
             {
                 deathTimer.Update(deltaTime);
                 // When timer is done
@@ -166,7 +162,7 @@ namespace Codename___Slash
             poolManager.Draw(deltaTime, spriteBatch);
             
 
-            hero.Draw(deltaTime, spriteBatch);
+            gameManager.Hero.Draw(deltaTime, spriteBatch);
             
             UI.Draw(spriteBatch);
 
@@ -183,93 +179,29 @@ namespace Codename___Slash
         {
             deathTimer.Start();
         }
+        
+        //private void SaveGame()
+        //{
+        //    CurrentScore = 1312;
+        //    CurrentStage = 2;
 
-        // Called when a gameplay session starts
-        public void SetupSession()
-        {
-            // Continue Game from saveddata
-            if (currentSaveData != null)
-            {
-                SetupContinueGame();
-                // Setup session values
-                CurrentScore = currentSaveData.currentScore;
-                CurrentStage = currentSaveData.stageNumber;
-                for (int i = 0; i < hero.WeaponHandler.WeaponsList.Count; i++)
-                {
-                    hero.WeaponHandler.WeaponsList[i].CurrentAmmoCarry = currentSaveData.weaponDataList[i].currentAmmoCarry;
-                    hero.WeaponHandler.WeaponsList[i].CurrentMagHold = currentSaveData.weaponDataList[i].currentMagHold;
-                }
-            }
-            else
-            {
-                SetupNewGame();
-                CurrentStage = 1;
-            }
+        //    SaveData saveData = new SaveData();
+        //    saveData.currentScore = CurrentScore;
+        //    saveData.stageNumber = CurrentStage;
 
-        }
+        //    // Test
+        //    saveData.weaponDataList = new List<WeaponSaveData>();
+        //    saveData.weaponDataList.Add(new WeaponSaveData(500, 23));
+        //    saveData.weaponDataList.Add(new WeaponSaveData(30, 2));
 
-        // Uses saveddata to load game
-        private void SetupContinueGame()
-        {
-            // If no save file
-            if (!LoadSaveFile())
-                currentSaveData = new SaveData();
-        }
+        //    //saveData.weaponDataList = new List<WeaponSaveData>();
+        //    //foreach(Weapon w in hero.WeaponHandler.WeaponsList)
+        //    //{
+        //    //    saveData.weaponDataList.Add(new WeaponSaveData(w.CurrentAmmoCarry, w.CurrentMagHold));
+        //    //}
 
-        // Sets up new game
-        private void SetupNewGame()
-        {
-            if (File.Exists("SaveFile.xml"))
-            {
-                DeleteSaveFile();
-            }
-            currentSaveData = new SaveData();
-        }
-
-        // Load saved file, returns true if successful
-        private bool LoadSaveFile()
-        {
-            if (File.Exists("SaveFile.xml"))
-            {
-                Loader.ReadXML("SaveFile.xml", ref currentSaveData);
-                return true;
-            }
-            return false;
-        }
-
-        private void UpdateSaveFile(SaveData saveData)
-        {
-            this.currentSaveData = saveData;
-            Loader.ToXmlFile(saveData, "SaveFile.xml");
-        }
-
-        private void DeleteSaveFile()
-        {
-            File.Delete("SaveFile.xml");
-        }
-
-        private void SaveGame()
-        {
-            CurrentScore = 1312;
-            CurrentStage = 2;
-
-            SaveData saveData = new SaveData();
-            saveData.currentScore = CurrentScore;
-            saveData.stageNumber = CurrentStage;
-
-            // Test
-            saveData.weaponDataList = new List<WeaponSaveData>();
-            saveData.weaponDataList.Add(new WeaponSaveData(500, 23));
-            saveData.weaponDataList.Add(new WeaponSaveData(30, 2));
-
-            //saveData.weaponDataList = new List<WeaponSaveData>();
-            //foreach(Weapon w in hero.WeaponHandler.WeaponsList)
-            //{
-            //    saveData.weaponDataList.Add(new WeaponSaveData(w.CurrentAmmoCarry, w.CurrentMagHold));
-            //}
-
-            Loader.ToXmlFile(saveData, "SaveFile.xml");
-        }
+        //    Loader.ToXmlFile(saveData, "SaveFile.xml");
+        //}
 
         // Load given stage
         public void UpdateStageData(int n)

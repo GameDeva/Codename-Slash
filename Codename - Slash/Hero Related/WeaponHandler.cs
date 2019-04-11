@@ -31,20 +31,18 @@ namespace Codename___Slash
         public WeaponHandler()
         {
             WeaponsList = new List<Weapon>();
-            
-
+            WeaponsList.Add(new MachineGun());
+            WeaponsList.Add(new Shotgun());
         }
 
         public void LoadContent(ContentManager content)
         {
-            // TODO : Maybe switch texture loading to weapon class? Not sure. 
-            WeaponsList.Add(new MachineGun(content.Load<Texture2D>("Sprites/Weapons/mg/mg_UI_icon"), content.Load<Texture2D>("Sprites/Weapons/mg/mg_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta")));
-            WeaponsList.Add(new Shotgun(content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta")));
-
+            // Load in textures 
+            WeaponsList[0].LoadContent(content.Load<Texture2D>("Sprites/Weapons/mg/mg_UI_icon"), content.Load<Texture2D>("Sprites/Weapons/mg/mg_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta"));
+            WeaponsList[1].LoadContent(content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/Shotgun/shot_side"), content.Load<Texture2D>("Sprites/Weapons/mg/bulleta"));
 
             // TODO: move this to own class for weapon swapping
             EquipWeapon(0);
-
             OnWeaponSwap?.Invoke(ref equippedWeapon, ref equippedWeapon);
 
         }

@@ -34,7 +34,9 @@ namespace Codename___Slash
         public float probDarkSpwan;
         public float probHealthDrop;
         public float probAmmoDrop;
+
         public int enemiesToKillToWin;
+        public int totalEnemiesSpawned;
         public int maxDogeCount;
         public int maxBaldCount;
         public int maxSkullCount;
@@ -112,6 +114,7 @@ namespace Codename___Slash
             
             // Reset old values
             spawnIntervalTimer = 0.0f;
+            totalEnemiesSpawned = 0;
             currentBaldCount = 0;
             currentDarkCount = 0;
             currentDogeCount = 0;
@@ -154,6 +157,7 @@ namespace Codename___Slash
                 {
                     CreateEnemy("Doge", DogeLocalBounds, p.ToVector2(), 100, "chase");
                     currentDogeCount++;
+                    totalEnemiesSpawned++;
                 }
                 return;
             }
@@ -163,6 +167,7 @@ namespace Codename___Slash
                 {
                     CreateEnemy("Skull", SkullLocalBounds, p.ToVector2(), 100, "chase");
                     currentSkullCount++;
+                    totalEnemiesSpawned++;
                 }
                 return;
             }
@@ -172,6 +177,7 @@ namespace Codename___Slash
                 {
                     CreateEnemy("Bald", BaldLocalBounds, p.ToVector2(), 100, "chase");
                     currentBaldCount++;
+                    totalEnemiesSpawned++;
                 }
                 return;
             }
@@ -179,6 +185,7 @@ namespace Codename___Slash
             {
                 CreateEnemy("Dark", DarkLocalBounds, p.ToVector2(), 100, "rest");
                 currentDarkCount++;
+                totalEnemiesSpawned++;
                 return;
             }
 
@@ -259,7 +266,7 @@ namespace Codename___Slash
             }
 
             // Spawning should be allowed, must have finished interval, must not spawn too many enemies
-            if (spawnIntervalTimer > currentIntervalBetweenSpawns && (currentDogeCount < maxDogeCount || currentSkullCount < maxSkullCount || currentBaldCount < maxBaldCount || currentDarkCount < maxDarkCount))
+            if (spawnIntervalTimer > currentIntervalBetweenSpawns && (currentDogeCount < maxDogeCount || currentSkullCount < maxSkullCount || currentBaldCount < maxBaldCount || currentDarkCount < maxDarkCount) && totalEnemiesSpawned < enemiesToKillToWin)
             {
                 spawnIntervalTimer = 0.0f;
                 SpawnEnemy();

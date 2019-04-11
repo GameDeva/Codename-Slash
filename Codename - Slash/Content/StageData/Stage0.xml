@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <StageData>
-	<stageNumber>1</stageNumber>
+	<stageNumber>0</stageNumber>
 	<enemiesToFight>5</enemiesToFight>
+	<intervalBetweenSpawn>1</intervalBetweenSpawn>
+	<spawnPointCount>4</spawnPointCount>
 	<maxDogeCount>5</maxDogeCount>
 	<maxBaldCount>0</maxBaldCount>
 	<maxSkullCount>5</maxSkullCount>

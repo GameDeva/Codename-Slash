@@ -72,7 +72,7 @@ namespace Codename___Slash
         public Action<int> OnDamage;
         public Action OnDeath;
 
-        public Hero(ContentManager content)
+        public Hero()
         {
             Animator = new Animator();
             WeaponHandler = new WeaponHandler();

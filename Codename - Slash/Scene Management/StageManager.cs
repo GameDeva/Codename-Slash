@@ -11,7 +11,7 @@ namespace Codename___Slash
 {
     public class StageManager
     {
-        // Single creation
+        // Singleton creation
         private static StageManager instance;
         public static StageManager Instance { get { if (instance == null) { instance = new StageManager(); return instance; } return instance; } set { instance = value; } }
 

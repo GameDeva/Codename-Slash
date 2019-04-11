@@ -21,6 +21,7 @@ namespace Codename___Slash
         public static MainMenuState MenuState { get; } = new MainMenuState();
         public static AwardsState AwardsState { get; } = new AwardsState();
         public static ProtocolState ProtocolState { get; } = new ProtocolState();
+        public static WalkwayState WalkwayState { get; } = new WalkwayState();
         public static GameplayState GameplayState { get; } = new GameplayState();
         public static GameOverState GameOverState { get; } = new GameOverState();
         // public static NextStageState NextStageState { get; } = new NextStageState();
@@ -32,8 +33,8 @@ namespace Codename___Slash
 
         public void InitialiseState(Game1 game)
         {
-            // graphics = new GraphicsDeviceManager(game);
-            stateContent = new ContentManager(game.Services, "Content"); // Should be based on level, maybe later object types or areas
+            // Create new content manager for each state
+            stateContent = new ContentManager(game.Services, "Content"); 
         }
 
         // Enter method to be called on entry into particular state

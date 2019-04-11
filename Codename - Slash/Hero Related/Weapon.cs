@@ -38,14 +38,18 @@ namespace Codename___Slash
 
         public List<Bullet> BulletsFired { get; protected set; }
 
-        public Weapon(Texture2D weaponIconTexture, Texture2D weaponTexture, Texture2D bulletTexture)
+        public Weapon()
+        {
+            BulletsFired = new List<Bullet>();
+
+        }
+
+        public void LoadContent(Texture2D weaponIconTexture, Texture2D weaponTexture, Texture2D bulletTexture)
         {
             WeaponIconTexture = weaponIconTexture;
             WeaponTexture = weaponTexture;
             BulletTexture = bulletTexture;
-
-            BulletsFired = new List<Bullet>();
-
+            
         }
 
         public virtual void Update(float deltaTime)

@@ -32,8 +32,7 @@ namespace Codename___Slash
             ui = new UI(game.Content);
             uIElements = new List<UIElement>();
             buttons = new List<Button>();
-            LoadAwardsFile();
-
+            
             base.Enter(game);
         }
 
@@ -175,7 +174,7 @@ namespace Codename___Slash
             Loader.ToXmlFile(AwardsData, "AwardsFile.xml");
         }
 
-        private void LoadAwardsFile()
+        public void LoadAwardsFile()
         {
             if (File.Exists("AwardsFile.xml"))
             {

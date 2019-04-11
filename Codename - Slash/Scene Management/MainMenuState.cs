@@ -31,8 +31,9 @@ namespace Codename___Slash
         public bool onPressDown;
         public bool onSelect;
         public GameState stateToReturn;
+        public Action cake;
 
-        public Button(Texture2D texture, Rectangle destRect, GameState stateToReturn)
+        public Button(Texture2D texture, Rectangle destRect, GameState stateToReturn, Action cake = null)
         {
             this.texture = texture;
             this.destRect = destRect;
@@ -40,10 +41,10 @@ namespace Codename___Slash
             onPressDown = false;
             onSelect = false;
             this.stateToReturn = stateToReturn;
+            this.cake = cake;
         }
     }
-
-
+    
     public class MainMenuState : GameState
     {
         private List<UIElement> uIElements;
@@ -52,12 +53,18 @@ namespace Codename___Slash
         private MouseState mouseState;
 
         private UI ui;
+        private GameManager gameManager;
 
         public override void Enter(Game1 game)
         {
+            gameManager = GameManager.Instance;
             ui = new UI(game.Content);
             uIElements = new List<UIElement>();
             buttons = new List<Button>();
+
+            AwardsState.LoadAwardsFile();
+
+
             base.Enter(game);
         }
 
@@ -71,8 +78,11 @@ namespace Codename___Slash
             // TODO: Change all button mappings toa appropriate states
             // Load and add all the UI elements
             uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/Title"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
-            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (400 / 2), 450, 400, 94), GameplayState));
-            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/NewGame"), new Rectangle((Game1.SCREENWIDTH / 2) - (454 / 2), 550, 454, 100), GameplayState));
+            // Try getting save data on the gamemanager
+            // If there is save data then display the continue button
+            if (GameManager.Instance.GetSaveData()) 
+                buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (400 / 2), 450, 400, 94), GameplayState, OnContinueButton));
+            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/NewGame"), new Rectangle((Game1.SCREENWIDTH / 2) - (454 / 2), 550, 454, 100), GameplayState, OnNewGame));
             buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Protocol"), new Rectangle((Game1.SCREENWIDTH / 2) - (423 / 2), 650, 423, 84), ProtocolState));
             buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Awards"), new Rectangle((Game1.SCREENWIDTH / 2) - (360 / 2), 750, 360, 94), AwardsState));
             buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Quit"), new Rectangle((Game1.SCREENWIDTH / 2) - (205 / 2), 850, 205, 104), null));
@@ -143,6 +153,12 @@ namespace Codename___Slash
             // If button has been selected
             if (buttonOnHoover.onSelect && buttonOnHoover.stateToReturn != null)
             {
+                // If the buttons have a method to call on click, call that method
+                if(buttonOnHoover.cake != null)
+                {
+                    buttonOnHoover.cake.Invoke();
+                }
+
                 return buttonOnHoover.stateToReturn;
             }
             // Exmaple return statement:::: return GameState.optionState;
@@ -175,6 +191,17 @@ namespace Codename___Slash
 
             spriteBatch.End();
             base.Draw(deltaTime, spriteBatch);
+        }
+
+
+        private void OnContinueButton()
+        {
+            GameManager.Instance.OnContinueGame();
+        }
+
+        private void OnNewGame()
+        {
+            GameManager.Instance.OnNewGame();
         }
 
     }

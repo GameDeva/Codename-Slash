@@ -43,7 +43,7 @@ namespace Codename___Slash
 
         }
 
-        public void Initialise(SaveData saveData, ref Hero hero)
+        public void Initialise(SaveData saveData, Hero hero)
         {
             this.hero = hero;
             healthRemaining = 100;
