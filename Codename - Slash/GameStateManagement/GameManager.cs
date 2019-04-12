@@ -15,7 +15,10 @@ namespace Codename___Slash
 
         // Contains saved data if any
         public SaveData CurrentSaveData { get; private set; }
-        
+
+        // Contains AwardsData if any
+        public AwardsData AwardsData { get; private set; }
+
         // Score of current play session
         public int CurrentScore;
         // Stage of current play session
@@ -23,7 +26,8 @@ namespace Codename___Slash
         // Hero instance for current gameplay session
         public Hero Hero { get; private set; }
 
- 
+
+        #region Game Session saving/loading
 
         // Load saved file, returns true if successful
         public bool GetSaveData()
@@ -104,5 +108,32 @@ namespace Codename___Slash
             Loader.ToXmlFile(CurrentSaveData, "SaveFile.xml");
         }
 
+        #endregion
+
+        #region Awards Data saving/loading
+
+        public void UpdateAwardsFileWithNewScore(int newScore)
+        {
+            AwardsData.scores.Add(newScore);
+            AwardsData.scores.Sort();
+
+            Loader.ToXmlFile(AwardsData, "AwardsFile.xml");
+        }
+
+        // Loads awards file into awardsData variable
+        public void LoadAwardsFile()
+        {
+            if (File.Exists("AwardsFile.xml"))
+            {
+                AwardsData a = new AwardsData();
+                Loader.ReadXML("AwardsFile.xml", ref a);
+                a.scores.Sort();
+                AwardsData = a;
+                return;
+            }
+            AwardsData = new AwardsData();
+        }
+
+        #endregion
     }
 }

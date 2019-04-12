@@ -28,13 +28,13 @@ namespace Codename___Slash
 
         protected CommandManager commandManager;
         protected IServiceProvider services;
-        protected ContentManager stateContent; // Content manager for each state
+        protected ContentManager stateContentManager; // Content manager for each state
         // protected GraphicsDeviceManager graphics;
 
         public void InitialiseState(Game1 game)
         {
             // Create new content manager for each state
-            stateContent = new ContentManager(game.Services, "Content"); 
+            stateContentManager = new ContentManager(game.Services, "Content"); 
         }
 
         // Enter method to be called on entry into particular state
@@ -62,7 +62,7 @@ namespace Codename___Slash
         protected virtual void UnloadContent()
         {
             // Unloads all content from state
-            stateContent.Unload();
+            stateContentManager.Unload();
         }
 
         // Update method for each scene

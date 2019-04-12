@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 
 
-namespace Codename___Slash
+namespace Codename___Slash.UIRelated
 {
     public class GameplayUI : UI
     {

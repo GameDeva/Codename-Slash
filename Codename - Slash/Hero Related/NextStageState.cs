@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using Codename___Slash.UIRelated;
 
 namespace Codename___Slash
 {
@@ -47,8 +48,8 @@ namespace Codename___Slash
             hudFont = content.Load<SpriteFont>("UI/Fonts/Hud");
             // TODO: Change all button mappings toa appropriate states
             // Load and add all the UI elements
-            uIElements.Add(new UIElement(stateContent.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
-            buttons.Add(new Button(stateContent.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), GameplayState));
+            uIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
+            buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), GameplayState));
 
             ui.LoadContent();
 

@@ -137,7 +137,7 @@ namespace Codename___Slash
             base.Draw(gameTime);
         }
 
-
+        // Draws rectangles 
         public static void DrawRect(SpriteBatch spriteBatch, Rectangle rect)
         {
             Texture2D tex = new Texture2D(spriteBatch.GraphicsDevice, rect.Width, rect.Height);
@@ -150,6 +150,8 @@ namespace Codename___Slash
 
             spriteBatch.Draw(tex, coor, Color.Red * 0.3f);
         }
+
+
 
     }
 }

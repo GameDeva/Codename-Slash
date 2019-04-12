@@ -11,16 +11,13 @@ using Codename___Slash.UIRelated;
 
 namespace Codename___Slash
 {
-    // Game Over State of the game 
-    public class GameOverState : GameState
+    // Main Menu State of the game 
+    public class MainMenuState : GameState
     {
-        private SpriteFont hudFont;
-        private int finalScore;
-
-        public Action<int> UpdateScores;
-
         private MenuUI menuUI; // State's menuUI  
         private GameManager gameManager; // Reference to Gamemanager Singleton
+
+        private Game1 game; // Reference to game1 object, used for exiting
 
         // On entering state, 
         //  Create menuUI with current state's contentManager
@@ -28,11 +25,10 @@ namespace Codename___Slash
         {
             gameManager = GameManager.Instance;
             menuUI = new MenuUI(stateContentManager);
+            this.game = game;
 
-            finalScore = GameplayState.UI.Score;
-            // UpdateScores?.Invoke(finalScore);
-            gameManager.UpdateAwardsFileWithNewScore(finalScore);
-
+            gameManager.LoadAwardsFile();
+            
             base.Enter(game);
         }
 
@@ -42,15 +38,25 @@ namespace Codename___Slash
             base.Exit(game);
         }
 
+        // Load relevant content for the state
+        // All the menuUI content
         protected override void LoadContent()
         {
-            // Load fonts
-            hudFont = stateContentManager.Load<SpriteFont>("UI/Fonts/Hud");
+            // 
             // Load and add all the UI elements
-            menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
-            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 2) - (287 /2), 650, 287, 90), GameplayState));
-            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/BackToMain"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), MenuState));
+            menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/Title"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
+            
+            // Try getting save data on the gamemanager
+            // If there is save data then display the continue button
+            if (GameManager.Instance.GetSaveData())
+                menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Continue"), new Rectangle((Game1.SCREENWIDTH / 2) - (400 / 2), 450, 400, 94), GameplayState, OnContinueButton));
+            // Load all buttons 
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/NewGame"), new Rectangle((Game1.SCREENWIDTH / 2) - (454 / 2), 550, 454, 100), GameplayState, OnNewGame));
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Protocol"), new Rectangle((Game1.SCREENWIDTH / 2) - (423 / 2), 650, 423, 84), ProtocolState));
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Awards"), new Rectangle((Game1.SCREENWIDTH / 2) - (360 / 2), 750, 360, 94), AwardsState));
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Quit"), new Rectangle((Game1.SCREENWIDTH / 2) - (205 / 2), 850, 205, 104), null, OnQuitGame));
 
+            // Let menuUI load its content
             menuUI.LoadContent();
 
             base.LoadContent();
@@ -81,16 +87,32 @@ namespace Codename___Slash
             return menuUI.ButtonsSelectCheck();
         }
 
+        // Draw state 
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-
-            spriteBatch.DrawString(hudFont, "Final Score: " + finalScore.ToString(), new Vector2(Game1.SCREENWIDTH/2 - 100, Game1.SCREENHEIGHT / 2), Color.White);
-
             menuUI.Draw(spriteBatch);
-
             spriteBatch.End();
+
             base.Draw(deltaTime, spriteBatch);
+        }
+
+        // Used to let the gameManager set up a continue game
+        private void OnContinueButton()
+        {
+            GameManager.Instance.OnContinueGame();
+        }
+
+        // Used to let the gameManager set up a new game
+        private void OnNewGame()
+        {
+            GameManager.Instance.OnNewGame();
+        }
+
+        // Used to quit the game
+        private void OnQuitGame()
+        {
+            game.Exit();
         }
 
     }

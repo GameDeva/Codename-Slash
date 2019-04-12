@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Codename___Slash.EnemyStates;
 using System.IO;
+using Codename___Slash.UIRelated;
 
 namespace Codename___Slash
 {
@@ -42,12 +43,12 @@ namespace Codename___Slash
             enemyDirector = EnemyDirector.Instance;
             gameManager = GameManager.Instance;
 
-            UI = new GameplayUI(stateContent);
+            UI = new GameplayUI(stateContentManager);
 
             // Initialise the EnemyDirector Singleton
             // IMPORTANT: Order, collisionmanager must be initalised first
             collisionManager.Initialise();
-            enemyDirector.Initialise(gameManager.Hero, stateContent);
+            enemyDirector.Initialise(gameManager.Hero, stateContentManager);
             poolManager.Initialise(gameManager.Hero);
 
             mapGen.Initialise(game.Services);
@@ -76,7 +77,7 @@ namespace Codename___Slash
         protected override void LoadContent() 
         {
             // Load content from all managers
-            gameManager.Hero.LoadContent(stateContent);
+            gameManager.Hero.LoadContent(stateContentManager);
             UI.LoadContent();
         }
 
