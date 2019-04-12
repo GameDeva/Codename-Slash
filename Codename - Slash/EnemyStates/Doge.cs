@@ -18,7 +18,7 @@ namespace Codename___Slash.EnemyStates
 
         public Doge()
         {
-            DealDamageValue = 10;
+            DealDamageValue = 80;
             KillScore = 10;
         }
 

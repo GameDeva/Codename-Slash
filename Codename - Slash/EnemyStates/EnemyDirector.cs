@@ -90,14 +90,8 @@ namespace Codename___Slash
         public Rectangle BaldLocalBounds { get; private set; }
         public Rectangle DarkLocalBounds { get; private set; }
 
-        // Initialise Enemy Director
-        public void Initialise(Hero hero, IServiceProvider services)
+        public void Initialise()
         {
-
-            // Attach references
-            this.hero = hero;
-            content = new ContentManager(services); // Has its own contentManager, to flush at the end of each stage
-            content.RootDirectory = "Content";
             poolManager = PoolManager.Instance;
 
             // 
@@ -107,6 +101,20 @@ namespace Codename___Slash
 
             // Attach events 
             poolManager.OnDeath += OnEnemyDeath;
+        }
+
+        // Initialise Enemy Director
+        public void ReInitialise(Hero hero, IServiceProvider services)
+        {
+
+            // Attach references
+            this.hero = hero;
+            if(content == null)
+            {
+                // Has its own contentManager, to flush at the end of each stage
+                content = new ContentManager(services); 
+                content.RootDirectory = "Content";
+            }
         }
 
         // On enter new stage
@@ -273,6 +281,12 @@ namespace Codename___Slash
                 DarkLocalBounds = new Rectangle(left, top, width, height);
             }
 
+        }
+
+        // Unloads the enemyDirector's contentManager
+        public void UnloadContent()
+        {
+            content.Unload();
         }
 
         // Update the enemy director

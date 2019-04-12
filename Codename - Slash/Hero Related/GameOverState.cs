@@ -29,7 +29,7 @@ namespace Codename___Slash.GameStateManagement
             gameManager = GameManager.Instance;
             menuUI = new MenuUI(stateContentManager);
 
-            finalScore = GameplayState.GameplayUI.Score;
+            finalScore = gameManager.CurrentScore;
             // UpdateScores?.Invoke(finalScore);
             gameManager.UpdateAwardsFileWithNewScore(finalScore);
 
@@ -48,7 +48,7 @@ namespace Codename___Slash.GameStateManagement
             hudFont = stateContentManager.Load<SpriteFont>("UI/Fonts/Hud");
             // Load and add all the UI elements
             menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
-            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 2) - (287 /2), 650, 287, 90), GameplayState));
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 2) - (287 /2), 650, 287, 90), GameplayState, gameManager.OnNewGame));
             menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/BackToMain"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), MenuState));
 
             menuUI.LoadContent();

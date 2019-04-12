@@ -36,7 +36,18 @@ namespace Codename___Slash
         // Enemy death events
         public Action<Enemy> OnDeath;
 
-        public void Initialise(Hero hero)
+        public void Initialise()
+        {
+            EnemyDirector.Instance.OnCreateDoge += SpawnDoge;
+            EnemyDirector.Instance.OnCreateSkull += SpawnSkull;
+            EnemyDirector.Instance.OnCreateBald += SpawnBald;
+            EnemyDirector.Instance.OnCreateDark += SpawnDark;
+
+            bulletsAlive = new List<Bullet>();
+            enemiesAlive = new List<Enemy>();
+        }
+
+        public void ReInitialise(Hero hero)
         {
             // Add hero's collider
             OnAddCollider?.Invoke(hero);
@@ -45,13 +56,6 @@ namespace Codename___Slash
             
             // Attach all listeners
             hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
-            EnemyDirector.Instance.OnCreateDoge += SpawnDoge;
-            EnemyDirector.Instance.OnCreateSkull += SpawnSkull;
-            EnemyDirector.Instance.OnCreateBald += SpawnBald;
-            EnemyDirector.Instance.OnCreateDark += SpawnDark;
-
-            bulletsAlive = new List<Bullet>();
-            enemiesAlive = new List<Enemy>();
         }
 
         // Create enemy pools based on the maximum count at any one time during a stage
@@ -68,7 +72,7 @@ namespace Codename___Slash
         }
 
         // Delete pools 
-        public void DeleteStageSpecificPools()
+        public void ClearPoolsForNextStage()
         {
             //// Remove all colliders
             //OnRemoveAllCollidersOfType?.Invoke(ColliderType.enemy);
@@ -80,6 +84,18 @@ namespace Codename___Slash
             baldPool = null;
             darkPool = null;
             
+        }
+
+        public void ClearAllPools()
+        {
+            enemiesAlive.Clear();
+            bulletsAlive.Clear();
+
+            bulletPool = null;
+            dogePool = null;
+            skullPool = null;
+            baldPool = null;
+            darkPool = null;
         }
 
         // Update all active objects from each of the pools

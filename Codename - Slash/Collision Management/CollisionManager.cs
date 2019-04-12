@@ -56,15 +56,13 @@ namespace Codename___Slash
         }
 
         // Clears all all ICollidables from the collidable list
-        private void RemoveAll()
+        public void RemoveAll()
         {
             collidablesList.Clear();
         }
 
-
         public void Initialise()
         {
-            collidablesList.Clear();
             // Get reference to singleton instances
             poolmanager = PoolManager.Instance;
 
@@ -72,6 +70,12 @@ namespace Codename___Slash
             poolmanager.OnAddCollider += AddCollidable;
             poolmanager.OnRemoveCollider += RemoveCollidable;
             poolmanager.OnRemoveAllCollidersOfType += RemoveAllOfType;
+        }
+
+        public void ReInitialise()
+        {
+            collidablesList.Clear();
+
         }
 
         public void Update()

@@ -45,7 +45,11 @@ namespace Codename___Slash.GameStateManagement
             collisionManager = CollisionManager.Instance;
             enemyDirector = EnemyDirector.Instance;
             gameManager = GameManager.Instance;
-            
+
+            collisionManager.Initialise();
+            enemyDirector.Initialise();
+            poolManager.Initialise();
+
             // Attach events
             enemyDirector.OnStageEnemiesDestroyed += OnStageBegin;
             // gameManager.Hero.OnDeath += OnHeroDeath;
@@ -80,9 +84,12 @@ namespace Codename___Slash.GameStateManagement
         {
             waitingToBegin = true;
 
-            // Thread.Sleep(2000);
-            poolManager.DeleteStageSpecificPools();
+            // Save Game
+            gameManager.SaveGame();
 
+            // Thread.Sleep(2000);
+            poolManager.ClearPoolsForNextStage();
+            
             // Load all relevant assets
             enemyDirector.OnNewStage(gameManager.CurrentStageData);
             // Create relevant object pools
@@ -97,9 +104,9 @@ namespace Codename___Slash.GameStateManagement
         {
             // Initialise the EnemyDirector Singleton
             // IMPORTANT: Order, collisionmanager must be initalised first
-            collisionManager.Initialise();
-            enemyDirector.Initialise(gameManager.Hero, game.Services);
-            poolManager.Initialise(gameManager.Hero);
+            collisionManager.ReInitialise();
+            enemyDirector.ReInitialise(gameManager.Hero, game.Services);
+            poolManager.ReInitialise(gameManager.Hero);
 
             OnStageBegin();
 
@@ -130,18 +137,15 @@ namespace Codename___Slash.GameStateManagement
 
         protected override void UnloadContent()
         {
-            // Unload all obj's content
-            poolManager.DeleteStageSpecificPools();
-
-
             base.UnloadContent();
         }
 
         public override void Exit(Game1 game)
         {
-            // destroy all objects and pools
+            collisionManager.RemoveAll();
+            poolManager.ClearAllPools();
+            enemyDirector.UnloadContent();
 
-            
             base.Exit(game);
         }
 
@@ -181,12 +185,8 @@ namespace Codename___Slash.GameStateManagement
             // Wait for death timer to pass, then return game over state
             if(gameManager.Hero.Dead)
             {
-                deathTimer.Update(deltaTime);
-                // When timer is done
-                if(!deathTimer.Running)
-                {
-                    return GameOverState;
-                }
+              
+                return GameOverState;
             }
 
             base.Update(game, deltaTime, ref inputHandler);

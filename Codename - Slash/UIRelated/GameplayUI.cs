@@ -36,8 +36,7 @@ namespace Codename___Slash.UIRelated
         private int healthRemaining;
         private bool completeStageText;
         private int stageNumber;
-        public int Score { get; private set; }
-
+        
         public GameplayUI(ContentManager content) : base(content)
         {
 
@@ -63,7 +62,6 @@ namespace Codename___Slash.UIRelated
             hero.OnDamage += OnTakeDamage;
             StageManager.Instance.OnCompleteStage += CompleteStage;
             StageManager.Instance.OnNewStage += BeginStage;
-            EnemyDirector.Instance.ScoreIncrement += IncrementScore;
         }
 
         private void BeginStage(StageData stageData)
@@ -123,7 +121,7 @@ namespace Codename___Slash.UIRelated
             spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.White);
 
             spriteBatch.DrawString(hudFont, "Stage: " + stageNumber.ToString(), new Vector2(Game1.SCREENWIDTH-200, hudLocation.Y), Color.White);
-            spriteBatch.DrawString(hudFont, "Score: " + Score.ToString(), new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y+32), Color.White);
+            spriteBatch.DrawString(hudFont, "Score: " + GameManager.Instance.CurrentScore.ToString(), new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y+32), Color.White);
 
             //if(completeStageText)
             //    spriteBatch.DrawString(hudFont, "Next one ->", new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y + 32), Color.White);
@@ -181,9 +179,5 @@ namespace Codename___Slash.UIRelated
             completeStageText = true;
         }
 
-        private void IncrementScore(int increment)
-        {
-            Score += increment;
-        }
     }
 }

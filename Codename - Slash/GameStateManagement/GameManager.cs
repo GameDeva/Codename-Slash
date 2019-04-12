@@ -21,7 +21,7 @@ namespace Codename___Slash
         public AwardsData AwardsData { get; private set; }
 
         // Score of current play session
-        public int CurrentScore;
+        public int CurrentScore { get; private set; }
         // Hero instance for current gameplay session
         public Hero Hero { get; private set; }
 
@@ -31,6 +31,10 @@ namespace Codename___Slash
         // Stage data used to create/maintain level i.e. probabilities of enemy/pickup spawn
         public StageData CurrentStageData { get; private set; }
 
+        public GameManager()
+        {
+            EnemyDirector.Instance.ScoreIncrement += IncrementScore;
+        }
 
         #region Game Session saving/loading
 
@@ -75,7 +79,7 @@ namespace Codename___Slash
 
                 // Set up session with save data values
                 CurrentScore = CurrentSaveData.currentScore;
-                ChangeStage(CurrentSaveData.stageNumber); // Also load stage data
+                ChangeStage(CurrentSaveData.stageNumber - 1); // Also load stage data
                 for (int i = 0; i < Hero.WeaponHandler.WeaponsList.Count; i++)
                 {
                     Hero.WeaponHandler.WeaponsList[i].CurrentAmmoCarry = CurrentSaveData.weaponDataList[i].currentAmmoCarry;
@@ -124,7 +128,7 @@ namespace Codename___Slash
         // Return true if all stages complete
         private bool ChangeStage(int n)
         {
-            if(n >= winStageNumber)
+            if(n < winStageNumber)
             {
                 CurrentStage = n;
                 StageData s = new StageData();
@@ -164,5 +168,10 @@ namespace Codename___Slash
         }
 
         #endregion
+
+        private void IncrementScore(int increment)
+        {
+            CurrentScore += increment;
+        }
     }
 }
