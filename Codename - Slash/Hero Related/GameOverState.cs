@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Codename___Slash.UIRelated;
 
-namespace Codename___Slash
+namespace Codename___Slash.GameStateManagement
 {
     // Game Over State of the game 
     public class GameOverState : GameState
@@ -29,7 +29,7 @@ namespace Codename___Slash
             gameManager = GameManager.Instance;
             menuUI = new MenuUI(stateContentManager);
 
-            finalScore = GameplayState.UI.Score;
+            finalScore = GameplayState.GameplayUI.Score;
             // UpdateScores?.Invoke(finalScore);
             gameManager.UpdateAwardsFileWithNewScore(finalScore);
 

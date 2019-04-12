@@ -15,11 +15,11 @@ namespace Codename___Slash.EnemyStates
         private float distanceToBeginChase = 1500.0f;
         private float distanceToBeginAttack = 75.0f;
 
-        public override bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Doge()
         {
             DealDamageValue = 10;
+            KillScore = 10;
         }
 
 

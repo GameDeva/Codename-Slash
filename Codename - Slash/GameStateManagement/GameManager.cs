@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace Codename___Slash
 {
+    // Game Manager singleton 
     public class GameManager
     {
         // Singleton creation
         private static GameManager instance;
         public static GameManager Instance { get { if (instance == null) { instance = new GameManager(); return instance; } return instance; } set { instance = value; } }
-
+        
         // Contains saved data if any
         public SaveData CurrentSaveData { get; private set; }
 
@@ -21,10 +22,14 @@ namespace Codename___Slash
 
         // Score of current play session
         public int CurrentScore;
-        // Stage of current play session
-        public int CurrentStage;
         // Hero instance for current gameplay session
         public Hero Hero { get; private set; }
+
+        private const int winStageNumber = 2;
+        // Stage of current play session
+        public int CurrentStage { get; private set; }
+        // Stage data used to create/maintain level i.e. probabilities of enemy/pickup spawn
+        public StageData CurrentStageData { get; private set; }
 
 
         #region Game Session saving/loading
@@ -50,8 +55,8 @@ namespace Codename___Slash
             Hero = new Hero();
             // Set initial values
             CurrentScore = 0;
-            CurrentStage = 1;
-            
+            ChangeStage(-1); // Change stage to the first
+
             // 
             CurrentSaveData = new SaveData();
         }
@@ -70,7 +75,7 @@ namespace Codename___Slash
 
                 // Set up session with save data values
                 CurrentScore = CurrentSaveData.currentScore;
-                CurrentStage = CurrentSaveData.stageNumber;
+                ChangeStage(CurrentSaveData.stageNumber); // Also load stage data
                 for (int i = 0; i < Hero.WeaponHandler.WeaponsList.Count; i++)
                 {
                     Hero.WeaponHandler.WeaponsList[i].CurrentAmmoCarry = CurrentSaveData.weaponDataList[i].currentAmmoCarry;
@@ -110,13 +115,36 @@ namespace Codename___Slash
 
         #endregion
 
+        // Get to next stage, return true if all stages complete
+        public bool NextStage()
+        {
+            return ChangeStage(CurrentStage+1);
+        }
+
+        // Return true if all stages complete
+        private bool ChangeStage(int n)
+        {
+            if(n >= winStageNumber)
+            {
+                CurrentStage = n;
+                StageData s = new StageData();
+                Loader.ReadXML(string.Format("Content/StageData/Stage{0}.xml", n), ref s);
+                CurrentStageData = s;
+                return false;
+            }
+
+            return true;
+        }
+
         #region Awards Data saving/loading
 
+        // Adds new score and updates the AwardsFile
         public void UpdateAwardsFileWithNewScore(int newScore)
         {
+            // Add new score and sort descending 
             AwardsData.scores.Add(newScore);
-            AwardsData.scores.Sort();
-
+            AwardsData.scores = AwardsData.scores.OrderByDescending(c => c).ToList();
+            // Write to xml
             Loader.ToXmlFile(AwardsData, "AwardsFile.xml");
         }
 
@@ -125,9 +153,10 @@ namespace Codename___Slash
         {
             if (File.Exists("AwardsFile.xml"))
             {
+                // Grab values and sort descending
                 AwardsData a = new AwardsData();
                 Loader.ReadXML("AwardsFile.xml", ref a);
-                a.scores.Sort();
+                a.scores = a.scores.OrderByDescending(c => c).ToList();
                 AwardsData = a;
                 return;
             }

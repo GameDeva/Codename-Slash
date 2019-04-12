@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Codename___Slash
 {
+    // Comparator class for Collisions used to compare Collisions
     public class CollisionComparer : IEqualityComparer<Collision>
     {
         public bool Equals(Collision a, Collision b)
@@ -24,6 +25,7 @@ namespace Codename___Slash
         }
     }
 
+    // Stores a collision that has occured between 2 ICollidable objects 
     public class Collision
     {
         public ICollidable A;
@@ -34,7 +36,9 @@ namespace Codename___Slash
             A = a;
             B = b;
         }
-
+        
+        // Checks whether this a Collision object is the same as another
+        //  by comparing the A and B value of each
         public bool Equals(Collision other)
         {
             if (other == null) return false;
@@ -47,6 +51,7 @@ namespace Codename___Slash
             return false;
         }
 
+        // Calls the appropriate OnCollision method
         public void Resolve()
         {
             A.OnCollision(B);

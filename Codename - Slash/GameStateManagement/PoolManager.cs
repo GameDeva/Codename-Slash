@@ -16,42 +16,34 @@ namespace Codename___Slash
         // Single creation
         private static PoolManager instance;
         public static PoolManager Instance { get { if (instance == null) { instance = new PoolManager(); return instance; } return instance; } set { instance = value; } }
-
-        private StageManager stageManager;
-
+        
+        // ObjectPools for 
         ObjectPool<Bullet> bulletPool;
         ObjectPool<Doge> dogePool;
         ObjectPool<Skull> skullPool;
         ObjectPool<Bald> baldPool;
         ObjectPool<Dark> darkPool;
-        // ObjectPool<>
 
+        // Local lists of bullets and enemies that are active/alive
         private List<Bullet> bulletsAlive;
         private List<Enemy> enemiesAlive;
 
-        // Collider add event
+        // Collider events to add, remove 
         public Action<ICollidable> OnAddCollider;
         public Action<ICollidable> OnRemoveCollider;
         public Action<ColliderType> OnRemoveAllCollidersOfType;
 
+        // Enemy death events
         public Action<Enemy> OnDeath;
 
         public void Initialise(Hero hero)
         {
-            //
-            // stageManager = StageManager.Instance;
-
             // Add hero's collider
             OnAddCollider?.Invoke(hero);
             
             bulletPool = new ObjectPool<Bullet>(100);
-
-
+            
             // Attach all listeners
-            // stageManager.OnCreateEnemyPools += CreateStageSpecificPools;
-            // stageManager.OnCompleteStage += DeleteStageSpecificPools;
-
-
             hero.WeaponHandler.OnSpawnBullet += SpawnBullet;
             EnemyDirector.Instance.OnCreateDoge += SpawnDoge;
             EnemyDirector.Instance.OnCreateSkull += SpawnSkull;
@@ -62,7 +54,7 @@ namespace Codename___Slash
             enemiesAlive = new List<Enemy>();
         }
 
-        // Create pools based on 
+        // Create enemy pools based on the maximum count at any one time during a stage
         public void CreateStageSpecificPools(StageData stageData)
         {
             if(stageData.maxDogeCount > 0)
@@ -78,24 +70,23 @@ namespace Codename___Slash
         // Delete pools 
         public void DeleteStageSpecificPools()
         {
-            // TODO: Manually delete dynamic memeory 
-
-            // Remove all colliders
-            OnRemoveAllCollidersOfType?.Invoke(ColliderType.enemy);
+            //// Remove all colliders
+            //OnRemoveAllCollidersOfType?.Invoke(ColliderType.enemy);
 
             // Remove all from lists
+            enemiesAlive.Clear();
+            dogePool = null;
+            skullPool = null;
+            baldPool = null;
+            darkPool = null;
             
-
-            //dogePool = null;
-            //skullPool = null;
-            //baldPool = null;
-            //darkPool = null;
         }
 
+        // Update all active objects from each of the pools
         public void Update(float deltaTime)
         {
-            // Update all gameobjects 
-            // int size = spawnedObjects.Count;
+            // Loop in reverse since elements are moved from list
+
             for (int i = bulletsAlive.Count - 1; i >= 0; --i)
             {
                 if (bulletsAlive[i].IsActive)
@@ -104,6 +95,7 @@ namespace Codename___Slash
                 }
                 else
                 {
+                    // If note active, remove collider and remove from list
                     OnRemoveCollider?.Invoke(bulletsAlive[i]);
                     bulletsAlive.RemoveAt(i);
                 }
@@ -118,6 +110,7 @@ namespace Codename___Slash
                 }
                 else
                 {
+                    // If note active, remove collider and remove from list
                     OnRemoveCollider?.Invoke(enemiesAlive[i]);
                     enemiesAlive.RemoveAt(i);
                 }
@@ -125,16 +118,15 @@ namespace Codename___Slash
 
         }
 
+        // Draw each active object in the pools
         public void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
-            // Draw all gameobjects 
-            // int size = spawnedObjects.Count;
             for (int i = 0; i < bulletsAlive.Count; i++)
             {
                 if (bulletsAlive[i].IsActive)
                 {
                     bulletsAlive[i].Draw(deltaTime, spriteBatch);
-                    // Game1.DrawRect(spriteBatch, bulletsAlive[i].BoundingRect);
+                    // Game1.DrawRect(spriteBatch, bulletsAlive[i].BoundingRect); // For Debugging
                 }
             }
 
@@ -143,19 +135,19 @@ namespace Codename___Slash
                 if (enemiesAlive[i].IsActive)
                 {
                     enemiesAlive[i].Draw(deltaTime, spriteBatch);
-                    // Game1.DrawRect(spriteBatch, enemiesAlive[i].BoundingRect);
+                    // Game1.DrawRect(spriteBatch, enemiesAlive[i].BoundingRect); // For Debugging
                 }
             }
         }
 
+        // Calls ondeath action, with the enemy object and calls the death effect method at given position
         private void OnEnemyDeath(Enemy enemy, Vector2 position)
         {
-            OnDeath.Invoke(enemy);
+            OnDeath?.Invoke(enemy);
             SpawnDeathEffect(position);
-            
         }
-
-
+        
+        // Spawns with given arguments and adds a collider
         private void SpawnBullet(IArgs args)
         {
             Bullet bullet = bulletPool.SpawnFromPool(args);
@@ -163,8 +155,10 @@ namespace Codename___Slash
             OnAddCollider?.Invoke(bullet);
         }
 
-        // Enemy Spawns
-        //
+        // Enemy Spawns for each type
+        // 
+        // Each doing: 1) Spawning from pool with given arguments 2) adding to aliveList 3) attaching damage and death actions 4) Add collider
+        // 
         private void SpawnDoge(IArgs args)
         {
             Doge doge = dogePool.SpawnFromPool(args);
@@ -198,11 +192,13 @@ namespace Codename___Slash
             OnAddCollider?.Invoke(dark);
         }
         
+        // Spawns hit effect at position
         private void SpawnEnemyHitEffect(Vector2 position)
         {
             
         }
 
+        // Spawns death effect at position
         private void SpawnDeathEffect(Vector2 position)
         {
 

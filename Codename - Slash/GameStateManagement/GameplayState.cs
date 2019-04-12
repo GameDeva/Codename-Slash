@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,80 +12,127 @@ using Codename___Slash.EnemyStates;
 using System.IO;
 using Codename___Slash.UIRelated;
 
-namespace Codename___Slash
+namespace Codename___Slash.GameStateManagement
 {
+    // Gameplay State of the game
     public class GameplayState : GameState
     {
-        // private Camera camera; // Camera instance for this gameplay session
-        // private MapGenerator mapGenerator;
+        private Thread stageLoaderThread;
+
+        private SpriteFont hudFont;
+        
+        // Reference to all the singleton Managers
         private EnemyDirector enemyDirector;
         private PoolManager poolManager;
         private CollisionManager collisionManager;
         private GameManager gameManager;
+        // Map Generator object load and draw a map
         private MapGen mapGen;
+        
+        public GameplayUI GameplayUI { get; set; } // UI instance for this gameplay session
 
-        public int CurrentScore { get; private set; }
-        public int CurrentStage { get; private set; }
-        public StageData CurrentStageData { get; private set; }
-
-        public GameplayUI UI { get; set; } // UI instance for this gameplay session
-
+        // Timer before leaving gameplay state after hero's death
         private Timer deathTimer = new Timer(1.0f);
+        private bool waitingToBegin = false;
 
-        // Initialise the hero on the enter state 
-        public override void Enter(Game1 game)
+
+        // Initialise state
+        public override void InitialiseState(Game1 game)
         {
-            
-
             // Store reference to singleton Managers
             mapGen = MapGen.Instance;
             poolManager = PoolManager.Instance;
             collisionManager = CollisionManager.Instance;
             enemyDirector = EnemyDirector.Instance;
             gameManager = GameManager.Instance;
+            
+            // Attach events
+            enemyDirector.OnStageEnemiesDestroyed += OnStageBegin;
+            // gameManager.Hero.OnDeath += OnHeroDeath;
 
-            UI = new GameplayUI(stateContentManager);
 
+            // Initialise 
+            mapGen.Initialise(game.Services);
+            mapGen.GetMapData("BattleArena");
+            
+
+            base.InitialiseState(game);
+        }
+        
+        // 
+        private void OnStageBegin()
+        {
+            // If all stages complete (true), display game over screen
+            if (gameManager.NextStage())
+            {
+
+            } else
+            {
+                stageLoaderThread = new Thread(BackgroundLoadStage);
+                stageLoaderThread.Start();
+            }
+        }
+
+        // Unload previous assets and objects and
+        // Load assets and objects needed for next stage
+        //  note: should be called on separate thread
+        private void BackgroundLoadStage()
+        {
+            waitingToBegin = true;
+
+            // Thread.Sleep(2000);
+            poolManager.DeleteStageSpecificPools();
+
+            // Load all relevant assets
+            enemyDirector.OnNewStage(gameManager.CurrentStageData);
+            // Create relevant object pools
+            poolManager.CreateStageSpecificPools(gameManager.CurrentStageData);
+            
+            waitingToBegin = false;
+        }
+
+
+        // Initialise the hero on the enter state 
+        public override void Enter(Game1 game)
+        {
             // Initialise the EnemyDirector Singleton
             // IMPORTANT: Order, collisionmanager must be initalised first
             collisionManager.Initialise();
-            enemyDirector.Initialise(gameManager.Hero, stateContentManager);
+            enemyDirector.Initialise(gameManager.Hero, game.Services);
             poolManager.Initialise(gameManager.Hero);
 
-            mapGen.Initialise(game.Services);
-            mapGen.GetMapData("Walkway");
-            mapGen.GetMapData("BattleArena");
-            
-            mapGen.LoadMapTextures("BattleArena");
-            mapGen.AssignMapToDraw("BattleArena");
+            OnStageBegin();
 
-            mapGen.ChangeMapColliders(MapCollider.BattleArena);
-
+            GameplayUI = new GameplayUI(stateContentManager);
             // Continue based on load or new game
-            UI.Initialise(GameManager.Instance.CurrentSaveData, gameManager.Hero);
-
-            UpdateStageData(CurrentStage);
-            enemyDirector.OnNewStage(CurrentStageData);
-            poolManager.CreateStageSpecificPools(CurrentStageData);
+            GameplayUI.Initialise(GameManager.Instance.CurrentSaveData, gameManager.Hero);
             
-            // Attach events
-            gameManager.Hero.OnDeath += OnHeroDeath;
-
             base.Enter(game);
             
         }
 
         protected override void LoadContent() 
         {
-            // Load content from all managers
+            // Load content for hero
             gameManager.Hero.LoadContent(stateContentManager);
-            UI.LoadContent();
+            // Load gameplayui content
+            GameplayUI.LoadContent();
+
+            // Load fonts
+            hudFont = stateContentManager.Load<SpriteFont>("UI/Fonts/Hud");
+
+            // Load and assign map
+            mapGen.LoadMapTextures("BattleArena");
+            mapGen.AssignMapToDraw("BattleArena");
+            mapGen.ChangeMapColliders(MapCollider.BattleArena);
+
         }
 
         protected override void UnloadContent()
         {
             // Unload all obj's content
             poolManager.DeleteStageSpecificPools();
+
 
             base.UnloadContent();
         }
@@ -121,16 +169,13 @@ namespace Codename___Slash
             commandManager.Update();
             gameManager.Hero.Update(deltaTime);
 
-            // If returns true then level has been complete
-            if(enemyDirector.Update(deltaTime))
-            {
-                return GameOverState;
-            }
+            // Update enemyDirector
+            enemyDirector.Update(deltaTime);
 
             collisionManager.Update();
             poolManager.Update(deltaTime);
             // Camera.Follow(hero);
-            UI.Update();
+            GameplayUI.Update();
             
             // If hero is dead, death timer would have started automatically 
             // Wait for death timer to pass, then return game over state
@@ -153,6 +198,7 @@ namespace Codename___Slash
             // transformMatrix: camera.Transform [add as parameter]
 
             spriteBatch.Begin();
+
             mapGen.DrawMap(spriteBatch);
             // stageManager.Draw(deltaTime, spriteBatch);
             foreach (Point point in enemyDirector.Spawnpoints)
@@ -165,7 +211,13 @@ namespace Codename___Slash
 
             gameManager.Hero.Draw(deltaTime, spriteBatch);
             
-            UI.Draw(spriteBatch);
+            GameplayUI.Draw(spriteBatch);
+
+            // If waiting to begin (loading next stage) 
+            if (waitingToBegin)
+            {
+                spriteBatch.DrawString(hudFont, string.Format("Creating Stage: {0}", gameManager.CurrentStage), new Vector2(Game1.SCREENWIDTH / 2, Game1.SCREENHEIGHT / 2), Color.White);
+            }
 
             // collisionManager.DebugDraw(spriteBatch);
             spriteBatch.End();
@@ -180,7 +232,7 @@ namespace Codename___Slash
         {
             deathTimer.Start();
         }
-        
+
         //private void SaveGame()
         //{
         //    CurrentScore = 1312;
@@ -205,12 +257,6 @@ namespace Codename___Slash
         //}
 
         // Load given stage
-        public void UpdateStageData(int n)
-        {
-            StageData s = new StageData();
-            Loader.ReadXML(string.Format("Content/StageData/Stage{0}.xml", n), ref s);
-            CurrentStageData = s;
-        }
 
     }
 }

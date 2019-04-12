@@ -50,7 +50,6 @@ namespace Codename___Slash
             }
             set { }
         }
-        public bool FlaggedForRemoval { get; set; }
         public ColliderType ColliderType { get { return ColliderType.hero; } set { value = ColliderType.hero; } }
 
         public WeaponHandler WeaponHandler { get; private set; }

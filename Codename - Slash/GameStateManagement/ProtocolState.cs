@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Codename___Slash.UIRelated;
 
-namespace Codename___Slash
+namespace Codename___Slash.GameStateManagement
 {
 
     public class ProtocolState : GameState

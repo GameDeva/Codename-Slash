@@ -10,7 +10,6 @@ namespace Codename___Slash
     public class StaticCollider : ICollidable
     {
         public Rectangle BoundingRect { get; set; }
-        public bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ColliderType ColliderType { get; set; }
 
         public List<ColliderType> interactionTypes;

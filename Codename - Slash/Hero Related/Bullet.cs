@@ -19,7 +19,6 @@ namespace Codename___Slash
         private float moveSpeed;
         private int colliderSize = 15;
 
-        public Point BoundingRectPoint { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Rectangle BoundingRect
         {
             get
@@ -28,7 +27,6 @@ namespace Codename___Slash
             }
             set { }
         }
-        public bool FlaggedForRemoval { get; set; }
         public ColliderType ColliderType { get; set; } = ColliderType.heroAttack;
         public int DealDamageValue { get; set; }
 

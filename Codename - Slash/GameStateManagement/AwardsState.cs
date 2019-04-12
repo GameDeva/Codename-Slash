@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Codename___Slash.UIRelated;
 
-namespace Codename___Slash
+namespace Codename___Slash.GameStateManagement
 {
     // Awards State of the game 
     public class AwardsState : GameState

@@ -16,11 +16,11 @@ namespace Codename___Slash.EnemyStates
         
         // public Vector2 CurrentChargeToPosition { get; set; }
 
-        public override bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Skull()
         {
             DealDamageValue = 20;
+            KillScore = 25;
         }
 
 

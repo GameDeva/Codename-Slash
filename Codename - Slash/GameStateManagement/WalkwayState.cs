@@ -6,19 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
 
-namespace Codename___Slash
+namespace Codename___Slash.GameStateManagement
 {
     public class WalkwayState : GameState
     {
 
         private bool loadingComplete;
         
-
-        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
-        {
-            base.Draw(deltaTime, spriteBatch);
-        }
-
         public override void Enter(Game1 game)
         {
             loadingComplete = false;
@@ -35,6 +29,13 @@ namespace Codename___Slash
         {
             return base.Update(game, deltaTime, ref inputHandler);
         }
+
+
+        public override void Draw(float deltaTime, SpriteBatch spriteBatch)
+        {
+            base.Draw(deltaTime, spriteBatch);
+        }
+
 
         protected override void InitialiseKeyBindings()
         {

@@ -10,6 +10,8 @@ namespace Codename___Slash
 {
     public abstract class Enemy : GameObject, ICollidable, IDamageDealer, IDamageable
     {
+        public int KillScore { get; protected set; }
+
         public float CurrentHealth { get; protected set; }
         
         public float MoveSpeed { get; protected set; }
@@ -37,7 +39,6 @@ namespace Codename___Slash
             }
             set { }
         }
-        public abstract bool FlaggedForRemoval { get; set; }
         public ColliderType ColliderType { get { return ColliderType.enemy; } set { value = ColliderType.enemy; } }
         public int DealDamageValue { get; set; }
 

@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace Codename___Slash
+namespace Codename___Slash.Scene_Management
 {
-    public class ReachBoxTrigger : ICollidable
+    public class Pickup : ICollidable
     {
         public Rectangle BoundingRect { get; set; }
-        public bool FlaggedForRemoval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ColliderType ColliderType { get; set; }
 
         public bool Active { get; set; } = false;
@@ -29,7 +28,7 @@ namespace Codename___Slash
 
         public Action Triggered;
 
-        public ReachBoxTrigger(Rectangle BoundingRect)
+        public Pickup(Rectangle BoundingRect)
         {
             this.BoundingRect = BoundingRect;
             ColliderType = ColliderType.triggerRegions;
@@ -53,5 +52,6 @@ namespace Codename___Slash
             Active = false;
             Triggered?.Invoke();
         }
+
     }
 }

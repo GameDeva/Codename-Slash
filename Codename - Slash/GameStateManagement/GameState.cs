@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Content;
 
-namespace Codename___Slash
+namespace Codename___Slash.GameStateManagement
 {
     // TODO : CHECK IF THIS CAN BE TURNED INTO AN ABSTRACT CLASS 
     public class GameState 
@@ -31,7 +31,7 @@ namespace Codename___Slash
         protected ContentManager stateContentManager; // Content manager for each state
         // protected GraphicsDeviceManager graphics;
 
-        public void InitialiseState(Game1 game)
+        public virtual void InitialiseState(Game1 game)
         {
             // Create new content manager for each state
             stateContentManager = new ContentManager(game.Services, "Content"); 

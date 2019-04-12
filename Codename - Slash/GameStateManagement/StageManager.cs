@@ -55,7 +55,7 @@ namespace Codename___Slash
             LeaveWalkwayTrigger.Triggered += OnReachBattleArena;
             BeginBattleTrigger.Triggered += BeginBattle;
             LeaveBattleArenaTrigger.Triggered += OnStageBegin;
-            EnemyDirector.Instance.OnBeatAllEnemies += OnStageEnd;
+            EnemyDirector.Instance.OnStageEnemiesDestroyed += OnStageEnd;
 
         }
         
