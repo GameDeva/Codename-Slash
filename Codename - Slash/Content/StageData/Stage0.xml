@@ -3,15 +3,15 @@
 	<stageNumber>0</stageNumber>
 	<enemiesToFight>5</enemiesToFight>
 	<intervalBetweenSpawn>1</intervalBetweenSpawn>
-	<spawnPointCount>4</spawnPointCount>
-	<maxDogeCount>5</maxDogeCount>
+	<spawnPointCount>3</spawnPointCount>
+	<maxDogeCount>0</maxDogeCount>
 	<maxBaldCount>0</maxBaldCount>
-	<maxSkullCount>5</maxSkullCount>
-	<maxDarkCount>0</maxDarkCount>
-	<probDogeSpwan>1</probDogeSpwan>
+	<maxSkullCount>0</maxSkullCount>
+	<maxDarkCount>1</maxDarkCount>
+	<probDogeSpwan>0</probDogeSpwan>
 	<probBaldSpwan>0</probBaldSpwan>
 	<probSkullSpwan>0</probSkullSpwan>
-	<probDarkSpwan>0</probDarkSpwan>
+	<probDarkSpwan>1</probDarkSpwan>
 	<probHealthDrop>0</probHealthDrop>
 	<probAmmoDrop>0</probAmmoDrop>
 </StageData>

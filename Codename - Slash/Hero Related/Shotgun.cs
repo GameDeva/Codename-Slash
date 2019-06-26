@@ -39,7 +39,7 @@ namespace Codename___Slash
                 // Let UI or others know shot has been fired
                 OnShootAction?.Invoke();
                 // Create bullet with given arguments
-                OnBulletCreated?.Invoke(new ArgsBullet(firePoint, fireDirection, BulletTexture, BulletDecayTime, BulletMoveSpeed, BulletColliderSize, 50));
+                OnBulletCreated?.Invoke(new ArgsBullet(false, firePoint, fireDirection, BulletTexture, BulletDecayTime, BulletMoveSpeed, BulletColliderSize, 50));
                 // Reset timer
                 currentTimerBetweenShots = 0.0f;
             }

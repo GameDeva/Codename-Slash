@@ -19,10 +19,7 @@ namespace Codename___Slash
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private InputHandler inputHandler;
         private GameState state;
-
-        private SaveData saveData;
 
         private Song song;
 
@@ -30,8 +27,8 @@ namespace Codename___Slash
         {
             graphics = new GraphicsDeviceManager(this); // TODO: Maybe not needed here if this is handling in the state classes? 
             Content.RootDirectory = "Content";
-
-            IsFixedTimeStep = false;
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            IsFixedTimeStep = true;
 
             graphics.PreferredBackBufferWidth = SCREENWIDTH;
             graphics.PreferredBackBufferHeight = SCREENHEIGHT;
@@ -48,7 +45,6 @@ namespace Codename___Slash
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            inputHandler = new InputHandler();
 
             // Initalise all states
             GameState.MenuState.InitialiseState(this);
@@ -107,9 +103,8 @@ namespace Codename___Slash
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // IMPORTANT
             // Scene/Game State handling area
-            GameState s = state.Update(this, (float) gameTime.ElapsedGameTime.TotalSeconds, ref inputHandler);
+            GameState s = state.Update(this, (float) gameTime.ElapsedGameTime.TotalSeconds);
             if (s != null)
             {
                 state.Exit(this); // Call previous state's exit method 
@@ -139,6 +134,7 @@ namespace Codename___Slash
         }
 
         // Draws rectangles 
+        // Used for debug purposes
         public static void DrawRect(SpriteBatch spriteBatch, Rectangle rect)
         {
             Texture2D tex = new Texture2D(spriteBatch.GraphicsDevice, rect.Width, rect.Height);

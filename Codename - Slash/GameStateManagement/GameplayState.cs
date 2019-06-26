@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using Codename___Slash.EnemyStates;
 using System.IO;
 using Codename___Slash.UIRelated;
+using Codename___Slash.Collisions;
 
 namespace Codename___Slash.GameStateManagement
 {
@@ -63,42 +64,6 @@ namespace Codename___Slash.GameStateManagement
             base.InitialiseState(game);
         }
         
-        // 
-        private void OnStageBegin()
-        {
-            // If all stages complete (true), display game over screen
-            if (gameManager.NextStage())
-            {
-
-            } else
-            {
-                stageLoaderThread = new Thread(BackgroundLoadStage);
-                stageLoaderThread.Start();
-            }
-        }
-
-        // Unload previous assets and objects and
-        // Load assets and objects needed for next stage
-        //  note: should be called on separate thread
-        private void BackgroundLoadStage()
-        {
-            waitingToBegin = true;
-
-            // Save Game
-            gameManager.SaveGame();
-
-            // Thread.Sleep(2000);
-            poolManager.ClearPoolsForNextStage();
-            
-            // Load all relevant assets
-            enemyDirector.OnNewStage(gameManager.CurrentStageData);
-            // Create relevant object pools
-            poolManager.CreateStageSpecificPools(gameManager.CurrentStageData);
-            
-            waitingToBegin = false;
-        }
-
-
         // Initialise the hero on the enter state 
         public override void Enter(Game1 game)
         {
@@ -112,7 +77,7 @@ namespace Codename___Slash.GameStateManagement
 
             GameplayUI = new GameplayUI(stateContentManager);
             // Continue based on load or new game
-            GameplayUI.Initialise(GameManager.Instance.CurrentSaveData, gameManager.Hero);
+            GameplayUI.Initialise(gameManager.Hero);
             
             base.Enter(game);
             
@@ -167,7 +132,7 @@ namespace Codename___Slash.GameStateManagement
         }
 
 
-        public override GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler)
+        public override GameState Update(Game1 game, float deltaTime)
         {
             // Handle State object Updates
             commandManager.Update();
@@ -185,11 +150,10 @@ namespace Codename___Slash.GameStateManagement
             // Wait for death timer to pass, then return game over state
             if(gameManager.Hero.Dead)
             {
-              
                 return GameOverState;
             }
 
-            base.Update(game, deltaTime, ref inputHandler);
+            base.Update(game, deltaTime);
             return null;
         }
 
@@ -221,13 +185,46 @@ namespace Codename___Slash.GameStateManagement
 
             // collisionManager.DebugDraw(spriteBatch);
             spriteBatch.End();
-
-
-
-            base.Draw(deltaTime, spriteBatch);
-
+            
         }
-        
+
+        // 
+        private void OnStageBegin()
+        {
+            // If all stages complete (true), display game over screen
+            if (gameManager.NextStage())
+            {
+                // Since the game only consists of 2 levels, the gameOver screen is displayed on completion
+                gameManager.Hero.Dead = true;
+            }
+            else
+            {
+                stageLoaderThread = new Thread(BackgroundLoadStage);
+                stageLoaderThread.Start();
+            }
+        }
+
+        // Unload previous assets and objects and
+        // Load assets and objects needed for next stage
+        //  note: should be called on separate thread
+        private void BackgroundLoadStage()
+        {
+            waitingToBegin = true;
+
+            // Save Game
+            gameManager.SaveGame();
+
+            // Thread.Sleep(2000);
+            poolManager.ClearPoolsForNextStage();
+
+            // Load all relevant assets
+            enemyDirector.OnNewStage(gameManager.CurrentStageData);
+            // Create relevant object pools
+            poolManager.CreateStageSpecificPools(gameManager.CurrentStageData);
+
+            waitingToBegin = false;
+        }
+
         private void OnHeroDeath()
         {
             deathTimer.Start();

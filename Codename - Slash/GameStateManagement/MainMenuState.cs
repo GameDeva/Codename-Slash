@@ -71,11 +71,10 @@ namespace Codename___Slash.GameStateManagement
                 commandManager.AddMouseBinding(MouseButton.LEFT, menuUI.OnSelect);
             }
 
-            base.InitialiseKeyBindings();
         }
 
         // Update State
-        public override GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler)
+        public override GameState Update(Game1 game, float deltaTime)
         {
             // Update Menu UI
             menuUI.Update();
@@ -94,7 +93,6 @@ namespace Codename___Slash.GameStateManagement
             menuUI.Draw(spriteBatch);
             spriteBatch.End();
 
-            base.Draw(deltaTime, spriteBatch);
         }
 
         // Used to let the gameManager set up a continue game

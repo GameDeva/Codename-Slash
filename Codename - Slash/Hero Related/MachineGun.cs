@@ -19,7 +19,7 @@ namespace Codename___Slash
             //          to take these values as parameters
             MaximumAmmoCarry = 1024;
             MaximumMagHold = 64;
-            MaxTimeBetweenShots = 0.2f;
+            MaxTimeBetweenShots = 0.1f;
             BulletMoveSpeed = 700;
             BulletDecayTime = 1f;
             BulletColliderSize = new Vector2(15, 15);
@@ -37,7 +37,7 @@ namespace Codename___Slash
                 // Let UI or others know shot has been fired
                 OnShootAction?.Invoke();
                 // Create bullet with given arguments
-                OnBulletCreated?.Invoke(new ArgsBullet(firePoint, fireDirection, BulletTexture, BulletDecayTime, BulletMoveSpeed, BulletColliderSize, 5));
+                OnBulletCreated?.Invoke(new ArgsBullet(false, firePoint, fireDirection, BulletTexture, BulletDecayTime, BulletMoveSpeed, BulletColliderSize, 10));
                 // Reset timer
                 currentTimerBetweenShots = 0.0f;
             }

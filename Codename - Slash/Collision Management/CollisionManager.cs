@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Codename___Slash
+namespace Codename___Slash.Collisions
 {
     // Collision types, that can be assigned to each ICollidable, or set to which ones it can collide with
     public enum ColliderType
@@ -15,7 +15,8 @@ namespace Codename___Slash
         heroAttack,
         staticEnvironment, 
         interactableObjects, 
-        triggerRegions
+        triggerRegions,
+        enemyAttack
     }
 
     // Handles all collisions between ICollidables during game session

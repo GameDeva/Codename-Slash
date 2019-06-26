@@ -7,15 +7,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
-using System.IO;
 using Codename___Slash.UIRelated;
 
 namespace Codename___Slash.GameStateManagement
 {
-    // Awards State of the game 
-    public class AwardsState : GameState
+    // Game Over State of the game 
+    public class GameOverState : GameState
     {
         private SpriteFont hudFont;
+        private int finalScore;
+
+        public Action<int> UpdateScores;
 
         private MenuUI menuUI; // State's menuUI  
         private GameManager gameManager; // Reference to Gamemanager Singleton
@@ -26,7 +28,13 @@ namespace Codename___Slash.GameStateManagement
         {
             gameManager = GameManager.Instance;
             menuUI = new MenuUI(stateContentManager);
+
+            finalScore = gameManager.CurrentScore;
+            // UpdateScores?.Invoke(finalScore);
             
+            gameManager.UpdateAwardsFileWithNewScore(finalScore);
+            gameManager.DeleteSaveFile(); // Deletes old save
+
             base.Enter(game);
         }
 
@@ -40,10 +48,11 @@ namespace Codename___Slash.GameStateManagement
         {
             // Load fonts
             hudFont = stateContentManager.Load<SpriteFont>("UI/Fonts/Hud");
-            // Load and add all the UI elements, buttons
-            menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/AwardsBig"), new Rectangle((Game1.SCREENWIDTH / 2) - (700 / 2), 100, 700, 199)));
-            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Back"), new Rectangle((Game1.SCREENWIDTH / 2) - (250 / 2), 850, 250, 96), MenuState));
-            
+            // Load and add all the UI elements
+            menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 2) - (287 /2), 650, 287, 90), GameplayState, gameManager.OnNewGame));
+            menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/BackToMain"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), MenuState));
+
             menuUI.LoadContent();
 
             base.LoadContent();
@@ -73,26 +82,16 @@ namespace Codename___Slash.GameStateManagement
             return menuUI.ButtonsSelectCheck();
         }
 
-        // Draw state 
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
+            
+            spriteBatch.DrawString(hudFont, "Final Score: " + finalScore.ToString(), new Vector2(Game1.SCREENWIDTH/2 - 100, Game1.SCREENHEIGHT / 2), Color.White);
+
             menuUI.Draw(spriteBatch);
 
-            if (gameManager.AwardsData.scores.Count > 0)
-            {
-                for(int i = 0; i < 10 && i < gameManager.AwardsData.scores.Count; i++)
-                {
-                    spriteBatch.DrawString(hudFont, gameManager.AwardsData.scores[i].ToString(), new Vector2(Game1.SCREENWIDTH / 2 - 300, 400 + (i * 40)), Color.White);
-                }
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                spriteBatch.DrawString(hudFont, string.Format("{0}. ", i+1), new Vector2(Game1.SCREENWIDTH / 2 - 350, 400 + (i * 40)), Color.White);
-            }
-            
             spriteBatch.End();
         }
+
     }
 }

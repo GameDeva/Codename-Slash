@@ -12,8 +12,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Codename___Slash.GameStateManagement
 {
-    // TODO : CHECK IF THIS CAN BE TURNED INTO AN ABSTRACT CLASS 
-    public class GameState 
+    public abstract class GameState 
     {
         // List of states
         // Stored as static auto properties, since the game will only have one game state
@@ -21,7 +20,6 @@ namespace Codename___Slash.GameStateManagement
         public static MainMenuState MenuState { get; } = new MainMenuState();
         public static AwardsState AwardsState { get; } = new AwardsState();
         public static ProtocolState ProtocolState { get; } = new ProtocolState();
-        public static WalkwayState WalkwayState { get; } = new WalkwayState();
         public static GameplayState GameplayState { get; } = new GameplayState();
         public static GameOverState GameOverState { get; } = new GameOverState();
         // public static NextStageState NextStageState { get; } = new NextStageState();
@@ -29,7 +27,6 @@ namespace Codename___Slash.GameStateManagement
         protected CommandManager commandManager;
         protected IServiceProvider services;
         protected ContentManager stateContentManager; // Content manager for each state
-        // protected GraphicsDeviceManager graphics;
 
         public virtual void InitialiseState(Game1 game)
         {
@@ -46,10 +43,9 @@ namespace Codename___Slash.GameStateManagement
             commandManager = new CommandManager();
             // Initalise the keybindings
             InitialiseKeyBindings();
-
         }
 
-        protected virtual void InitialiseKeyBindings() { }
+        protected abstract void InitialiseKeyBindings();
 
         // Exit method to be called on exit out of statey
         public virtual void Exit(Game1 game)
@@ -66,8 +62,8 @@ namespace Codename___Slash.GameStateManagement
         }
 
         // Update method for each scene
-        public virtual GameState Update(Game1 game, float deltaTime, ref InputHandler inputHandler) { return null; }
+        public virtual GameState Update(Game1 game, float deltaTime) { return null; }
 
-        public virtual void Draw(float deltaTime, SpriteBatch spriteBatch) { }
+        public abstract void Draw(float deltaTime, SpriteBatch spriteBatch);
     }
 }

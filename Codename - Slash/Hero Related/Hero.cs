@@ -7,14 +7,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
-
+using Codename___Slash.Collisions;
 
 namespace Codename___Slash
 {
     public class Hero : IDamageable, ICollidable
     {
         // Hero stats
-        public bool Dead { get; private set; }
+        public bool Dead { get; set; }
         public float MaxHealth { get; private set; } = 100;
         public float CurrentHealth { get; private set; }
 
@@ -54,7 +54,7 @@ namespace Codename___Slash
 
         public WeaponHandler WeaponHandler { get; private set; }
         public List<ColliderType> interactionTypes;
-        public List<ColliderType> InteractionTypes { get { if (interactionTypes == null) { List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.enemy);
+        public List<ColliderType> InteractionTypes { get { if (interactionTypes == null) { List<ColliderType> i = new List<ColliderType>(); i.Add(ColliderType.enemy); i.Add(ColliderType.enemyAttack);
                     i.Add(ColliderType.interactableObjects);
                     i.Add(ColliderType.triggerRegions);
                     i.Add(ColliderType.staticEnvironment); return i; } return interactionTypes; } }
@@ -188,6 +188,7 @@ namespace Codename___Slash
             {
                 position.X = MathHelper.Clamp(position.X, (BoundingRect.Width / 2) + 32, (Game1.SCREENWIDTH - BoundingRect.Width / 2) - 32);
                 position.Y = MathHelper.Clamp(position.Y, (BoundingRect.Height / 2) + 64, (Game1.SCREENHEIGHT - BoundingRect.Height / 2) - 64);
+
             } else if(MapGen.Instance.CurrentMapColliderType == MapCollider.Walkway)
             {
                 // position.X = MathHelper.Clamp(position.X, (BoundingRect.Width / 2) + 224, (Game1.SCREENWIDTH - BoundingRect.Width / 2) - 224);
@@ -335,12 +336,10 @@ namespace Codename___Slash
                 // Move the collider in the opposite direction by that amount
                 position += new Vector2(r.Width, r.Height);
             }
-            
-            if (other.ColliderType == ColliderType.enemy && !invulnerabilityTimer.Running)
+            if ((other.ColliderType == ColliderType.enemy || other.ColliderType == ColliderType.enemyAttack) && !invulnerabilityTimer.Running)
             {
                 TakeDamage((other as IDamageDealer).DealDamageValue);
             } 
-
         }
     }
 }

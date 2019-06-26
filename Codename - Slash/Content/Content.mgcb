@@ -205,6 +205,30 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Enemies/Doge_up.png
 
+#begin Sprites/Enemies/enemyBullet.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/enemyBullet.jpg
+
+#begin Sprites/Enemies/explosion_death.jpeg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/explosion_death.jpeg
+
 #begin Sprites/Enemies/Portal.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -12822,6 +12846,12 @@
 
 #begin StageData/Stage1.xml
 /copy:StageData/Stage1.xml
+
+#begin StageData/Stage2.xml
+/copy:StageData/Stage2.xml
+
+#begin StageData/Stage3.xml
+/copy:StageData/Stage3.xml
 
 #begin TileInfo1.xml
 /copy:TileInfo1.xml

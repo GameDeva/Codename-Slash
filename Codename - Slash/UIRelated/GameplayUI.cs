@@ -11,20 +11,23 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Codename___Slash.UIRelated
 {
+    // UI used during the GameplayState as HUD for the player
     public class GameplayUI : UI
     {
+        // Font to write with
         private SpriteFont hudFont;
+        // Blank texture, can be resized and drawn with differnet colors, for health, energy etc
         private Texture2D templateSquare;
 
+        // Locations of the HUD 
         Rectangle titleSafeArea;
         Vector2 hudLocation;
         Vector2 center;
 
+        // Different UI components
         private Rectangle healthRectangle;
         private Rectangle dashRectangle;
         private Rectangle weaponIconRectangle;
-        
-        private Hero hero;
 
         // Weapon Display
         private Texture2D weaponIconUI;
@@ -34,40 +37,32 @@ namespace Codename___Slash.UIRelated
 
         // 
         private int healthRemaining;
-        private bool completeStageText;
-        private int stageNumber;
         
+        // Constructor that passes the given ContentManager to the base UI class
         public GameplayUI(ContentManager content) : base(content)
         {
 
         }
 
-        public void Initialise(SaveData saveData, Hero hero)
+        // Initialise
+        public void Initialise(Hero hero)
         {
-            this.hero = hero;
-            healthRemaining = 100;
+            // Store hero's starting health
+            healthRemaining = (int)hero.MaxHealth;
             
+            // Setup UI rectangles
             titleSafeArea = new Rectangle(10, 32, 100, 100);
             hudLocation = new Vector2(titleSafeArea.X, titleSafeArea.Y);
             center = new Vector2(titleSafeArea.X + titleSafeArea.Width / 2.0f,
                                          titleSafeArea.Y + titleSafeArea.Height / 2.0f);
-            healthRectangle = new Rectangle(titleSafeArea.X, titleSafeArea.Y + 32, 50, healthRemaining * 2);
+            healthRectangle = new Rectangle(titleSafeArea.X, titleSafeArea.Y + 36, 50, healthRemaining * 2);
             dashRectangle = new Rectangle(70, titleSafeArea.Y + 32, 20, 200);
             weaponIconRectangle = new Rectangle(150, titleSafeArea.Y + 32, 100, 40);
 
-
-            stageNumber = saveData.stageNumber;
-
+            // Attach relevant events
             hero.WeaponHandler.OnWeaponSwap += OnWeaponSwap;
             hero.OnDamage += OnTakeDamage;
-            StageManager.Instance.OnCompleteStage += CompleteStage;
-            StageManager.Instance.OnNewStage += BeginStage;
-        }
 
-        private void BeginStage(StageData stageData)
-        {
-            completeStageText = false;
-            stageNumber = stageData.stageNumer;
         }
 
         public override void Update()
@@ -114,19 +109,15 @@ namespace Codename___Slash.UIRelated
 
         private void DrawFont(SpriteBatch spriteBatch)
         {
-            string text = "Geezer101";
-            // string weaponName = "[WepName]";
+            string text = "Hero";
             
-            // spriteBatch.DrawString(hudFont, text, hudLocation, Color.White);
+            spriteBatch.DrawString(hudFont, text, hudLocation, Color.White);
             spriteBatch.DrawString(hudFont, weaponName + " : " + ammoInMag + " / " + ammoRemaining, hudLocation + Vector2.UnitX * 120, Color.White);
 
-            spriteBatch.DrawString(hudFont, "Stage: " + stageNumber.ToString(), new Vector2(Game1.SCREENWIDTH-200, hudLocation.Y), Color.White);
+            spriteBatch.DrawString(hudFont, "Stage: " + GameManager.Instance.CurrentStage.ToString(), new Vector2(Game1.SCREENWIDTH-200, hudLocation.Y), Color.White);
             spriteBatch.DrawString(hudFont, "Score: " + GameManager.Instance.CurrentScore.ToString(), new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y+32), Color.White);
 
-            //if(completeStageText)
-            //    spriteBatch.DrawString(hudFont, "Next one ->", new Vector2(Game1.SCREENWIDTH - 200, hudLocation.Y + 32), Color.White);
-
-
+            
             spriteBatch.Draw(templateSquare, healthRectangle, Color.Red);
             // spriteBatch.Draw(templateSquare, dashRectangle, Color.Blue);
             if(weaponIconUI != null)
@@ -136,18 +127,20 @@ namespace Codename___Slash.UIRelated
 
         }
         
-
+        // Reduces ammo in mag display
         private void OnShoot()
         {
             ammoInMag--;
         }
 
+        // Updates mag and ammo remaining display
         private void OnReload(int amountToRefill)
         {
             ammoInMag += amountToRefill;
             ammoRemaining -= amountToRefill;
         }
         
+        // Swap the events, by unsubscribing from old weapon and subscribing to the new
         private void OnWeaponSwap(ref Weapon oldWeapon, ref Weapon newWeapon)
         {
             if(oldWeapon != null)
@@ -168,16 +161,11 @@ namespace Codename___Slash.UIRelated
             ammoInMag = newWeapon.CurrentMagHold;
         }
 
+        // Updates hero damage value and size of square
         private void OnTakeDamage(int damageVal)
         {
             healthRemaining -= damageVal;
             healthRectangle.Height = healthRemaining * 2;
         }
-
-        private void CompleteStage()
-        {
-            completeStageText = true;
-        }
-
     }
 }

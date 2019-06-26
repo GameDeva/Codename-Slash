@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Codename___Slash
 {
+    // State of the keyboard button when interacted with 
     public enum eButtonState
     {
         NONE = 0,
@@ -17,32 +18,53 @@ namespace Codename___Slash
         PRESSED
     }
 
+    // State of the Mouse button when interacted with 
+    public enum MouseButton
+    {
+        NONE = 0x00,
+        LEFT = 0x01,
+        RIGHT = 0x02,
+        MIDDLE = 0x04,
+        XBUTTON1 = 0x08,
+        XBUTTON2 = 0x10,
+    }
+
+    // Scroll enum whether you scroll up or down
+    public enum Scroll { UP, DOWN }
+
+    // 
     public class CommandManager
     {
-        private InputListener m_Input;
+        private InputListener inputListener; // Listens for input
+
+        // Dictionaries matching a given input to a delegate method that will be invoked on input
         private Dictionary<Keys, Action<eButtonState, Vector2>> m_keyBindings = new Dictionary<Keys, Action<eButtonState, Vector2>>();
         private Dictionary<MouseButton, Action<eButtonState, Vector2>> m_MouseButtonBindings = new Dictionary<MouseButton, Action<eButtonState, Vector2>>();
         private Dictionary<Scroll, Action<eButtonState, Vector2>> m_scrollBindings = new Dictionary<Scroll, Action<eButtonState, Vector2>>();
 
         public CommandManager()
         {
-            m_Input = new InputListener();
+            inputListener = new InputListener();
 
-            m_Input.OnKeyDown += OnkeyDown;
-            m_Input.OnKeyPressed += OnKeyPressed;
-            m_Input.OnKeyUp += OnKeyUp;
+            //
+            // Attach all relevant methods to the inputListener's events
 
-            m_Input.OnButtonDown += OnMouseDown;
-            m_Input.OnButtonPressed += OnMousePressed;
-            m_Input.OnButtonUp += OnMouseUp;
+            inputListener.OnKeyDown += OnkeyDown;
+            inputListener.OnKeyPressed += OnKeyPressed;
+            inputListener.OnKeyUp += OnKeyUp;
 
-            m_Input.OnScroll += OnScroll;
+            inputListener.OnButtonDown += OnMouseDown;
+            inputListener.OnButtonPressed += OnMousePressed;
+            inputListener.OnButtonUp += OnMouseUp;
+
+            inputListener.OnScroll += OnScroll;
 
         }
 
+        // 
         public void Update()
         {
-            m_Input.Update();
+            inputListener.Update();
         }
 
         #region Key Press Evaluation
@@ -74,7 +96,7 @@ namespace Codename___Slash
         public void AddKeyboardBinding(Keys key, Action<eButtonState, Vector2> action)
         {
             // Add key to listen for when polling            
-            m_Input.AddKey(key);
+            inputListener.AddKey(key);
             // Add the binding to the command map            
             m_keyBindings.Add(key, action);
         }
@@ -114,14 +136,14 @@ namespace Codename___Slash
         public void AddMouseBinding(MouseButton button, Action<eButtonState, Vector2> action)
         {
             // Add key to listen for when polling            
-            m_Input.AddButton(button);
+            inputListener.AddButton(button);
             // Add the binding to the command map            
             m_MouseButtonBindings.Add(button, action);
         }
 
         public void AddScrollBinding(Scroll scroll, Action<eButtonState, Vector2> action)
         {
-            m_Input.AddScroll(scroll);
+            inputListener.AddScroll(scroll);
 
             m_scrollBindings.Add(scroll, action);
         }

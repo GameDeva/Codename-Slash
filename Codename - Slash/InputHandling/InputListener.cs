@@ -8,26 +8,34 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Codename___Slash
 {
+    // Checks for any sort of input in the lists of possible inputs, and fires events if there is
     class InputListener
     {
+        // Key interaction events
         public Action<Keys> OnKeyDown;
         public Action<Keys> OnKeyPressed;
         public Action<Keys> OnKeyUp;
 
+        // Mouse interaction events
         public Action<MouseButton> OnButtonDown;
         public Action<MouseButton> OnButtonPressed;
         public Action<MouseButton> OnButtonUp;
 
+        // Scroll interaction event
         public Action<Scroll> OnScroll;
 
+        // Previous and current Keyboard states
         private KeyboardState PrevKeyboardState { get; set; }
         private KeyboardState CurrentKeyboardState { get; set; }
 
+        // Previous and current Mouse states
         private MouseState PrevMouseState { get; set; }
         private MouseState CurrentMouseState { get; set; }
 
+        // Previous scroll value to compare with current
         private int previousScrollVal;
 
+        // Hashsets of types of input that should be checked 
         public HashSet<Keys> KeyList;
         public HashSet<MouseButton> buttonsList;
         public HashSet<Scroll> scrollList;
@@ -46,6 +54,7 @@ namespace Codename___Slash
             scrollList = new HashSet<Scroll>();
         }
 
+        // 
         public void Update()
         {
             PrevKeyboardState = CurrentKeyboardState;
@@ -60,6 +69,9 @@ namespace Codename___Slash
 
             FireScrollEvents();
         }
+
+        //
+        // Add key, mouse and scroll interactions to hashset that needs to be watched
 
         public void AddKey(Keys key)
         {
@@ -76,6 +88,9 @@ namespace Codename___Slash
             scrollList.Add(scroll);
         }
 
+        //
+        // Events that should be fired based on the interaction/input received
+        
         private void FireKeyboardEvents()
         {
             foreach (Keys key in KeyList)
@@ -126,6 +141,7 @@ namespace Codename___Slash
 
         private void FireScrollEvents()
         {
+            // Scroll is determined through changing the value of the scroll wheel higher or lower
             int newScrollVal = Mouse.GetState().ScrollWheelValue;
             if (newScrollVal > previousScrollVal) { OnScroll?.Invoke(Scroll.UP); previousScrollVal = newScrollVal; }
             if (newScrollVal < previousScrollVal) { OnScroll?.Invoke(Scroll.DOWN); previousScrollVal = newScrollVal; }
@@ -133,5 +149,4 @@ namespace Codename___Slash
 
     }
 
-    public enum Scroll { UP, DOWN }
 }

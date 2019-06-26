@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Codename___Slash
+namespace Codename___Slash.Collisions
 {
     // Comparator class for Collisions used to compare Collisions
     public class CollisionComparer : IEqualityComparer<Collision>
