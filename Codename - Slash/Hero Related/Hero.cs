@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Codename___Slash.Collisions;
+using Codename___Slash.GameStateManagement;
 
 namespace Codename___Slash
 {
@@ -304,7 +305,9 @@ namespace Codename___Slash
             {
                 invulnerabilityTimer.Start();
                 OnDamage?.Invoke(damagePoints);
-            } else {
+            } else
+            {
+                GameState.GameOverState.win = false;
                 Dead = true;
                 OnDeath?.Invoke();
             }
@@ -336,10 +339,11 @@ namespace Codename___Slash
                 // Move the collider in the opposite direction by that amount
                 position += new Vector2(r.Width, r.Height);
             }
+            // When able to take damage
             if ((other.ColliderType == ColliderType.enemy || other.ColliderType == ColliderType.enemyAttack) && !invulnerabilityTimer.Running)
             {
                 TakeDamage((other as IDamageDealer).DealDamageValue);
-            } 
+            }
         }
     }
 }

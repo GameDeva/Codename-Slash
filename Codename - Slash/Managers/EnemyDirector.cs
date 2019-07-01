@@ -89,6 +89,7 @@ namespace Codename___Slash
         public Animator PortalAnimator { get; private set; }
         // 
         public Animation ExplosionAnimation { get; private set; }
+        public Animation Bloodanimation { get; private set; }
         
         // Localbounds
         public Rectangle DogeLocalBounds { get; private set; }
@@ -228,7 +229,7 @@ namespace Codename___Slash
         private void LoadContent(StageData stageData)
         {
             // Texture
-            EnemyBulletTexture = content.Load<Texture2D>("Sprites/Weapons/Shotgun/bulletb");
+            EnemyBulletTexture = content.Load<Texture2D>("Sprites/Enemies/enemyBullet");
 
             // Portal animation
             PortalAnimation = new Animation(content.Load<Texture2D>("Sprites/Enemies/portal"), 4, 0.6f, true);
@@ -237,6 +238,9 @@ namespace Codename___Slash
             // Explosion animation
             ExplosionAnimation = new Animation(content.Load<Texture2D>("Sprites/Enemies/explosion_death"), 39, 0.01f, false);
             
+            // Blood animation 
+            Bloodanimation = new Animation(content.Load<Texture2D>("Sprites/Enemies/blood"), 6, 0.02f, false);
+
             // ---
             // Enemy animations
             // ---
@@ -341,14 +345,18 @@ namespace Codename___Slash
         {
             return hero.Position;
         }
-        
+
+        public void OnEnemyHit(Vector2 pos)
+        {
+            createEffect?.Invoke(new ArgsEffect(pos, 0.12f, Bloodanimation));
+        }
 
         // On Enemy death, increases score and removes from appropriate counts
         private void OnEnemyDeath(Enemy enemy)
         {
             // Create explosion effect
             createEffect?.Invoke(new ArgsEffect(enemy.Position, ExplosionAnimation.FrameTime * ExplosionAnimation.FrameCount, ExplosionAnimation));
-
+            
             // Increment score
             ScoreIncrement?.Invoke(enemy.KillScore);
 

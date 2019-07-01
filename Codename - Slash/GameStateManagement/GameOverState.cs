@@ -16,6 +16,7 @@ namespace Codename___Slash.GameStateManagement
     {
         private SpriteFont hudFont;
         private int finalScore;
+        public bool win;
 
         public Action<int> UpdateScores;
 
@@ -49,7 +50,9 @@ namespace Codename___Slash.GameStateManagement
             // Load fonts
             hudFont = stateContentManager.Load<SpriteFont>("UI/Fonts/Hud");
             // Load and add all the UI elements
-            menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
+            // Only add if lost
+            if (!win)
+                menuUI.UIElements.Add(new UIElement(stateContentManager.Load<Texture2D>("UI/GameOver"), new Rectangle((Game1.SCREENWIDTH / 2) - (968 / 2), 100, 968, 198)));
             menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/Retry"), new Rectangle((Game1.SCREENWIDTH / 2) - (287 /2), 650, 287, 90), GameplayState, gameManager.OnNewGame));
             menuUI.Buttons.Add(new Button(stateContentManager.Load<Texture2D>("UI/BackToMain"), new Rectangle((Game1.SCREENWIDTH / 2) - (424 / 2), 850, 424, 67), MenuState));
 
@@ -85,7 +88,9 @@ namespace Codename___Slash.GameStateManagement
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            
+
+            spriteBatch.DrawString(hudFont, "You Win!", new Vector2(Game1.SCREENWIDTH / 2 - 100, (Game1.SCREENHEIGHT / 2) - 400), Color.White);
+
             spriteBatch.DrawString(hudFont, "Final Score: " + finalScore.ToString(), new Vector2(Game1.SCREENWIDTH/2 - 100, Game1.SCREENHEIGHT / 2), Color.White);
 
             menuUI.Draw(spriteBatch);

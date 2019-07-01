@@ -17,7 +17,6 @@ namespace Codename___Slash.EnemyStates
         private bool startWithAttack;
 
         public bool InAttack { get; private set; }
-        private float currentAttackCounter; // Between 0 and 1
         private float currentTimerToAttack;
         private Vector2 currentAttackPos;
 
@@ -30,7 +29,7 @@ namespace Codename___Slash.EnemyStates
             this.timeBetweenShots = timeBetweenAttacks;
             this.startWithAttack = startWithAttack;
             this.bulletTexture = bulletTexture;
-            bulletColliderSize = new Vector2(40, 40);
+            bulletColliderSize = new Vector2(60);
         }
 
         public override void Enter(Enemy owner)
@@ -40,7 +39,6 @@ namespace Codename___Slash.EnemyStates
 
             // 
             InAttack = startWithAttack;
-            currentAttackCounter = 0.0f;
             currentTimerToAttack = 0.0f;
             initialPosition = owner.Position;
             currentAttackPos = EnemyDirector.Instance.GetHeroPosition();
@@ -63,9 +61,8 @@ namespace Codename___Slash.EnemyStates
             else
             {
                 // Shoot
-                PoolManager.Instance.SpawnBullet(new ArgsBullet(true, owner.Position, EnemyDirector.Instance.GetHeroPosition() - owner.Position, bulletTexture, 5, bulletSpeed, bulletColliderSize, 10));
+                PoolManager.Instance.SpawnBullet(new ArgsBullet(true, new Vector2(0.5f), owner.Position, Vector2.Normalize(EnemyDirector.Instance.GetHeroPosition() - owner.Position), bulletTexture, 5, bulletSpeed, bulletColliderSize, 10));
                 // Reset timer
-                currentAttackCounter = 0.0f;
                 InAttack = false;
             }
         }

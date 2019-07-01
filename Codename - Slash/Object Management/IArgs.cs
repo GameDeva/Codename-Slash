@@ -17,6 +17,7 @@ namespace Codename___Slash
     public class ArgsBullet : IArgs
     {
         public Texture2D BulletTexture { get; private set; }
+        public Vector2 DrawSize { get; private set; }
         public bool IsEnemyBullet { get; private set; }
         public Vector2 Position { get; private set; }
         public Vector2 Direction { get; private set; }
@@ -25,9 +26,10 @@ namespace Codename___Slash
         public Vector2 ColliderSize { get; private set; }
         public float DamageValue { get; private set; }
 
-        public ArgsBullet(bool isEnemyBullet,Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed, Vector2 colliderSize, float damageValue)
+        public ArgsBullet(bool isEnemyBullet, Vector2 drawSize, Vector2 position, Vector2 direction, Texture2D bulletTexture, float maxLiveTime, float moveSpeed, Vector2 colliderSize, float damageValue)
         {
             IsEnemyBullet = isEnemyBullet;
+            DrawSize = drawSize;
             Position = position;
             Direction = direction;
             BulletTexture = bulletTexture;

@@ -53,7 +53,7 @@ namespace Codename___Slash.EnemyStates
             // Create the states
             IdleState idle = new IdleState("idle");
             ChaseState chase = new ChaseState("chase");
-            ShootState shoot = new ShootState("shoot", 3, 2, true, EnemyDirector.Instance.EnemyBulletTexture);
+            ShootState shoot = new ShootState("shoot", 200, 2, true, EnemyDirector.Instance.EnemyBulletTexture);
 
             // Transitions
             idle.AddTransition(new Transition(chase, () => (Math.Pow(distanceToBeginChase, 2) >= EnemyDirector.Instance.SqrDistanceToHeroFrom(Position))));

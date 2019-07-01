@@ -85,6 +85,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Enemies/Bald_up.png
 
+#begin Sprites/Enemies/blood.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/blood.png
+
 #begin Sprites/Enemies/Dark_down.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -205,7 +217,7 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Enemies/Doge_up.png
 
-#begin Sprites/Enemies/enemyBullet.jpg
+#begin Sprites/Enemies/enemyBullet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -215,7 +227,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/Enemies/enemyBullet.jpg
+/build:Sprites/Enemies/enemyBullet.png
 
 #begin Sprites/Enemies/explosion_death.jpeg
 /importer:TextureImporter

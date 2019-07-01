@@ -19,7 +19,7 @@ namespace Codename___Slash.GameStateManagement
     public class GameplayState : GameState
     {
         private Thread stageLoaderThread;
-
+        
         private SpriteFont hudFont;
         
         // Reference to all the singleton Managers
@@ -195,6 +195,7 @@ namespace Codename___Slash.GameStateManagement
             if (gameManager.NextStage())
             {
                 // Since the game only consists of 2 levels, the gameOver screen is displayed on completion
+                GameOverState.win = true;
                 gameManager.Hero.Dead = true;
             }
             else

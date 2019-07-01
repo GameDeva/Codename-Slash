@@ -46,7 +46,7 @@ namespace Codename___Slash
             EnemyDirector.Instance.OnCreateBald += SpawnBald;
             EnemyDirector.Instance.OnCreateDark += SpawnDark;
 
-            EnemyDirector.Instance.createEffect += SpawnDeathEffect;
+            EnemyDirector.Instance.createEffect += SpawnEffect;
             
             bulletsAlive = new List<Bullet>();
             enemiesAlive = new List<Enemy>();
@@ -209,7 +209,7 @@ namespace Codename___Slash
         {
             Doge doge = dogePool.SpawnFromPool(args);
             enemiesAlive.Add(doge);
-            // doge.OnDamage += SpawnEnemyHitEffect;
+            doge.OnDamage += OnEnemyHit;
             doge.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(doge);
         }
@@ -217,7 +217,7 @@ namespace Codename___Slash
         {
             Skull skull = skullPool.SpawnFromPool(args);
             enemiesAlive.Add(skull);
-            //skull.OnDamage += SpawnEnemyHitEffect;
+            skull.OnDamage += OnEnemyHit;
             skull.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(skull);
         }
@@ -225,7 +225,7 @@ namespace Codename___Slash
         {
             Bald bald = baldPool.SpawnFromPool(args);
             enemiesAlive.Add(bald);
-            //bald.OnDamage += SpawnEnemyHitEffect;
+            bald.OnDamage += OnEnemyHit;
             bald.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(bald);
         }
@@ -233,19 +233,19 @@ namespace Codename___Slash
         {
             Dark dark = darkPool.SpawnFromPool(args);
             enemiesAlive.Add(dark);
-            //dark.OnDamage += SpawnEnemyHitEffect;
+            dark.OnDamage += OnEnemyHit;
             dark.OnDeath += OnEnemyDeath;
             OnAddCollider?.Invoke(dark);
         }
         
-        // Spawns hit effect at position
-        private void SpawnEnemyHitEffect(IArgs args)
+        // On enemy takes hit
+        private void OnEnemyHit(Vector2 pos)
         {
-            
+            // EnemyDirector.Instance.OnEnemyHit(pos);
         }
 
-        // Spawns death effect at position
-        private void SpawnDeathEffect(IArgs args)
+        // Spawns effect at position
+        private void SpawnEffect(IArgs args)
         {
             Effect effect = effectPool.SpawnFromPool(args);
             effectsAlive.Add(effect);

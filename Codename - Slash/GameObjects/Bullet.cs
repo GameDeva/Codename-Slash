@@ -19,6 +19,8 @@ namespace Codename___Slash
         private float maxLiveTime;
         private float moveSpeed;
         private int colliderSize = 15;
+        private float rotationAngle;
+        private Vector2 drawSize;
 
         public Rectangle BoundingRect
         {
@@ -66,7 +68,7 @@ namespace Codename___Slash
 
         public override void Draw(float deltaTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(bulletTexture, position, null, null, null, 0, new Vector2(colliderSize/5), Color.White, SpriteEffects.None, 0);
+            spriteBatch.Draw(bulletTexture, position, null, null, null, rotationAngle, drawSize, Color.White, SpriteEffects.None, 0);
             
         }
 
@@ -87,6 +89,7 @@ namespace Codename___Slash
             moveSpeed = a.MoveSpeed;
             colliderSize = (int)a.ColliderSize.X;
             DealDamageValue = (int)a.DamageValue;
+            drawSize = a.DrawSize;
             // BoundingRect = new Rectangle((int)position.X, (int)position.Y, (int)a.ColliderSize.X, (int)a.ColliderSize.Y);
 
             // If enemy bullet spawned, then change interactiontypes
@@ -106,6 +109,8 @@ namespace Codename___Slash
                 InteractionTypes.Add(ColliderType.heroAttack);
             }
 
+            rotationAngle = (float) Math.Atan2(moveDirection.Y, moveDirection.X);
+            
             liveTime = 0f;
             IsActive = true;
         }
